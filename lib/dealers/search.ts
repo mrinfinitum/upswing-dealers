@@ -1,0 +1,31 @@
+import type { Dealer } from "@/types/dealer";
+
+const stateNames: Record<string, string> = {
+  CA: "california", CO: "colorado", FL: "florida", GA: "georgia", IA: "iowa",
+  ID: "idaho", IL: "illinois", IN: "indiana", KS: "kansas", MA: "massachusetts",
+  MI: "michigan", MN: "minnesota", MO: "missouri", NC: "north carolina",
+  NJ: "new jersey", NV: "nevada", NY: "new york", OK: "oklahoma", OR: "oregon",
+  PA: "pennsylvania", SC: "south carolina", SD: "south dakota", TN: "tennessee",
+  TX: "texas", UT: "utah", VA: "virginia", WA: "washington", WI: "wisconsin",
+};
+
+const clean = (value: string) => value.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, " ").trim();
+
+export function searchDealers(dealers: Dealer[], query: string): Dealer[] {
+  const normalizedQuery = clean(query);
+  if (!normalizedQuery) return dealers;
+  const terms = normalizedQuery.split(/\s+/);
+  return dealers.filter((dealer) => {
+    const regionName = dealer.stateProvince ? stateNames[dealer.stateProvince] : "";
+    const haystack = clean([
+      dealer.name, dealer.addressLine1, dealer.addressLine2, dealer.city,
+      dealer.stateProvince, regionName, dealer.postalCode, dealer.country,
+    ].filter(Boolean).join(" "));
+    return terms.every((term) => haystack.includes(term));
+  });
+}
+
+export function queryLooksPostal(query: string) {
+  const value = query.trim();
+  return /^\d{5}(?:-\d{4})?$/.test(value) || /^[A-Z]\d[A-Z][ -]?\d[A-Z]\d$/i.test(value);
+}
