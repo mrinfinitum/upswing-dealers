@@ -79,7 +79,7 @@ button { color: inherit; }
 .admin-button { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 0 20px; border: 1px solid #999; border-radius: 0; background: #fff; color: #000; font-size: 11px; font-weight: 500; letter-spacing: .07em; text-decoration: none; text-transform: uppercase; cursor: pointer; }
 .admin-button:hover { border-color: #000; }
 .admin-button--primary { border-color: #000; background: #000; color: #fff; }
-.admin-button--primary:hover { background: #222; }
+.admin-button--primary:hover { border-color: var(--blue); background: var(--blue); }
 .admin-button--danger { border-color: #9a312e; background: #9a312e; color: #fff; }
 .admin-button:disabled { cursor: wait; opacity: .6; }
 .admin-toolbar { margin-bottom: 18px; padding: 20px; border: 1px solid #d4d4d0; background: #fff; }
@@ -113,6 +113,7 @@ button { color: inherit; }
 .admin-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
 .admin-field--wide { grid-column: 1 / -1; }
 .admin-field input, .admin-field select, .admin-field textarea { width: 100%; min-height: 46px; padding: 10px 12px; border: 1px solid #aaa; border-radius: 0; background: #fff; color: #000; font: inherit; }
+.admin-field input:focus, .admin-field select:focus, .admin-field textarea:focus { border-color: #000; outline: 0; box-shadow: inset 0 0 0 1px #000; }
 .admin-field textarea { resize: vertical; }
 .admin-field__error { display: block; margin-top: 5px; color: #8b302d; font-size: 12px; }
 .admin-checkbox { display: flex; align-items: center; gap: 10px; margin-top: 21px; cursor: pointer; }
@@ -194,6 +195,16 @@ button { color: inherit; }
   height: 2px;
   background: var(--blue);
 }
+.site-header__actions { height: 83px; display: flex; align-items: center; justify-self: end; gap: 12px; }
+.site-header__actions a { text-decoration: none; }
+.site-header__actions-contact { padding: 10px 2px; color: #d4d4d4; font-size: 10.5px; font-weight: 500; letter-spacing: .09em; text-transform: uppercase; transition: color .2s ease; }
+.site-header__actions-contact:hover { color: #fff; }
+.site-header__actions-shop { min-height: 42px; display: inline-flex; align-items: center; gap: 18px; padding: 0 15px; background: #fff; color: #000; font-size: 10.5px; font-weight: 500; letter-spacing: .09em; text-transform: uppercase; transition: background-color .2s ease, color .2s ease; }
+.site-header__actions-shop:hover { background: var(--blue); color: #fff; }
+.site-header__actions-shop span { font-size: 14px; transition: transform .2s ease; }
+.site-header__actions-shop:hover span { transform: translate(2px, -2px); }
+.site-header__actions-cart { width: 42px; height: 42px; display: grid; place-items: center; border: 1px solid #3b3b3b; color: #fff; transition: border-color .2s ease, background-color .2s ease; }
+.site-header__actions-cart:hover { border-color: #fff; background: #181818; }
 .site-header__mobile-menu { display: none; justify-self: end; }
 .site-header__mobile-menu summary { width: 48px; height: 48px; display: grid; place-content: center; gap: 5px; cursor: pointer; list-style: none; }
 .site-header__mobile-menu summary::-webkit-details-marker { display: none; }
@@ -362,10 +373,18 @@ button { color: inherit; }
   body { font-size: 13.5px; }
   .site-header__inner { grid-template-columns: 1fr auto; }
   .site-header__desktop-nav { display: none; }
+  .site-header__actions { display: none; }
   .site-header__mobile-menu { display: block; }
   .locator-shell { grid-template-columns: 400px minmax(0, 1fr); }
   .locator-panel__intro, .locator-search { padding-inline: 28px; }
   .locator-results-heading, .dealer-card { padding-inline: 28px; }
+}
+
+@media (min-width: 1100px) and (max-width: 1399px) {
+  .site-header__desktop-nav a { padding-inline: 10px; }
+  .site-header__desktop-nav a.is-current::after { right: 10px; left: 10px; }
+  .site-header__actions-contact { display: none; }
+  .site-header__actions { gap: 8px; }
 }
 
 @media (max-width: 767px) {
