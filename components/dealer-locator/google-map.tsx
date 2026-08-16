@@ -17,6 +17,71 @@ type GoogleMapProps = {
   onFailure: () => void;
 };
 
+function getDirectionsUrl(dealer: Dealer) {
+  const destination = [dealer.name, dealer.addressLine1, dealer.addressLine2, dealer.city, dealer.stateProvince, dealer.postalCode, dealer.country]
+    .filter(Boolean)
+    .join(", ");
+  return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}`;
+}
+
+function createDealerInfoCard(dealer: Dealer) {
+  const card = document.createElement("article");
+  card.className = "map-dealer-card";
+
+  const eyebrow = document.createElement("p");
+  eyebrow.className = "map-dealer-card__eyebrow";
+  eyebrow.textContent = "Authorized UpSwing dealer";
+  card.append(eyebrow);
+
+  const heading = document.createElement("h3");
+  heading.textContent = dealer.name;
+  card.append(heading);
+
+  const municipality = [dealer.city, dealer.stateProvince].filter(Boolean).join(", ");
+  const localityLine = [municipality, dealer.postalCode].filter(Boolean).join(" ");
+  const addressParts = [
+    dealer.addressLine1,
+    dealer.addressLine2,
+    localityLine,
+    dealer.country !== "United States" ? dealer.country : undefined,
+  ].filter((part): part is string => Boolean(part));
+  if (addressParts.length > 0) {
+    const address = document.createElement("address");
+    for (const part of addressParts) {
+      const line = document.createElement("span");
+      line.textContent = part;
+      address.append(line);
+    }
+    card.append(address);
+  }
+
+  const actions = document.createElement("div");
+  actions.className = "map-dealer-card__actions";
+  if (dealer.phone) {
+    const call = document.createElement("a");
+    call.href = `tel:${dealer.phone}`;
+    call.textContent = "Call";
+    actions.append(call);
+  }
+  if (dealer.website) {
+    const website = document.createElement("a");
+    website.href = dealer.website;
+    website.target = "_blank";
+    website.rel = "noreferrer";
+    website.textContent = "Website";
+    actions.append(website);
+  }
+  const directions = document.createElement("a");
+  directions.href = getDirectionsUrl(dealer);
+  directions.target = "_blank";
+  directions.rel = "noreferrer";
+  directions.textContent = "Directions ↗";
+  actions.append(directions);
+  card.append(actions);
+
+  return card;
+}
+
 export function GoogleMap({ config, dealers, selectedDealerId, origin, originLabel, onSelectDealer, onFailure }: GoogleMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<google.maps.Map | undefined>(undefined);
@@ -24,6 +89,7 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
   const clustererRef = useRef<MarkerClusterer | undefined>(undefined);
   const previousSelectedDealerId = useRef<string | undefined>(undefined);
   const [libraries, setLibraries] = useState<[google.maps.MapsLibrary, google.maps.MarkerLibrary]>();
+  const [openDealerId, setOpenDealerId] = useState<string>();
 
   useEffect(() => {
     let active = true;
@@ -54,12 +120,14 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !libraries) return;
-    const [, markerLibrary] = libraries;
+    const [mapsLibrary, markerLibrary] = libraries;
     clustererRef.current?.clearMarkers();
     markersRef.current.forEach((marker) => { marker.map = null; });
     const dealerMarkers: google.maps.marker.AdvancedMarkerElement[] = [];
+    const dealerMarkersById = new Map<string, google.maps.marker.AdvancedMarkerElement>();
     const auxiliaryMarkers: google.maps.marker.AdvancedMarkerElement[] = [];
     const bounds = new google.maps.LatLngBounds();
+    const infoWindow = new mapsLibrary.InfoWindow();
 
     for (const dealer of getMappableDealers(dealers)) {
       const coordinates = dealer.coordinates!;
@@ -72,10 +140,23 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
       });
       const position = { lat: coordinates.latitude, lng: coordinates.longitude };
       const marker = new markerLibrary.AdvancedMarkerElement({ map, position, title: `${dealer.name}, ${dealer.city}`, content: pin });
-      marker.addEventListener("gmp-click", () => onSelectDealer(dealer.id));
+      marker.addEventListener("gmp-click", () => {
+        setOpenDealerId(dealer.id);
+        onSelectDealer(dealer.id);
+      });
       dealerMarkers.push(marker);
+      dealerMarkersById.set(dealer.id, marker);
       bounds.extend(position);
     }
+
+    const openDealer = openDealerId === selectedDealerId ? dealers.find((dealer) => dealer.id === openDealerId) : undefined;
+    const openMarker = openDealerId ? dealerMarkersById.get(openDealerId) : undefined;
+    if (openDealer && openMarker) {
+      infoWindow.setContent(createDealerInfoCard(openDealer));
+      infoWindow.open({ map, anchor: openMarker, shouldFocus: false });
+    }
+    const closeListener = infoWindow.addListener("closeclick", () => setOpenDealerId(undefined));
+    const mapClickListener = map.addListener("click", () => setOpenDealerId(undefined));
 
     if (origin) {
       const position = { lat: origin.latitude, lng: origin.longitude };
@@ -99,10 +180,13 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
     }
     previousSelectedDealerId.current = selectedDealerId;
     return () => {
+      closeListener.remove();
+      mapClickListener.remove();
+      infoWindow.close();
       clustererRef.current?.clearMarkers();
       markers.forEach((marker) => { marker.map = null; });
     };
-  }, [dealers, libraries, onSelectDealer, origin, originLabel, selectedDealerId]);
+  }, [dealers, libraries, onSelectDealer, openDealerId, origin, originLabel, selectedDealerId]);
 
   return (
     <div

@@ -358,6 +358,19 @@ button { color: inherit; }
 .map-panel__topline i.is-live { background: #2878d1; }
 .map-panel__canvas { position: relative; flex: 1; min-height: 0; overflow: hidden; display: grid; place-items: center; isolation: isolate; border: 1px solid #d8dde3; border-radius: 20px; background: #e7eaee; box-shadow: 0 8px 26px rgb(20 32 49 / .08); }
 .map-panel__google-map { position: absolute; inset: 0; width: 100%; height: 100%; }
+.gm-style .gm-style-iw-c { max-width: 340px !important; padding: 0 !important; border-radius: 18px; box-shadow: 0 16px 42px rgb(20 32 49 / .22); }
+.gm-style .gm-style-iw-d { overflow: auto !important; }
+.gm-style .gm-style-iw-c button.gm-ui-hover-effect { top: 5px !important; right: 5px !important; }
+.map-dealer-card { width: min(290px, calc(100vw - 80px)); padding: 22px 20px 18px; color: #090b0d; font-family: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif; }
+.map-dealer-card__eyebrow { margin: 0 28px 8px 0; color: var(--blue); font-size: 9px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+.map-dealer-card h3 { margin: 0 28px 11px 0; font-size: 20px; font-weight: 700; letter-spacing: -.025em; line-height: 1.08; }
+.map-dealer-card address { display: grid; gap: 1px; margin: 0; color: #59616b; font-size: 12px; font-style: normal; line-height: 1.4; }
+.map-dealer-card address span { display: block; }
+.map-dealer-card__actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 17px; padding-top: 14px; border-top: 1px solid #e5e8ec; }
+.map-dealer-card__actions a { min-height: 34px; display: inline-flex; align-items: center; justify-content: center; padding: 0 11px; border: 1px solid #d8dde3; border-radius: 999px; background: #fff; color: #222a33; font-size: 9px; font-weight: 600; letter-spacing: .055em; text-decoration: none; text-transform: uppercase; }
+.map-dealer-card__actions a:hover { border-color: #aab2bc; background: #f3f5f7; }
+.map-dealer-card__actions a:last-child { border-color: #000; background: #000; color: #fff; }
+.map-dealer-card__actions a:last-child:hover { border-color: var(--blue); background: var(--blue); }
 .map-panel__grid { position: absolute; inset: -20%; z-index: -1; background: repeating-linear-gradient(32deg, transparent 0 48px, rgb(0 0 0 / .055) 49px, transparent 50px 98px), repeating-linear-gradient(118deg, transparent 0 64px, rgb(0 0 0 / .04) 65px, transparent 66px 130px); transform: rotate(-4deg); }
 .map-panel__grid::before, .map-panel__grid::after { content: ""; position: absolute; border: 2px solid rgb(255 255 255 / .9); border-radius: 48%; }
 .map-panel__grid::before { width: 76%; height: 44%; top: 10%; right: 3%; transform: rotate(17deg); }
