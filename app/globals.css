@@ -135,6 +135,8 @@ button { color: inherit; }
 .admin-login__body > p:not(.eyebrow) { margin: 9px 0 25px; color: var(--muted); }
 .admin-login__form { display: grid; gap: 17px; }
 .admin-login__form .admin-button { margin-top: 3px; }
+.admin-login__recovery { margin: 3px 0 0; color: var(--muted); font-size: 12px; text-align: center; }
+.admin-reset-complete p { margin: 0 0 18px; }
 
 @media (max-width: 760px) {
   .admin-header { grid-template-columns: 1fr auto; gap: 12px; padding: 0 18px; }

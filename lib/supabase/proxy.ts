@@ -21,10 +21,11 @@ export async function updateSession(request: NextRequest) {
   const { data } = await supabase.auth.getClaims();
   const pathname = request.nextUrl.pathname;
   const isLogin = pathname === "/admin/login";
+  const isPasswordRecovery = pathname === "/admin/reset-password";
   const isAdminRoute = pathname === "/admin" || pathname.startsWith("/admin/");
   const isAdmin = data?.claims?.app_metadata?.role === "admin";
 
-  if (isAdminRoute && !isLogin && !isAdmin) {
+  if (isAdminRoute && !isLogin && !isPasswordRecovery && !isAdmin) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/admin/login";
     loginUrl.search = "";

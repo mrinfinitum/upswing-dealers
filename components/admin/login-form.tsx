@@ -20,6 +20,7 @@ export function LoginForm() {
       <button className="admin-button admin-button--primary" disabled={pending} type="submit">
         {pending ? "Signing in…" : "Sign in"}
       </button>
+      <p className="admin-login__recovery">Lost your password? Ask an authorized project owner to send a recovery email.</p>
     </form>
   );
 }
