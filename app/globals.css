@@ -381,12 +381,19 @@ button { color: inherit; }
 .map-panel__legend { position: absolute; right: 18px; bottom: 18px; display: flex; align-items: center; gap: 8px; padding: 10px 13px; border: 1px solid rgb(0 0 0 / .06); border-radius: 999px; background: rgb(255 255 255 / .94); box-shadow: 0 5px 20px rgb(0 0 0 / .08); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; backdrop-filter: blur(10px); }
 .map-panel__legend span { width: 10px; height: 10px; border: 3px solid #fff; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
 
-.locator-cta { padding: 62px 0; background: var(--blue); color: #fff; }
-.locator-cta .shell { display: flex; align-items: center; justify-content: space-between; gap: 40px; }
-.locator-cta .eyebrow { margin-bottom: 10px; color: #dbeaff; }
-.locator-cta h2 { margin: 0; font-size: clamp(30px, 3.5vw, 48px); font-weight: 500; letter-spacing: -.035em; line-height: 1.05; }
-.locator-cta a { flex: none; }
-.locator-cta a:hover { background: #000; color: #fff; }
+.locator-cta { position: relative; overflow: hidden; padding: 84px 0; border-top: 1px solid #1f1f1f; background: #050505; color: #fff; isolation: isolate; }
+.locator-cta::before,
+.locator-cta::after { content: ""; position: absolute; z-index: -1; border-radius: 50%; pointer-events: none; }
+.locator-cta::before { width: 640px; height: 190px; top: -48px; right: -70px; border: 2px solid rgb(52 126 228 / .38); transform: rotate(-4deg); box-shadow: 0 0 48px rgb(52 126 228 / .09); }
+.locator-cta::after { width: 810px; height: 260px; right: -150px; bottom: -152px; border: 2px solid rgb(211 75 71 / .3); transform: rotate(4deg); box-shadow: 0 0 55px rgb(211 75 71 / .06); }
+.locator-cta .shell { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 56px; }
+.locator-cta .shell::after { content: ""; position: absolute; top: -84px; right: 34%; bottom: -84px; width: 1px; background: linear-gradient(transparent, rgb(255 255 255 / .08), transparent); }
+.locator-cta .eyebrow { margin-bottom: 15px; color: #83b3f4; }
+.locator-cta h2 { max-width: 820px; margin: 0; font-family: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: clamp(36px, 4vw, 58px); font-weight: 700; letter-spacing: -.05em; line-height: .98; }
+.locator-cta a { min-width: 290px; min-height: 64px; flex: none; gap: 28px; padding: 8px 8px 8px 27px; border-radius: 999px; box-shadow: 0 14px 36px rgb(0 0 0 / .3); transition: background-color .2s ease, color .2s ease, transform .2s ease; }
+.locator-cta a span { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; background: #000; color: #fff; font-size: 15px; transition: background-color .2s ease, color .2s ease, transform .2s ease; }
+.locator-cta a:hover { background: var(--blue); color: #fff; transform: translateY(-2px); }
+.locator-cta a:hover span { background: #fff; color: #000; transform: translate(2px, -2px); }
 
 .site-footer { background: #040404; color: #eaeaea; }
 .site-footer__main { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 70px; padding-block: 50px; }
@@ -448,6 +455,7 @@ button { color: inherit; }
   .map-panel { min-height: 560px; padding: 0 10px 10px; border-top: 1px solid #dce1e7; }
   .map-panel__canvas { min-height: 477px; }
   .locator-cta .shell { align-items: flex-start; flex-direction: column; }
+  .locator-cta .shell::after { display: none; }
   .site-footer__main { grid-template-columns: 1fr 1fr; gap: 42px; }
   .site-footer__brand { grid-column: 1 / -1; }
   .site-footer__tagline { min-height: 110px; }
@@ -475,7 +483,10 @@ button { color: inherit; }
   .map-panel__canvas { min-height: 417px; }
   .map-panel__message { width: calc(100% - 28px); padding: 26px 22px; }
   .map-panel__legend { right: 14px; bottom: 14px; }
-  .locator-cta { padding-block: 48px; }
+  .locator-cta { padding-block: 64px; }
+  .locator-cta::before { right: -390px; }
+  .locator-cta::after { right: -500px; }
+  .locator-cta a { width: 100%; }
   .locator-cta a { width: 100%; }
   .site-footer__main { grid-template-columns: 1fr; gap: 32px; }
   .site-footer__brand { grid-column: auto; }
