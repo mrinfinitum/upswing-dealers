@@ -4,7 +4,6 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { dealerRepository } from "@/lib/dealers/repository";
 import { getMapConfiguration } from "@/lib/maps/provider";
 import { connection } from "next/server";
-import Image from "next/image";
 
 export default async function Home() {
   await connection();
@@ -16,9 +15,6 @@ export default async function Home() {
       <SiteHeader />
       <main>
         <section className="locator-hero">
-          <div className="locator-hero__media" aria-hidden="true">
-            <Image className="locator-hero__image" src="/brand/dealer-hero-child-golfer-wide.png" alt="" fill sizes="100vw" quality={88} priority />
-          </div>
           <div className="locator-hero__texture" aria-hidden="true" />
           <div className="shell locator-hero__content">
             <p className="eyebrow">UpSwing retail partners</p>
