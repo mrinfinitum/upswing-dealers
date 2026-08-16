@@ -118,6 +118,8 @@ button { color: inherit; }
 .admin-checkbox { display: flex; align-items: center; gap: 10px; margin-top: 21px; cursor: pointer; }
 .admin-checkbox input { width: 19px; height: 19px; accent-color: #000; }
 .admin-form-help { margin: 0 0 18px; color: var(--muted); font-size: 12px; }
+.admin-coordinate-status { margin: 0; padding: 14px 16px; border-left: 3px solid var(--blue); background: #f1f6fd; }
+.admin-coordinate-status span { display: block; margin-bottom: 3px; color: var(--muted); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
 .admin-form-actions { display: flex; gap: 10px; padding-top: 4px; }
 .admin-record-id { font-family: ui-monospace, monospace; font-size: 12px; }
 .admin-danger-zone { margin-top: 50px; padding-top: 25px; border-top: 1px solid #c9c9c6; }

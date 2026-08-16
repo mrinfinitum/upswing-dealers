@@ -54,4 +54,5 @@ At request time the public locator reads active, verified Supabase rows. Until t
 - A row is published only when both `active = true` and `verification_status = 'verified'`.
 - Coordinates require a complete latitude/longitude pair and database range checks.
 - Editing an imported location retains its stable ID and source provenance fields.
+- Admins enter a complete address rather than latitude/longitude. The server calculates coordinates with Google and stores them only when a unique precise result passes component validation.
 - Rotate the service-role key immediately if it is ever exposed. Never paste it into browser code, logs, tickets, or screenshots.

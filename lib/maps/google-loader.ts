@@ -23,20 +23,24 @@ export async function loadGoogleMaps(config: GoogleMapConfiguration) {
 }
 
 export async function geocodeWithGoogle(query: string, config: GoogleMapConfiguration) {
+  const results = await geocodeCandidatesWithGoogle(query, config);
+  return results[0];
+}
+
+export async function geocodeCandidatesWithGoogle(query: string, config: GoogleMapConfiguration) {
   configure(config);
   const { Geocoder } = await importLibrary("geocoding") as google.maps.GeocodingLibrary;
   const response = await new Geocoder().geocode({ address: query });
-  const result = response.results[0];
-  if (!result) return undefined;
-  return {
+  return response.results.slice(0, 10).map((result) => ({
     coordinates: { latitude: result.geometry.location.lat(), longitude: result.geometry.location.lng() },
     formattedAddress: result.formatted_address,
     resultTypes: result.types,
     locationType: result.geometry.location_type,
+    partialMatch: result.partial_match,
     addressComponents: result.address_components.map((component) => ({
       longName: component.long_name,
       shortName: component.short_name,
       types: component.types,
     })),
-  };
+  }));
 }

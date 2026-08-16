@@ -8,20 +8,12 @@ import { dealerToMutation } from "@/lib/dealers/supabase-mapper";
 import { createClient } from "@/lib/supabase/server";
 import type { Dealer, DealerVerificationStatus } from "@/types/dealer";
 import type { AdminFormState } from "@/lib/admin/form-state";
+import { dealerAddressFingerprint } from "@/lib/geo/address";
+import { reviewGeocodeCandidate, type GeocodeCandidate } from "@/lib/geo/geocode-review";
 
 const statuses: DealerVerificationStatus[] = ["unverified", "needs-review", "verified", "rejected"];
 const text = (formData: FormData, key: string) => String(formData.get(key) ?? "").trim();
 const optionalText = (formData: FormData, key: string) => text(formData, key) || undefined;
-
-function parseNumber(value: string, field: string, min: number, max: number, errors: Record<string, string>) {
-  if (!value) return undefined;
-  const parsed = Number(value);
-  if (!Number.isFinite(parsed) || parsed < min || parsed > max) {
-    errors[field] = `Enter a number from ${min} to ${max}.`;
-    return undefined;
-  }
-  return parsed;
-}
 
 function parseDealerForm(formData: FormData, existing?: Dealer) {
   const errors: Record<string, string> = {};
@@ -29,19 +21,15 @@ function parseDealerForm(formData: FormData, existing?: Dealer) {
   const city = text(formData, "city");
   const country = text(formData, "country");
   const verificationStatus = text(formData, "verificationStatus") as DealerVerificationStatus;
-  const latitude = parseNumber(text(formData, "latitude"), "latitude", -90, 90, errors);
-  const longitude = parseNumber(text(formData, "longitude"), "longitude", -180, 180, errors);
+  const addressLine1 = text(formData, "addressLine1");
   const website = optionalText(formData, "website");
   const email = optionalText(formData, "email");
 
   if (!name) errors.name = "Dealer name is required.";
+  if (!addressLine1) errors.addressLine1 = "Street address is required for automatic map placement.";
   if (!city) errors.city = "City is required.";
   if (!country) errors.country = "Country is required.";
   if (!statuses.includes(verificationStatus)) errors.verificationStatus = "Choose a valid status.";
-  if ((latitude === undefined) !== (longitude === undefined)) {
-    errors.latitude = "Latitude and longitude must be supplied together.";
-    errors.longitude = "Latitude and longitude must be supplied together.";
-  }
   if (website) {
     try {
       const parsed = new URL(website);
@@ -56,13 +44,13 @@ function parseDealerForm(formData: FormData, existing?: Dealer) {
     id: existing?.id ?? crypto.randomUUID(),
     name,
     locationName: optionalText(formData, "locationName"),
-    addressLine1: optionalText(formData, "addressLine1"),
+    addressLine1: addressLine1 || undefined,
     addressLine2: optionalText(formData, "addressLine2"),
     city,
     stateProvince: optionalText(formData, "stateProvince"),
     postalCode: optionalText(formData, "postalCode"),
     country,
-    coordinates: latitude !== undefined && longitude !== undefined ? { latitude, longitude } : undefined,
+    coordinates: existing?.coordinates,
     coordinateEvidence: existing?.coordinateEvidence,
     phone: optionalText(formData, "phone"),
     website,
@@ -82,6 +70,66 @@ function parseDealerForm(formData: FormData, existing?: Dealer) {
   };
 
   return { dealer, errors };
+}
+
+function parseGeocodeCandidates(formData: FormData): GeocodeCandidate[] {
+  const raw = text(formData, "geocodeCandidates");
+  if (!raw || raw.length > 100_000) return [];
+  try {
+    const candidates = JSON.parse(raw) as unknown;
+    if (!Array.isArray(candidates) || candidates.length > 10) return [];
+    return candidates.filter((candidate): candidate is GeocodeCandidate => {
+      if (!candidate || typeof candidate !== "object") return false;
+      const item = candidate as Partial<GeocodeCandidate>;
+      return Boolean(
+        item.coordinates
+        && Number.isFinite(item.coordinates.latitude)
+        && item.coordinates.latitude >= -90
+        && item.coordinates.latitude <= 90
+        && Number.isFinite(item.coordinates.longitude)
+        && item.coordinates.longitude >= -180
+        && item.coordinates.longitude <= 180
+        && typeof item.formattedAddress === "string"
+        && Array.isArray(item.resultTypes)
+        && typeof item.locationType === "string"
+        && Array.isArray(item.addressComponents),
+      );
+    });
+  } catch {
+    return [];
+  }
+}
+
+function applyAutomaticCoordinates(dealer: Dealer, formData: FormData, existing?: Dealer): AdminFormState | null {
+  const addressChanged = !existing || dealerAddressFingerprint(dealer) !== dealerAddressFingerprint(existing);
+  if (!addressChanged && existing?.coordinates) return null;
+
+  const reviewed = parseGeocodeCandidates(formData).map((candidate) => ({
+    candidate,
+    review: reviewGeocodeCandidate(dealer, candidate),
+  }));
+  const verified = reviewed.filter(({ review }) => review.status === "verified");
+  if (verified.length !== 1) {
+    return {
+      message: verified.length > 1
+        ? "Google returned multiple precise matches. Add more address detail and try again."
+        : "The address did not produce one unambiguous precise match. Review the address and postal code.",
+      fieldErrors: { addressLine1: "A unique, precise Google address match is required." },
+    };
+  }
+
+  const { candidate } = verified[0];
+  dealer.coordinates = candidate.coordinates;
+  dealer.coordinateEvidence = {
+    source: "google-maps-js-geocoder",
+    retrievedAt: new Date().toISOString(),
+    formattedAddress: candidate.formattedAddress,
+    resultTypes: candidate.resultTypes,
+    locationType: candidate.locationType,
+    verificationStatus: "verified",
+    discrepancies: [],
+  };
+  return null;
 }
 
 export async function loginAction(_: AdminFormState, formData: FormData): Promise<AdminFormState> {
@@ -111,6 +159,8 @@ export async function createLocationAction(_: AdminFormState, formData: FormData
   await requireAdmin();
   const { dealer, errors } = parseDealerForm(formData);
   if (Object.keys(errors).length) return { message: "Review the highlighted fields.", fieldErrors: errors };
+  const geocodeError = applyAutomaticCoordinates(dealer, formData);
+  if (geocodeError) return geocodeError;
 
   const supabase = await createClient();
   const { error } = await supabase.from("dealers").insert(dealerToMutation(dealer));
@@ -126,6 +176,8 @@ export async function updateLocationAction(id: string, _: AdminFormState, formDa
   if (!existing) return { message: "This location no longer exists." };
   const { dealer, errors } = parseDealerForm(formData, existing);
   if (Object.keys(errors).length) return { message: "Review the highlighted fields.", fieldErrors: errors };
+  const geocodeError = applyAutomaticCoordinates(dealer, formData, existing);
+  if (geocodeError) return geocodeError;
 
   const supabase = await createClient();
   const { error } = await supabase.from("dealers").update(dealerToMutation(dealer)).eq("id", id);

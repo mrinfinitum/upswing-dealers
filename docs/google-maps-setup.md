@@ -1,6 +1,6 @@
 # Google Maps production setup
 
-The locator uses the Google Maps JavaScript API through `@googlemaps/js-api-loader`. Geocoding is performed with the Maps JavaScript Geocoding service so the same website-restricted browser key can be used; there is no server credential or unrestricted proxy route.
+The locator and authenticated admin use the Google Maps JavaScript API through `@googlemaps/js-api-loader`. Public searches and admin address calculation use the website-restricted browser Geocoding service. The authenticated Server Action independently validates submitted candidates before storing coordinates; no server geocoding credential is required.
 
 ## Environment variables
 
@@ -22,7 +22,7 @@ Restart `next dev` or rebuild after changing either value. Next.js inlines `NEXT
 
 ### Vercel setup
 
-In Vercel, open **Project Settings → Environment Variables** and add both variables separately for Production and only the Preview environments explicitly approved for map testing. Redeploy after changes because public values are build-time configuration. Do not paste credentials into `vercel.json`, source files, screenshots, tickets, or the generated audit reports.
+In Vercel, open **Project Settings → Environment Variables** and add both variables separately for Production and only the Preview environments explicitly approved for map testing. Redeploy after changes because public values are build-time configuration. Do not paste credentials into `vercel.json`, source files, screenshots, tickets, or generated audit reports.
 
 ## Required Google Cloud configuration
 
@@ -41,7 +41,7 @@ Apply a **Websites** application restriction to the browser key. At minimum, aut
 
 Use exact HTTPS production hostnames. Do not authorize `*.upswinggolf.com/*` when only `dealers.upswinggolf.com` is required. If Vercel preview testing is necessary, prefer an explicit preview hostname per approved deployment instead of a broad `*.vercel.app/*` wildcard, then remove it after testing.
 
-Remove preview or local referrers when they are no longer needed. Do not use this key for server-side REST calls. Do not add a server key unless a future server workflow has stable egress controls or another secure authentication strategy.
+Remove preview or local referrers when they are no longer needed. Do not use the browser key for server-side REST calls.
 
 Under **API restrictions**, select **Restrict key** and allow only:
 
@@ -72,3 +72,4 @@ The production site must also provide publicly accessible terms and privacy page
 - City, state, ZIP/postal, and address searches are geocoded when Google is configured.
 - Retailer-name searches stay lexical.
 - Geographic results use 25, 50, or 100 mile filters and sort nearest-first.
+- Admin create/update calculates candidates from the complete address in the authorized browser. The Server Action accepts only one precise street/premise result whose city, region, postal code, and country pass the existing review rules; ambiguous or approximate matches return a form error and are not stored.

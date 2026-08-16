@@ -5,14 +5,30 @@ import Link from "next/link";
 import { createLocationAction, updateLocationAction } from "@/app/admin/actions";
 import { initialAdminFormState } from "@/lib/admin/form-state";
 import type { Dealer } from "@/types/dealer";
+import type { MapConfiguration } from "@/lib/maps/provider";
+import { geocodeCandidatesWithGoogle } from "@/lib/maps/google-loader";
+import { dealerAddressFingerprint, formAddressFingerprint, formAddressQuery } from "@/lib/geo/address";
 
 function FieldError({ error }: { error?: string }) {
   return error ? <span className="admin-field__error">{error}</span> : null;
 }
 
-export function LocationForm({ dealer }: { dealer?: Dealer }) {
-  const updateAction = dealer ? updateLocationAction.bind(null, dealer.id) : createLocationAction;
-  const [state, action, pending] = useActionState(updateAction, initialAdminFormState);
+export function LocationForm({ dealer, mapConfig }: { dealer?: Dealer; mapConfig: MapConfiguration }) {
+  const serverAction = dealer ? updateLocationAction.bind(null, dealer.id) : createLocationAction;
+  async function geocodingAction(previousState: typeof initialAdminFormState, formData: FormData) {
+    const addressChanged = !dealer || formAddressFingerprint(formData) !== dealerAddressFingerprint(dealer);
+    if (addressChanged || !dealer.coordinates) {
+      if (mapConfig.provider !== "google") return { message: "Automatic geocoding is not configured." };
+      try {
+        const candidates = await geocodeCandidatesWithGoogle(formAddressQuery(formData), mapConfig);
+        formData.set("geocodeCandidates", JSON.stringify(candidates));
+      } catch {
+        return { message: "Google could not geocode this address. Check the address and try again." };
+      }
+    }
+    return serverAction(previousState, formData);
+  }
+  const [state, action, pending] = useActionState(geocodingAction, initialAdminFormState);
   const error = (name: string) => state.fieldErrors?.[name];
 
   return (
@@ -32,7 +48,7 @@ export function LocationForm({ dealer }: { dealer?: Dealer }) {
       <fieldset>
         <legend>Address</legend>
         <div className="admin-form-grid">
-          <div className="admin-field admin-field--wide"><label htmlFor="addressLine1">Address line 1</label><input id="addressLine1" name="addressLine1" defaultValue={dealer?.addressLine1} /></div>
+          <div className="admin-field admin-field--wide"><label htmlFor="addressLine1">Address line 1 *</label><input id="addressLine1" name="addressLine1" defaultValue={dealer?.addressLine1} required /><FieldError error={error("addressLine1")} /></div>
           <div className="admin-field admin-field--wide"><label htmlFor="addressLine2">Address line 2</label><input id="addressLine2" name="addressLine2" defaultValue={dealer?.addressLine2} /></div>
           <div className="admin-field"><label htmlFor="city">City *</label><input id="city" name="city" defaultValue={dealer?.city} required /><FieldError error={error("city")} /></div>
           <div className="admin-field"><label htmlFor="stateProvince">State / province / region</label><input id="stateProvince" name="stateProvince" defaultValue={dealer?.stateProvince} /></div>
@@ -42,12 +58,9 @@ export function LocationForm({ dealer }: { dealer?: Dealer }) {
       </fieldset>
 
       <fieldset>
-        <legend>Coordinates</legend>
-        <p className="admin-form-help">Coordinates are optional, but both values are required together. Verification is separate from geocoding.</p>
-        <div className="admin-form-grid">
-          <div className="admin-field"><label htmlFor="latitude">Latitude</label><input id="latitude" name="latitude" type="number" step="any" defaultValue={dealer?.coordinates?.latitude} /><FieldError error={error("latitude")} /></div>
-          <div className="admin-field"><label htmlFor="longitude">Longitude</label><input id="longitude" name="longitude" type="number" step="any" defaultValue={dealer?.coordinates?.longitude} /><FieldError error={error("longitude")} /></div>
-        </div>
+        <legend>Map location</legend>
+        <p className="admin-form-help">Latitude and longitude are calculated automatically from the complete address when this record is saved. Ambiguous or approximate matches are not accepted.</p>
+        {dealer?.coordinates ? <p className="admin-coordinate-status"><span>Current verified coordinates</span>{dealer.coordinates.latitude.toFixed(6)}, {dealer.coordinates.longitude.toFixed(6)}</p> : <p className="admin-coordinate-status"><span>Status</span>Coordinates will be calculated on save.</p>}
       </fieldset>
 
       <fieldset>
@@ -59,7 +72,7 @@ export function LocationForm({ dealer }: { dealer?: Dealer }) {
           <div className="admin-field admin-field--wide"><label htmlFor="notes">Internal notes</label><textarea id="notes" name="notes" rows={4} defaultValue={dealer?.notes} /></div>
         </div>
       </fieldset>
-      <div className="admin-form-actions"><button className="admin-button admin-button--primary" disabled={pending} type="submit">{pending ? "Saving…" : dealer ? "Save changes" : "Create location"}</button><Link className="admin-button" href="/admin/locations">Cancel</Link></div>
+      <div className="admin-form-actions"><button className="admin-button admin-button--primary" disabled={pending} type="submit">{pending ? "Validating address…" : dealer ? "Save changes" : "Create location"}</button><Link className="admin-button" href="/admin/locations">Cancel</Link></div>
     </form>
   );
 }
