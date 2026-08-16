@@ -15,8 +15,32 @@ export function ResetPasswordForm() {
 
     async function establishRecoverySession() {
       const code = new URLSearchParams(window.location.search).get("code");
+      const fragment = new URLSearchParams(window.location.hash.slice(1));
+      const accessToken = fragment.get("access_token");
+      const refreshToken = fragment.get("refresh_token");
+      const recoveryError = fragment.get("error_description");
+
+      if (recoveryError) {
+        if (active) {
+          setMessage("This password-reset link is invalid or has expired.");
+          setRecoveryState("invalid");
+        }
+        return;
+      }
+
       if (code) {
         const { error } = await supabase.auth.exchangeCodeForSession(code);
+        if (error && active) {
+          setMessage("This password-reset link is invalid or has expired.");
+          setRecoveryState("invalid");
+          return;
+        }
+        window.history.replaceState({}, "", window.location.pathname);
+      } else if (accessToken && refreshToken) {
+        const { error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        });
         if (error && active) {
           setMessage("This password-reset link is invalid or has expired.");
           setRecoveryState("invalid");
