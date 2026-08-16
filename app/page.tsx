@@ -17,8 +17,7 @@ export default async function Home() {
       <main>
         <section className="locator-hero">
           <div className="locator-hero__media" aria-hidden="true">
-            <Image className="locator-hero__media-backdrop" src="/brand/dealer-hero-child-golfer.png" alt="" fill sizes="(max-width: 767px) 100vw, 58vw" quality={60} priority />
-            <Image className="locator-hero__media-subject" src="/brand/dealer-hero-child-golfer.png" alt="" fill sizes="(max-width: 767px) 78vw, 32vw" quality={88} priority />
+            <Image className="locator-hero__image" src="/brand/dealer-hero-child-golfer-wide.png" alt="" fill sizes="100vw" quality={88} priority />
           </div>
           <div className="locator-hero__texture" aria-hidden="true" />
           <div className="shell locator-hero__content">
