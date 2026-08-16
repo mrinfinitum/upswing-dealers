@@ -296,76 +296,93 @@ button { color: inherit; }
 .locator-hero__content > a span { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; background: #000; color: #fff; font-size: 14px; transition: background-color .25s ease, color .25s ease, transform .25s ease; }
 .locator-hero__content > a:hover span { background: #fff; color: #000; transform: translateY(2px); }
 
-.locator-section-wrap { padding-block: 70px 90px; }
-.locator-shell { min-height: 760px; display: grid; grid-template-columns: minmax(390px, 470px) minmax(0, 1fr); border: 1px solid #cfcfcb; background: #fff; }
-.locator-panel { min-width: 0; height: 760px; display: flex; flex-direction: column; border-right: 1px solid #cfcfcb; }
-.locator-panel__intro { padding: 36px 36px 28px; }
+.locator-section-wrap { padding-block: 82px 104px; }
+.locator-shell {
+  min-height: 790px;
+  display: grid;
+  grid-template-columns: minmax(400px, 480px) minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid #dce1e7;
+  border-radius: 28px;
+  background: #eef1f5;
+  box-shadow: 0 30px 80px rgb(20 32 49 / .14), 0 2px 8px rgb(20 32 49 / .06);
+}
+.locator-panel { min-width: 0; height: 790px; display: flex; flex-direction: column; border-right: 1px solid #dce1e7; background: rgb(255 255 255 / .96); }
+.locator-panel__intro { padding: 34px 32px 26px; border-bottom: 1px solid #edf0f3; background: linear-gradient(135deg, #fff, #fafbfc); }
 .locator-panel__intro .eyebrow { margin-bottom: 12px; color: var(--blue); }
-.locator-panel__intro h2 { margin: 0 0 12px; font-size: 34px; font-weight: 500; letter-spacing: -.03em; line-height: 1.08; }
+.locator-panel__intro h2 { margin: 0 0 11px; font-size: 36px; font-weight: 500; letter-spacing: -.04em; line-height: 1.04; }
 .locator-panel__intro > p:last-child { max-width: 390px; margin: 0; color: var(--muted); font-size: 14px; }
-.locator-search { padding: 0 36px 26px; border-bottom: 1px solid var(--line); }
+.locator-search { padding: 22px 32px 24px; border-bottom: 1px solid #e2e6eb; background: #f7f8fa; }
 .locator-search > label { display: block; margin-bottom: 8px; font-size: 11px; font-weight: 500; letter-spacing: .09em; text-transform: uppercase; }
-.locator-search__row { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
-.locator-search input { min-width: 0; height: 52px; padding: 0 15px; border: 1px solid #9d9d9a; border-right: 0; border-radius: 0; background: #fff; color: #000; font-size: 16px; outline: 0; }
-.locator-search input:focus { border-color: #000; box-shadow: inset 0 0 0 1px #000; }
-.locator-search__row > button { min-width: 105px; padding-inline: 20px; border: 1px solid #000; border-radius: 0; background: #000; color: #fff; font-size: 11px; font-weight: 500; letter-spacing: .09em; text-transform: uppercase; cursor: pointer; }
-.locator-search__row > button:hover { background: #282828; }
+.locator-search__row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 5px; padding: 5px; border: 1px solid #d7dce2; border-radius: 16px; background: #fff; box-shadow: 0 5px 18px rgb(23 39 60 / .06); transition: border-color .2s ease, box-shadow .2s ease; }
+.locator-search__row:focus-within { border-color: #9cbce9; box-shadow: 0 0 0 4px rgb(52 126 228 / .1), 0 7px 22px rgb(23 39 60 / .08); }
+.locator-search input { min-width: 0; height: 48px; padding: 0 13px; border: 0; border-radius: 11px; background: transparent; color: #000; font-size: 15px; outline: 0; }
+.locator-search input:focus { border-color: transparent; box-shadow: none; }
+.locator-search__row > button { min-width: 102px; padding-inline: 20px; border: 1px solid #000; border-radius: 11px; background: #000; color: #fff; font-size: 10.5px; font-weight: 500; letter-spacing: .09em; text-transform: uppercase; box-shadow: 0 5px 14px rgb(0 0 0 / .17); cursor: pointer; transition: background-color .2s ease, border-color .2s ease, transform .2s ease; }
+.locator-search__row > button:hover { border-color: var(--blue); background: var(--blue); transform: translateY(-1px); }
 .locator-search__row > button:disabled { cursor: wait; opacity: .65; }
 .locator-search__utilities { min-height: 42px; display: flex; justify-content: space-between; gap: 12px; padding-top: 13px; }
-.locator-search__utilities button { min-height: 40px; padding: 0; border: 0; background: transparent; font-size: 12px; font-weight: 500; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+.locator-search__utilities button { min-height: 40px; padding: 0 2px; border: 0; background: transparent; color: #414b58; font-size: 12px; font-weight: 500; text-decoration: none; cursor: pointer; }
+.locator-search__utilities button:hover { color: var(--blue); }
 .locator-search__utilities button:first-child { display: inline-flex; align-items: center; gap: 7px; }
 .locator-search__utilities button:first-child span { color: var(--blue); font-size: 19px; }
-.locator-search__status { margin: 8px 0 0; padding: 10px 12px; border-left: 3px solid var(--blue); background: #edf4fd; color: #234a7f; font-size: 12px; line-height: 1.45; }
+.locator-search__status { margin: 8px 0 0; padding: 11px 13px; border: 1px solid #d8e7fa; border-radius: 10px; background: #edf4fd; color: #234a7f; font-size: 12px; line-height: 1.45; }
 .locator-search__status.is-error { border-color: var(--red); background: #fff1f0; color: #7b302d; }
 .locator-radius { display: flex; align-items: center; gap: 8px; margin: 10px 0 0; padding: 0; border: 0; }
 .locator-radius legend { margin-bottom: 7px; color: var(--muted); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
 .locator-radius label { cursor: pointer; }
 .locator-radius input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-.locator-radius span { min-height: 36px; display: inline-flex; align-items: center; justify-content: center; padding: 0 13px; border: 1px solid #b9b9b5; font-size: 11px; font-weight: 500; }
-.locator-radius input:checked + span { border-color: #000; background: #000; color: #fff; }
+.locator-radius span { min-height: 36px; display: inline-flex; align-items: center; justify-content: center; padding: 0 14px; border: 1px solid #d5d9df; border-radius: 999px; background: #fff; font-size: 11px; font-weight: 500; }
+.locator-radius input:checked + span { border-color: #000; background: #000; color: #fff; box-shadow: 0 4px 10px rgb(0 0 0 / .12); }
 .locator-radius input:focus-visible + span { outline: 2px solid var(--blue); outline-offset: 2px; }
-.locator-results-heading { min-height: 53px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 36px; border-bottom: 1px solid var(--line); }
+.locator-results-heading { min-height: 57px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 32px; border-bottom: 1px solid #e2e6eb; background: #fff; }
 .locator-results-heading p { margin: 0; font-weight: 500; }
-.locator-results-heading span { color: var(--muted); font-size: 10px; letter-spacing: .09em; text-transform: uppercase; }
-.results-list { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-color: #aaa transparent; }
-.dealer-card { position: relative; padding: 0 36px; border-bottom: 1px solid var(--line); transition: background-color .18s ease; }
-.dealer-card:hover, .dealer-card.is-selected { background: #f6f6f3; }
-.dealer-card.is-selected::before { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 4px; background: var(--blue); }
+.locator-results-heading span { padding: 5px 9px; border-radius: 999px; background: #f0f3f6; color: #5d6672; font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; }
+.results-list { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 12px; background: #f3f5f7; scrollbar-color: #aeb5be transparent; }
+.dealer-card { position: relative; margin-bottom: 9px; padding: 0 20px; overflow: hidden; border: 1px solid #e0e4e9; border-radius: 14px; background: #fff; box-shadow: 0 3px 12px rgb(28 43 62 / .04); transition: border-color .18s ease, background-color .18s ease, box-shadow .18s ease, transform .18s ease; }
+.dealer-card:last-child { margin-bottom: 0; }
+.dealer-card:hover { border-color: #c9d0d9; box-shadow: 0 8px 24px rgb(28 43 62 / .09); transform: translateY(-1px); }
+.dealer-card.is-selected { border-color: #9abdec; background: #f7faff; box-shadow: 0 8px 24px rgb(52 126 228 / .11); }
+.dealer-card.is-selected::before { content: ""; position: absolute; top: 12px; bottom: 12px; left: 0; width: 4px; border-radius: 0 4px 4px 0; background: var(--blue); }
 .dealer-card__select { width: 100%; display: grid; grid-template-columns: 34px 1fr; gap: 8px; padding: 20px 0 14px; border: 0; background: transparent; text-align: left; cursor: pointer; }
 .dealer-card__select > span:last-child { min-width: 0; }
-.dealer-card__number { padding-top: 2px; color: #959595; font-size: 10px; letter-spacing: .08em; }
+.dealer-card__number { width: 28px; height: 28px; display: grid; place-items: center; padding: 0; border-radius: 50%; background: #f0f2f5; color: #68717d; font-size: 9px; font-weight: 500; letter-spacing: .04em; }
+.dealer-card.is-selected .dealer-card__number { background: var(--blue); color: #fff; }
 .dealer-card__name, .dealer-card__address, .dealer-card__location, .dealer-card__postal, .dealer-card__country, .dealer-card__distance { display: block; }
-.dealer-card__name { margin-bottom: 4px; font-size: 15px; font-weight: 500; }
+.dealer-card__name { margin-bottom: 5px; font-size: 15px; font-weight: 600; letter-spacing: -.01em; }
 .dealer-card__address { font-size: 13px; line-height: 1.4; }
 .dealer-card__location { font-size: 14px; }
 .dealer-card__postal, .dealer-card__country, .dealer-card__distance { margin-top: 2px; color: var(--muted); font-size: 12px; }
-.dealer-card__distance { color: #215996; }
-.dealer-card__actions { display: flex; flex-wrap: wrap; gap: 8px 22px; padding: 0 0 20px 42px; }
-.dealer-card__actions a { min-height: 34px; display: inline-flex; align-items: center; font-size: 11px; font-weight: 500; letter-spacing: .07em; text-decoration: underline; text-transform: uppercase; text-underline-offset: 4px; }
+.dealer-card__distance { margin-top: 6px; color: #215996; font-weight: 500; }
+.dealer-card__actions { display: flex; flex-wrap: wrap; gap: 7px; padding: 0 0 18px 42px; }
+.dealer-card__actions a { min-height: 34px; display: inline-flex; align-items: center; padding: 0 11px; border: 1px solid #d9dde2; border-radius: 999px; background: #fff; color: #38414c; font-size: 9.5px; font-weight: 500; letter-spacing: .06em; text-decoration: none; text-transform: uppercase; transition: border-color .18s ease, background-color .18s ease, color .18s ease; }
+.dealer-card__actions a:hover { border-color: #aeb6c0; background: #f3f5f7; }
+.dealer-card__actions a:last-child { border-color: #000; background: #000; color: #fff; }
+.dealer-card__actions a:last-child:hover { border-color: var(--blue); background: var(--blue); }
 .locator-empty { flex: 1; min-height: 260px; display: grid; place-content: center; padding: 44px; text-align: center; }
 .locator-empty > span { color: var(--blue); font-size: 38px; }
 .locator-empty h3 { margin: 8px 0; font-size: 23px; font-weight: 500; }
 .locator-empty p { max-width: 310px; margin: 0; color: var(--muted); }
 .locator-show-all { display: none; }
 
-.map-panel { min-width: 0; min-height: 0; display: flex; flex-direction: column; background: #e9e9e4; }
-.map-panel__topline { min-height: 53px; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 0 24px; border-bottom: 1px solid #cfcfcb; background: #fff; }
+.map-panel { min-width: 0; min-height: 0; display: flex; flex-direction: column; padding: 0 14px 14px; background: #eef1f5; }
+.map-panel__topline { min-height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 0 10px; background: transparent; }
 .map-panel__topline p { margin: 0; font-size: 11px; font-weight: 500; letter-spacing: .09em; text-transform: uppercase; }
-.map-panel__topline > span { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+.map-panel__topline > span { display: flex; align-items: center; gap: 7px; padding: 7px 10px; border-radius: 999px; background: rgb(255 255 255 / .82); color: var(--muted); font-size: 9.5px; letter-spacing: .07em; text-transform: uppercase; box-shadow: 0 2px 7px rgb(20 32 49 / .05); }
 .map-panel__topline i { width: 7px; height: 7px; border-radius: 50%; background: #8e8e8b; }
 .map-panel__topline i.is-live { background: #2878d1; }
-.map-panel__canvas { position: relative; flex: 1; min-height: 0; overflow: hidden; display: grid; place-items: center; isolation: isolate; }
+.map-panel__canvas { position: relative; flex: 1; min-height: 0; overflow: hidden; display: grid; place-items: center; isolation: isolate; border: 1px solid #d8dde3; border-radius: 20px; background: #e7eaee; box-shadow: 0 8px 26px rgb(20 32 49 / .08); }
 .map-panel__google-map { position: absolute; inset: 0; width: 100%; height: 100%; }
 .map-panel__grid { position: absolute; inset: -20%; z-index: -1; background: repeating-linear-gradient(32deg, transparent 0 48px, rgb(0 0 0 / .055) 49px, transparent 50px 98px), repeating-linear-gradient(118deg, transparent 0 64px, rgb(0 0 0 / .04) 65px, transparent 66px 130px); transform: rotate(-4deg); }
 .map-panel__grid::before, .map-panel__grid::after { content: ""; position: absolute; border: 2px solid rgb(255 255 255 / .9); border-radius: 48%; }
 .map-panel__grid::before { width: 76%; height: 44%; top: 10%; right: 3%; transform: rotate(17deg); }
 .map-panel__grid::after { width: 55%; height: 70%; bottom: 0; left: 7%; transform: rotate(-25deg); }
-.map-panel__message { width: min(calc(100% - 48px), 470px); padding: 36px; border-top: 4px solid var(--blue); background: rgb(255 255 255 / .94); box-shadow: 0 18px 55px rgb(0 0 0 / .12); }
+.map-panel__message { width: min(calc(100% - 48px), 470px); padding: 36px; border: 1px solid rgb(255 255 255 / .7); border-radius: 18px; background: rgb(255 255 255 / .94); box-shadow: 0 18px 55px rgb(0 0 0 / .12); backdrop-filter: blur(14px); }
 .map-panel__message .eyebrow { margin-bottom: 12px; color: var(--blue); }
 .map-panel__message h2 { margin: 0 0 8px; font-size: clamp(34px, 4vw, 54px); font-weight: 500; letter-spacing: -.04em; line-height: 1; }
 .map-panel__message > p:not(.eyebrow) { margin: 0 0 22px; font-size: 16px; }
 .map-panel__message > span { display: block; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
-.map-panel__legend { position: absolute; right: 24px; bottom: 24px; display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: #fff; box-shadow: 0 5px 20px rgb(0 0 0 / .08); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; }
+.map-panel__legend { position: absolute; right: 18px; bottom: 18px; display: flex; align-items: center; gap: 8px; padding: 10px 13px; border: 1px solid rgb(0 0 0 / .06); border-radius: 999px; background: rgb(255 255 255 / .94); box-shadow: 0 5px 20px rgb(0 0 0 / .08); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; backdrop-filter: blur(10px); }
 .map-panel__legend span { width: 10px; height: 10px; border: 3px solid #fff; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
 
 .locator-cta { padding: 62px 0; background: var(--blue); color: #fff; }
@@ -398,7 +415,7 @@ button { color: inherit; }
   .site-header__desktop-nav { display: none; }
   .site-header__actions { display: none; }
   .site-header__mobile-menu { display: block; }
-  .locator-shell { grid-template-columns: 400px minmax(0, 1fr); }
+  .locator-shell { grid-template-columns: 400px minmax(0, 1fr); border-radius: 24px; }
   .locator-panel__intro, .locator-search { padding-inline: 28px; }
   .locator-results-heading, .dealer-card { padding-inline: 28px; }
 }
@@ -423,18 +440,18 @@ button { color: inherit; }
   .locator-hero__content { padding-block: 58px; }
   .locator-hero h1 { font-size: clamp(43px, 12vw, 66px); }
   .locator-hero__content > p:not(.eyebrow) { font-size: 16px; }
-  .locator-section-wrap { padding-block: 40px 56px; }
-  .locator-shell { display: flex; flex-direction: column; min-height: 0; }
+  .locator-section-wrap { padding-block: 40px 64px; }
+  .locator-shell { display: flex; flex-direction: column; min-height: 0; border-radius: 20px; box-shadow: 0 20px 52px rgb(20 32 49 / .12); }
   .locator-panel { height: auto; border-right: 0; }
   .locator-panel__intro { padding: 30px 24px 24px; }
   .locator-panel__intro h2 { font-size: 30px; }
   .locator-search { padding: 0 24px 22px; }
   .locator-results-heading { padding-inline: 24px; }
-  .results-list { overflow: visible; }
+  .results-list { overflow: visible; padding: 10px; }
   .results-list:not(.show-all) .dealer-card:nth-child(n + 13) { display: none; }
   .locator-show-all { min-height: 54px; display: block; margin: 0 24px 24px; border: 1px solid #000; border-radius: 0; background: #fff; font-size: 11px; font-weight: 500; letter-spacing: .09em; text-transform: uppercase; cursor: pointer; }
   .dealer-card { padding-inline: 24px; }
-  .map-panel { min-height: 430px; border-top: 1px solid #cfcfcb; }
+  .map-panel { min-height: 460px; padding: 0 10px 10px; border-top: 1px solid #dce1e7; }
   .map-panel__canvas { min-height: 377px; }
   .locator-cta .shell { align-items: flex-start; flex-direction: column; }
   .site-footer__main { grid-template-columns: 1fr 1fr; gap: 42px; }
@@ -451,14 +468,16 @@ button { color: inherit; }
   .locator-hero__content > p:not(.eyebrow) { margin-block: 24px 28px; }
   .locator-hero__content > a { width: 100%; }
   .locator-panel__intro, .locator-search { padding-inline: 18px; }
-  .locator-search__row { grid-template-columns: 1fr; gap: 8px; }
-  .locator-search input { border-right: 1px solid #9d9d9a; }
-  .locator-search__row > button { height: 50px; }
+  .locator-search__row { grid-template-columns: 1fr; gap: 8px; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+  .locator-search__row:focus-within { border-color: transparent; box-shadow: none; }
+  .locator-search input { border: 1px solid #d7dce2; border-radius: 12px; background: #fff; box-shadow: 0 4px 14px rgb(23 39 60 / .05); }
+  .locator-search input:focus { border-color: #9cbce9; box-shadow: 0 0 0 4px rgb(52 126 228 / .1); }
+  .locator-search__row > button { height: 50px; border-radius: 12px; }
   .locator-results-heading { align-items: flex-start; flex-direction: column; justify-content: center; gap: 2px; padding: 10px 18px; }
   .dealer-card { padding-inline: 18px; }
   .locator-show-all { margin-inline: 18px; }
   .dealer-card__actions { padding-left: 42px; }
-  .map-panel { min-height: 390px; }
+  .map-panel { min-height: 420px; }
   .map-panel__canvas { min-height: 337px; }
   .map-panel__message { width: calc(100% - 28px); padding: 26px 22px; }
   .map-panel__legend { right: 14px; bottom: 14px; }
