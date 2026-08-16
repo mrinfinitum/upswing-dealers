@@ -14,7 +14,7 @@ export function SiteHeader() {
     <header className="site-header">
       <div className="site-header__inner">
         <a href="https://www.upswinggolf.com/" aria-label="UpSwing Golf home">
-          <Image src="/brand/upswing-logo-white.png" alt="UpSwing Golf" width={115} height={53} className="site-header__logo" priority />
+          <Image src="/brand/upswing-logo-white.png" alt="UpSwing Golf" width={345} height={159} className="site-header__logo" style={{ height: "auto" }} priority />
         </a>
         <nav className="site-header__desktop-nav" aria-label="Main navigation">
           {links.map(([label, href]) => <a key={label} href={href}>{label}</a>)}

@@ -1,0 +1,1404 @@
+{
+  "generatedAt": "2026-08-15T05:53:59.518Z",
+  "provider": "Google Maps JavaScript Geocoder",
+  "records": [
+    {
+      "dealerId": "pga-tour-superstore-greenwood-village-co-united-states",
+      "queriedAddress": "9451 East Arapahoe Road, Greenwood Village, CO, 80112-3632, United States",
+      "responseStatus": "OK",
+      "candidates": [
+        {
+          "formattedAddress": "9451 E Arapahoe Rd, Greenwood Village, CO 80111, USA",
+          "coordinates": {
+            "latitude": 39.5973819,
+            "longitude": -104.8783094
+          },
+          "resultTypes": [
+            "street_address",
+            "subpremise"
+          ],
+          "locationType": "ROOFTOP",
+          "partialMatch": false,
+          "addressComponents": [
+            {
+              "longName": "9451",
+              "shortName": "9451",
+              "types": [
+                "street_number"
+              ]
+            },
+            {
+              "longName": "East Arapahoe Road",
+              "shortName": "E Arapahoe Rd",
+              "types": [
+                "route"
+              ]
+            },
+            {
+              "longName": "Greenwood Village",
+              "shortName": "Greenwood Village",
+              "types": [
+                "locality",
+                "political"
+              ]
+            },
+            {
+              "longName": "Arapahoe County",
+              "shortName": "Arapahoe County",
+              "types": [
+                "administrative_area_level_2",
+                "political"
+              ]
+            },
+            {
+              "longName": "Colorado",
+              "shortName": "CO",
+              "types": [
+                "administrative_area_level_1",
+                "political"
+              ]
+            },
+            {
+              "longName": "United States",
+              "shortName": "US",
+              "types": [
+                "country",
+                "political"
+              ]
+            },
+            {
+              "longName": "80111",
+              "shortName": "80111",
+              "types": [
+                "postal_code"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dealerId": "pga-tour-superstore-woodlands-tx-united-states",
+      "queriedAddress": "19075 I-45 S, 105, Shenandoah, TX, 77385-8705, United States",
+      "responseStatus": "OK",
+      "candidates": [
+        {
+          "formattedAddress": "Interstate 45 S, Conroe, TX 77385, USA",
+          "coordinates": {
+            "latitude": 30.2301733,
+            "longitude": -95.4581326
+          },
+          "resultTypes": [
+            "route"
+          ],
+          "locationType": "GEOMETRIC_CENTER",
+          "partialMatch": true,
+          "addressComponents": [
+            {
+              "longName": "Interstate 45 South",
+              "shortName": "Interstate 45 S",
+              "types": [
+                "route"
+              ]
+            },
+            {
+              "longName": "Conroe",
+              "shortName": "Conroe",
+              "types": [
+                "locality",
+                "political"
+              ]
+            },
+            {
+              "longName": "Montgomery County",
+              "shortName": "Montgomery County",
+              "types": [
+                "administrative_area_level_2",
+                "political"
+              ]
+            },
+            {
+              "longName": "Texas",
+              "shortName": "TX",
+              "types": [
+                "administrative_area_level_1",
+                "political"
+              ]
+            },
+            {
+              "longName": "United States",
+              "shortName": "US",
+              "types": [
+                "country",
+                "political"
+              ]
+            },
+            {
+              "longName": "77385",
+              "shortName": "77385",
+              "types": [
+                "postal_code"
+              ]
+            }
+          ]
+        },
+        {
+          "formattedAddress": "19075 I-45 #105, Conroe, TX 77385, USA",
+          "coordinates": {
+            "latitude": 30.18250159999999,
+            "longitude": -95.4497711
+          },
+          "resultTypes": [
+            "street_address",
+            "subpremise"
+          ],
+          "locationType": "ROOFTOP",
+          "partialMatch": true,
+          "addressComponents": [
+            {
+              "longName": "105",
+              "shortName": "105",
+              "types": [
+                "subpremise"
+              ]
+            },
+            {
+              "longName": "19075",
+              "shortName": "19075",
+              "types": [
+                "street_number"
+              ]
+            },
+            {
+              "longName": "Interstate 45",
+              "shortName": "I-45",
+              "types": [
+                "route"
+              ]
+            },
+            {
+              "longName": "Conroe",
+              "shortName": "Conroe",
+              "types": [
+                "locality",
+                "political"
+              ]
+            },
+            {
+              "longName": "Montgomery County",
+              "shortName": "Montgomery County",
+              "types": [
+                "administrative_area_level_2",
+                "political"
+              ]
+            },
+            {
+              "longName": "Texas",
+              "shortName": "TX",
+              "types": [
+                "administrative_area_level_1",
+                "political"
+              ]
+            },
+            {
+              "longName": "United States",
+              "shortName": "US",
+              "types": [
+                "country",
+                "political"
+              ]
+            },
+            {
+              "longName": "77385",
+              "shortName": "77385",
+              "types": [
+                "postal_code"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dealerId": "pga-tour-superstore-austin-tx-united-states",
+      "queriedAddress": "10515 N Mopac Expy, Austin, TX, 78759-5324, United States",
+      "responseStatus": "OK",
+      "candidates": [
+        {
+          "formattedAddress": "10515 N Mopac Expy, Austin, TX 78759, USA",
+          "coordinates": {
+            "latitude": 30.39333929999999,
+            "longitude": -97.73143290000002
+          },
+          "resultTypes": [
+            "premise",
+            "street_address"
+          ],
+          "locationType": "GEOMETRIC_CENTER",
+          "partialMatch": false,
+          "addressComponents": [
+            {
+              "longName": "10515",
+              "shortName": "10515",
+              "types": [
+                "street_number"
+              ]
+            },
+            {
+              "longName": "North Mopac Expressway",
+              "shortName": "N Mopac Expy",
+              "types": [
+                "route"
+              ]
+            },
+            {
+              "longName": "North Burnet",
+              "shortName": "North Burnet",
+              "types": [
+                "neighborhood",
+                "political"
+              ]
+            },
+            {
+              "longName": "Austin",
+              "shortName": "Austin",
+              "types": [
+                "locality",
+                "political"
+              ]
+            },
+            {
+              "longName": "Travis County",
+              "shortName": "Travis County",
+              "types": [
+                "administrative_area_level_2",
+                "political"
+              ]
+            },
+            {
+              "longName": "Texas",
+              "shortName": "TX",
+              "types": [
+                "administrative_area_level_1",
+                "political"
+              ]
+            },
+            {
+              "longName": "United States",
+              "shortName": "US",
+              "types": [
+                "country",
+                "political"
+              ]
+            },
+            {
+              "longName": "78759",
+              "shortName": "78759",
+              "types": [
+                "postal_code"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dealerId": "scheels-eden-prairie-mn-united-states",
+      "queriedAddress": "8301 Flying Cloud Dr, Eden Prairie, MN, 55344, United States",
+      "responseStatus": "OK",
+      "candidates": [
+        {
+          "formattedAddress": "8301 Flying Cloud Dr, Eden Prairie, MN 55344, USA",
+          "coordinates": {
+            "latitude": 44.85218829999999,
+            "longitude": -93.4261753
+          },
+          "resultTypes": [
+            "premise",
+            "street_address"
+          ],
+          "locationType": "GEOMETRIC_CENTER",
+          "partialMatch": false,
+          "addressComponents": [
+            {
+              "longName": "8301",
+              "shortName": "8301",
+              "types": [
+                "street_number"
+              ]
+            },
+            {
+              "longName": "Flying Cloud Drive",
+              "shortName": "Flying Cloud Dr",
+              "types": [
+                "route"
+              ]
+            },
+            {
+              "longName": "Eden Prairie",
+              "shortName": "Eden Prairie",
+              "types": [
+                "locality",
+                "political"
+              ]
+            },
+            {
+              "longName": "Hennepin County",
+              "shortName": "Hennepin County",
+              "types": [
+                "administrative_area_level_2",
+                "political"
+              ]
+            },
+            {
+              "longName": "Minnesota",
+              "shortName": "MN",
+              "types": [
+                "administrative_area_level_1",
+                "political"
+              ]
+            },
+            {
+              "longName": "United States",
+              "shortName": "US",
+              "types": [
+                "country",
+                "political"
+              ]
+            },
+            {
+              "longName": "55344",
+              "shortName": "55344",
+              "types": [
+                "postal_code"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dealerId": "club-champion-cherry-hill-nj-united-states",
+      "queriedAddress": "706 Haddonfield Road, Cherry Hill, NJ, 08002, United States",
+      "responseStatus": "OK",
+      "candidates": [
+        {
+          "formattedAddress": "706 Haddonfield Rd, Cherry Hill Township, NJ 08002, USA",
+          "coordinates": {
+            "latitude": 39.9297677,
+            "longitude": -75.0314731
+          },
+          "resultTypes": [
+            "street_address",
+            "subpremise"
+          ],
+          "locationType": "ROOFTOP",
+          "partialMatch": false,
+          "addressComponents": [
+            {
+              "longName": "706",
+              "shortName": "706",
+              "types": [
+                "street_number"
+              ]
+            },
+            {
+              "longName": "Haddonfield Road",
+              "shortName": "Haddonfield Rd",
+              "types": [
+                "route"
+              ]
+            },
+            {
+              "longName": "Golden Triangle",
+              "shortName": "Golden Triangle",
+              "types": [
+                "neighborhood",
+                "political"
+              ]
+            },
+            {
+              "longName": "Cherry Hill Township",
+              "shortName": "Cherry Hill Township",
+              "types": [
+                "locality",
+                "political"
+              ]
+            },
+            {
+              "longName": "Camden County",
+              "shortName": "Camden County",
+              "types": [
+                "administrative_area_level_2",
+                "political"
+              ]
+            },
+            {
+              "longName": "New Jersey",
+              "shortName": "NJ",
+              "types": [
+                "administrative_area_level_1",
+                "political"
+              ]
+            },
+            {
+              "longName": "United States",
+              "shortName": "US",
+              "types": [
+                "country",
+                "political"
+              ]
+            },
+            {
+              "longName": "08002",
+              "shortName": "08002",
+              "types": [
+                "postal_code"
+              ]
+            },
+            {
+              "longName": "2652",
+              "shortName": "2652",
+              "types": [
+                "postal_code_suffix"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dealerId": "club-champion-west-long-branch-nj-united-states",
+      "queriedAddress": "310 RT 36, Unit 5, West Long Branch, NJ, 07764, United States",
+      "responseStatus": "OK",
+      "candidates": [
+        {
+          "formattedAddress": "310 NJ-36 #5, Sea Bright, NJ 07760, USA",
+          "coordinates": {
+            "latitude": 40.3884754,
+            "longitude": -73.97525139999999
+          },
+          "resultTypes": [
+            "street_address",
+            "subpremise"
+          ],
+          "locationType": "ROOFTOP",
+          "partialMatch": false,
+          "addressComponents": [
+            {
+              "longName": "5",
+              "shortName": "5",
+              "types": [
+                "subpremise"
+              ]
+            },
+            {
+              "longName": "310",
+              "shortName": "310",
+              "types": [
+                "street_number"
+              ]
+            },
+            {
+              "longName": "New Jersey 36",
+              "shortName": "NJ-36",
+              "types": [
+                "route"
+              ]
+            },
+            {
+              "longName": "Sea Bright",
+              "shortName": "Sea Bright",
+              "types": [
+                "locality",
+                "political"
+              ]
+            },
+            {
+              "longName": "Monmouth County",
+              "shortName": "Monmouth County",
+              "types": [
+                "administrative_area_level_2",
+                "political"
+              ]
+            },
+            {
+              "longName": "New Jersey",
+              "shortName": "NJ",
+              "types": [
+                "administrative_area_level_1",
+                "political"
+              ]
+            },
+            {
+              "longName": "United States",
+              "shortName": "US",
+              "types": [
+                "country",
+                "political"
+              ]
+            },
+            {
+              "longName": "07760",
+              "shortName": "07760",
+              "types": [
+                "postal_code"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dealerId": "club-champion-tigard-or-united-states",
+      "queriedAddress": "7215 SW Hazel Fern Road, Tigard, OR, 97224, United States",
+      "responseStatus": "OK",
+      "candidates": [
+        {
+          "formattedAddress": "7215 SW Hazel Fern Rd, Portland, OR 97224, USA",
+          "coordinates": {
+            "latitude": 45.3939566,
+            "longitude": -122.7505101
+          },
+          "resultTypes": [
+            "street_address",
+            "subpremise"
+          ],
+          "locationType": "ROOFTOP",
+          "partialMatch": false,
+          "addressComponents": [
+            {
+              "longName": "7215",
+              "shortName": "7215",
+              "types": [
+                "street_number"
+              ]
+            },
+            {
+              "longName": "Southwest Hazel Fern Road",
+              "shortName": "SW Hazel Fern Rd",
+              "types": [
+                "route"
+              ]
+            },
+            {
+              "longName": "Metzger",
+              "shortName": "Metzger",
+              "types": [
+                "neighborhood",
+                "political"
+              ]
+            },
+            {
+              "longName": "Portland",
+              "shortName": "Portland",
+              "types": [
+                "locality",
+                "political"
+              ]
+            },
+            {
+              "longName": "Washington County",
+              "shortName": "Washington County",
+              "types": [
+                "administrative_area_level_2",
+                "political"
+              ]
+            },
+            {
+              "longName": "Oregon",
+              "shortName": "OR",
+              "types": [
+                "administrative_area_level_1",
+                "political"
+              ]
+            },
+            {
+              "longName": "United States",
+              "shortName": "US",
+              "types": [
+                "country",
+                "political"
+              ]
+            },
+            {
+              "longName": "97224",
+              "shortName": "97224",
+              "types": [
+                "postal_code"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dealerId": "club-champion-pittsburgh-pa-united-states",
+      "queriedAddress": "6563 Steubenville Pike, Pittsburgh, PA, 15205, United States",
+      "responseStatus": "OK",
+      "candidates": [
+        {
+          "formattedAddress": "6563 Steubenville Pike, Pittsburgh, PA 15277, USA",
+          "coordinates": {
+            "latitude": 40.4479492,
+            "longitude": -80.15866659999999
+          },
+          "resultTypes": [
+            "street_address",
+            "subpremise"
+          ],
+          "locationType": "ROOFTOP",
+          "partialMatch": false,
+          "addressComponents": [
+            {
+              "longName": "6563",
+              "shortName": "6563",
+              "types": [
+                "street_number"
+              ]
+            },
+            {
+              "longName": "Steubenville Pike",
+              "shortName": "Steubenville Pike",
+              "types": [
+                "route"
+              ]
+            },
+            {
+              "longName": "Pittsburgh",
+              "shortName": "Pittsburgh",
+              "types": [
+                "locality",
+                "political"
+              ]
+            },
+            {
+              "longName": "Robinson Township",
+              "shortName": "Robinson Township",
+              "types": [
+                "administrative_area_level_3",
+                "political"
+              ]
+            },
+            {
+              "longName": "Allegheny County",
+              "shortName": "Allegheny County",
+              "types": [
+                "administrative_area_level_2",
+                "political"
+              ]
+            },
+            {
+              "longName": "Pennsylvania",
+              "shortName": "PA",
+              "types": [
+                "administrative_area_level_1",
+                "political"
+              ]
+            },
+            {
+              "longName": "United States",
+              "shortName": "US",
+              "types": [
+                "country",
+                "political"
+              ]
+            },
+            {
+              "longName": "15277",
+              "shortName": "15277",
+              "types": [
+                "postal_code"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dealerId": "club-champion-columbia-sc-united-states",
+      "queriedAddress": "106 Percival Road, Columbia, SC, 29203, United States",
+      "responseStatus": "OK",
+      "candidates": [
+        {
+          "formattedAddress": "106 Percival Rd, Columbia, SC 29206, USA",
+          "coordinates": {
+            "latitude": 34.0239687,
+            "longitude": -80.950465
+          },
+          "resultTypes": [
+            "premise",
+            "street_address"
+          ],
+          "locationType": "ROOFTOP",
+          "partialMatch": false,
+          "addressComponents": [
+            {
+              "longName": "106",
+              "shortName": "106",
+              "types": [
+                "street_number"
+              ]
+            },
+            {
+              "longName": "Percival Road",
+              "shortName": "Percival Rd",
+              "types": [
+                "route"
+              ]
+            },
+            {
+              "longName": "Columbia",
+              "shortName": "Columbia",
+              "types": [
+                "locality",
+                "political"
+              ]
+            },
+            {
+              "longName": "Richland County",
+              "shortName": "Richland County",
+              "types": [
+                "administrative_area_level_2",
+                "political"
+              ]
+            },
+            {
+              "longName": "South Carolina",
+              "shortName": "SC",
+              "types": [
+                "administrative_area_level_1",
+                "political"
+              ]
+            },
+            {
+              "longName": "United States",
+              "shortName": "US",
+              "types": [
+                "country",
+                "political"
+              ]
+            },
+            {
+              "longName": "29206",
+              "shortName": "29206",
+              "types": [
+                "postal_code"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dealerId": "club-champion-austin-tx-united-states",
+      "queriedAddress": "3801 N. Capitol of Texas Hwy, Austin, TX, 78746, United States",
+      "responseStatus": "OK",
+      "candidates": [
+        {
+          "formattedAddress": "3801 N Capital of Texas Hwy, Austin, TX 78746, USA",
+          "coordinates": {
+            "latitude": 30.33632489999999,
+            "longitude": -97.8045064
+          },
+          "resultTypes": [
+            "premise",
+            "street_address"
+          ],
+          "locationType": "GEOMETRIC_CENTER",
+          "partialMatch": true,
+          "addressComponents": [
+            {
+              "longName": "3801",
+              "shortName": "3801",
+              "types": [
+                "street_number"
+              ]
+            },
+            {
+              "longName": "North Capital of Texas Highway",
+              "shortName": "N Capital of Texas Hwy",
+              "types": [
+                "route"
+              ]
+            },
+            {
+              "longName": "Davenport Lake Austin",
+              "shortName": "Davenport Lake Austin",
+              "types": [
+                "neighborhood",
+                "political"
+              ]
+            },
+            {
+              "longName": "Austin",
+              "shortName": "Austin",
+              "types": [
+                "locality",
+                "political"
+              ]
+            },
+            {
+              "longName": "Travis County",
+              "shortName": "Travis County",
+              "types": [
+                "administrative_area_level_2",
+                "political"
+              ]
+            },
+            {
+              "longName": "Texas",
+              "shortName": "TX",
+              "types": [
+                "administrative_area_level_1",
+                "political"
+              ]
+            },
+            {
+              "longName": "United States",
+              "shortName": "US",
+              "types": [
+                "country",
+                "political"
+              ]
+            },
+            {
+              "longName": "78746",
+              "shortName": "78746",
+              "types": [
+                "postal_code"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dealerId": "club-champion-dallas-tx-united-states",
+      "queriedAddress": "5331 E. Mockingbird Lane, Dallas, TX, 75206, United States",
+      "responseStatus": "OK",
+      "candidates": [
+        {
+          "formattedAddress": "5331 E Mockingbird Ln, Dallas, TX 75206, USA",
+          "coordinates": {
+            "latitude": 32.8373916,
+            "longitude": -96.7773699
+          },
+          "resultTypes": [
+            "premise",
+            "street_address"
+          ],
+          "locationType": "GEOMETRIC_CENTER",
+          "partialMatch": false,
+          "addressComponents": [
+            {
+              "longName": "5331",
+              "shortName": "5331",
+              "types": [
+                "street_number"
+              ]
+            },
+            {
+              "longName": "East Mockingbird Lane",
+              "shortName": "E Mockingbird Ln",
+              "types": [
+                "route"
+              ]
+            },
+            {
+              "longName": "Northeast Dallas",
+              "shortName": "Northeast Dallas",
+              "types": [
+                "neighborhood",
+                "political"
+              ]
+            },
+            {
+              "longName": "Dallas",
+              "shortName": "Dallas",
+              "types": [
+                "locality",
+                "political"
+              ]
+            },
+            {
+              "longName": "Dallas County",
+              "shortName": "Dallas County",
+              "types": [
+                "administrative_area_level_2",
+                "political"
+              ]
+            },
+            {
+              "longName": "Texas",
+              "shortName": "TX",
+              "types": [
+                "administrative_area_level_1",
+                "political"
+              ]
+            },
+            {
+              "longName": "United States",
+              "shortName": "US",
+              "types": [
+                "country",
+                "political"
+              ]
+            },
+            {
+              "longName": "75206",
+              "shortName": "75206",
+              "types": [
+                "postal_code"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dealerId": "club-champion-richmond-va-united-states",
+      "queriedAddress": "11747 W. Broad Street, Richmond, VA, 23233, United States",
+      "responseStatus": "OK",
+      "candidates": [
+        {
+          "formattedAddress": "11747 W Broad St, Ridge, VA 23233, USA",
+          "coordinates": {
+            "latitude": 37.6519132,
+            "longitude": -77.6209901
+          },
+          "resultTypes": [
+            "street_address",
+            "subpremise"
+          ],
+          "locationType": "ROOFTOP",
+          "partialMatch": false,
+          "addressComponents": [
+            {
+              "longName": "11747",
+              "shortName": "11747",
+              "types": [
+                "street_number"
+              ]
+            },
+            {
+              "longName": "West Broad Street",
+              "shortName": "W Broad St",
+              "types": [
+                "route"
+              ]
+            },
+            {
+              "longName": "Ridge",
+              "shortName": "Ridge",
+              "types": [
+                "neighborhood",
+                "political"
+              ]
+            },
+            {
+              "longName": "Short Pump",
+              "shortName": "Short Pump",
+              "types": [
+                "locality",
+                "political"
+              ]
+            },
+            {
+              "longName": "Henrico County",
+              "shortName": "Henrico County",
+              "types": [
+                "administrative_area_level_2",
+                "political"
+              ]
+            },
+            {
+              "longName": "Virginia",
+              "shortName": "VA",
+              "types": [
+                "administrative_area_level_1",
+                "political"
+              ]
+            },
+            {
+              "longName": "United States",
+              "shortName": "US",
+              "types": [
+                "country",
+                "political"
+              ]
+            },
+            {
+              "longName": "23233",
+              "shortName": "23233",
+              "types": [
+                "postal_code"
+              ]
+            },
+            {
+              "longName": "1006",
+              "shortName": "1006",
+              "types": [
+                "postal_code_suffix"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dealerId": "club-champion-basingstoke-united-kingdom",
+      "queriedAddress": "Unit 7 Vickers Business Centre, Priestley Road, Basingstoke, Hampshire, RG24 9NP, United Kingdom",
+      "responseStatus": "OK",
+      "candidates": [
+        {
+          "formattedAddress": "Unit 1, Vickers House, Priestley Rd, Basingstoke RG24 9NP, UK",
+          "coordinates": {
+            "latitude": 51.2786962,
+            "longitude": -1.1070456
+          },
+          "resultTypes": [
+            "establishment",
+            "point_of_interest",
+            "real_estate_agency"
+          ],
+          "locationType": "ROOFTOP",
+          "partialMatch": true,
+          "addressComponents": [
+            {
+              "longName": "Unit 1",
+              "shortName": "Unit 1",
+              "types": [
+                "subpremise"
+              ]
+            },
+            {
+              "longName": "Vickers House",
+              "shortName": "Vickers House",
+              "types": [
+                "premise"
+              ]
+            },
+            {
+              "longName": "Priestley Road",
+              "shortName": "Priestley Rd",
+              "types": [
+                "route"
+              ]
+            },
+            {
+              "longName": "Basingstoke",
+              "shortName": "Basingstoke",
+              "types": [
+                "postal_town"
+              ]
+            },
+            {
+              "longName": "Hampshire",
+              "shortName": "Hampshire",
+              "types": [
+                "administrative_area_level_2",
+                "political"
+              ]
+            },
+            {
+              "longName": "England",
+              "shortName": "England",
+              "types": [
+                "administrative_area_level_1",
+                "political"
+              ]
+            },
+            {
+              "longName": "United Kingdom",
+              "shortName": "GB",
+              "types": [
+                "country",
+                "political"
+              ]
+            },
+            {
+              "longName": "RG24 9NP",
+              "shortName": "RG24 9NP",
+              "types": [
+                "postal_code"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dealerId": "club-champion-heatherton-australia",
+      "queriedAddress": "385 Centre Dandenong Road, Heatherton, VIC, 3202, Australia",
+      "responseStatus": "OK",
+      "candidates": [
+        {
+          "formattedAddress": "385 Centre Dandenong Rd, Heatherton VIC 3202, Australia",
+          "coordinates": {
+            "latitude": -37.9692335,
+            "longitude": 145.1041357
+          },
+          "resultTypes": [
+            "premise",
+            "street_address"
+          ],
+          "locationType": "GEOMETRIC_CENTER",
+          "partialMatch": false,
+          "addressComponents": [
+            {
+              "longName": "385",
+              "shortName": "385",
+              "types": [
+                "street_number"
+              ]
+            },
+            {
+              "longName": "Centre Dandenong Road",
+              "shortName": "Centre Dandenong Rd",
+              "types": [
+                "route"
+              ]
+            },
+            {
+              "longName": "Heatherton",
+              "shortName": "Heatherton",
+              "types": [
+                "locality",
+                "political"
+              ]
+            },
+            {
+              "longName": "City of Kingston",
+              "shortName": "City of Kingston",
+              "types": [
+                "administrative_area_level_2",
+                "political"
+              ]
+            },
+            {
+              "longName": "Victoria",
+              "shortName": "VIC",
+              "types": [
+                "administrative_area_level_1",
+                "political"
+              ]
+            },
+            {
+              "longName": "Australia",
+              "shortName": "AU",
+              "types": [
+                "country",
+                "political"
+              ]
+            },
+            {
+              "longName": "3202",
+              "shortName": "3202",
+              "types": [
+                "postal_code"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dealerId": "club-champion-mississauga-canada",
+      "queriedAddress": "3105 Unity Drive, Unit 20, Mississauga, ON, L5L 4L2, Canada",
+      "responseStatus": "OK",
+      "candidates": [
+        {
+          "formattedAddress": "3105 Unity Dr #20, Mississauga, ON L5L 4L3, Canada",
+          "coordinates": {
+            "latitude": 43.5386636,
+            "longitude": -79.7085232
+          },
+          "resultTypes": [
+            "street_address",
+            "subpremise"
+          ],
+          "locationType": "ROOFTOP",
+          "partialMatch": false,
+          "addressComponents": [
+            {
+              "longName": "20",
+              "shortName": "20",
+              "types": [
+                "subpremise"
+              ]
+            },
+            {
+              "longName": "3105",
+              "shortName": "3105",
+              "types": [
+                "street_number"
+              ]
+            },
+            {
+              "longName": "Unity Drive",
+              "shortName": "Unity Dr",
+              "types": [
+                "route"
+              ]
+            },
+            {
+              "longName": "Erin Mills",
+              "shortName": "Erin Mills",
+              "types": [
+                "neighborhood",
+                "political"
+              ]
+            },
+            {
+              "longName": "Mississauga",
+              "shortName": "Mississauga",
+              "types": [
+                "locality",
+                "political"
+              ]
+            },
+            {
+              "longName": "Mississauga",
+              "shortName": "Mississauga",
+              "types": [
+                "administrative_area_level_3",
+                "political"
+              ]
+            },
+            {
+              "longName": "Regional Municipality of Peel",
+              "shortName": "Regional Municipality of Peel",
+              "types": [
+                "administrative_area_level_2",
+                "political"
+              ]
+            },
+            {
+              "longName": "Ontario",
+              "shortName": "ON",
+              "types": [
+                "administrative_area_level_1",
+                "political"
+              ]
+            },
+            {
+              "longName": "Canada",
+              "shortName": "CA",
+              "types": [
+                "country",
+                "political"
+              ]
+            },
+            {
+              "longName": "L5L 4L3",
+              "shortName": "L5L 4L3",
+              "types": [
+                "postal_code"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dealerId": "club-champion-toronto-canada",
+      "queriedAddress": "31 Scarsdale Road, Unit 3, North York, ON, M3B 2R2, Canada",
+      "responseStatus": "OK",
+      "candidates": [
+        {
+          "formattedAddress": "31 Scarsdale Rd unit 3, North York, ON M3B 3R8, Canada",
+          "coordinates": {
+            "latitude": 43.7468172,
+            "longitude": -79.35345629999999
+          },
+          "resultTypes": [
+            "street_address",
+            "subpremise"
+          ],
+          "locationType": "ROOFTOP",
+          "partialMatch": false,
+          "addressComponents": [
+            {
+              "longName": "unit 3",
+              "shortName": "unit 3",
+              "types": [
+                "subpremise"
+              ]
+            },
+            {
+              "longName": "31",
+              "shortName": "31",
+              "types": [
+                "street_number"
+              ]
+            },
+            {
+              "longName": "Scarsdale Road",
+              "shortName": "Scarsdale Rd",
+              "types": [
+                "route"
+              ]
+            },
+            {
+              "longName": "North York",
+              "shortName": "North York",
+              "types": [
+                "political",
+                "sublocality",
+                "sublocality_level_1"
+              ]
+            },
+            {
+              "longName": "Toronto",
+              "shortName": "Toronto",
+              "types": [
+                "locality",
+                "political"
+              ]
+            },
+            {
+              "longName": "Toronto",
+              "shortName": "Toronto",
+              "types": [
+                "administrative_area_level_3",
+                "political"
+              ]
+            },
+            {
+              "longName": "Toronto",
+              "shortName": "Toronto",
+              "types": [
+                "administrative_area_level_2",
+                "political"
+              ]
+            },
+            {
+              "longName": "Ontario",
+              "shortName": "ON",
+              "types": [
+                "administrative_area_level_1",
+                "political"
+              ]
+            },
+            {
+              "longName": "Canada",
+              "shortName": "CA",
+              "types": [
+                "country",
+                "political"
+              ]
+            },
+            {
+              "longName": "M3B 3R8",
+              "shortName": "M3B 3R8",
+              "types": [
+                "postal_code"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

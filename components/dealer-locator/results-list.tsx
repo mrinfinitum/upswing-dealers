@@ -17,7 +17,7 @@ export function ResultsList({ dealers, selectedDealerId, query, postalQuery, sho
         <span aria-hidden="true">◎</span>
         <h3>No dealers found</h3>
         <p>{postalQuery
-          ? "Postal codes are not included in the current dealer file. Try a city, state, or dealer name."
+          ? "We couldn’t find a verified dealer near that postal code. Try a nearby city, state, or dealer name."
           : `We couldn’t find a current location matching “${query}.” Try a nearby city or state.`}</p>
       </div>
     );

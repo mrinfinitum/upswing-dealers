@@ -19,3 +19,8 @@ export function sortDealersByDistance(dealers: Dealer[], origin?: DealerCoordina
     ...(dealer.coordinates ? { distanceMiles: distanceMiles(origin, dealer.coordinates) } : {}),
   })).sort((a, b) => (a.distanceMiles ?? Infinity) - (b.distanceMiles ?? Infinity));
 }
+
+export function dealersWithinRadius(dealers: Dealer[], origin: DealerCoordinates, radiusMiles: number) {
+  return sortDealersByDistance(dealers, origin)
+    .filter((dealer) => dealer.distanceMiles !== undefined && dealer.distanceMiles <= radiusMiles);
+}

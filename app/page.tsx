@@ -2,9 +2,13 @@ import { DealerLocator } from "@/components/dealer-locator/dealer-locator";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { dealerRepository } from "@/lib/dealers/repository";
+import { getMapConfiguration } from "@/lib/maps/provider";
+import { connection } from "next/server";
 
 export default async function Home() {
+  await connection();
   const dealers = await dealerRepository.getAll();
+  const mapConfig = getMapConfiguration();
 
   return (
     <>
@@ -20,7 +24,7 @@ export default async function Home() {
           </div>
         </section>
         <div className="shell locator-section-wrap">
-          <DealerLocator dealers={dealers} />
+          <DealerLocator dealers={dealers} mapConfig={mapConfig} />
         </div>
         <section className="locator-cta">
           <div className="shell">

@@ -6,7 +6,7 @@ export function SiteFooter() {
       <div className="site-footer__main shell">
         <div className="site-footer__brand">
           <a href="https://www.upswinggolf.com/" aria-label="UpSwing Golf home">
-            <Image src="/brand/upswing-logo-white.png" alt="UpSwing Golf" width={140} height={64} />
+            <Image src="/brand/upswing-logo-white.png" alt="UpSwing Golf" width={345} height={159} style={{ width: 140, height: "auto" }} />
           </a>
           <p>Premium golf equipment engineered to grow with your golfer.</p>
         </div>

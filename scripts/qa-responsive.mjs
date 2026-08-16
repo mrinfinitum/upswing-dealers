@@ -92,6 +92,14 @@ await command("Emulation.setGeolocationOverride", { latitude: 41.8781, longitude
 
 const interaction = await evaluate(`(async () => {
   const pause = () => new Promise((resolve) => setTimeout(resolve, 80));
+  const waitForSearch = async () => {
+    const started = Date.now();
+    while (Date.now() - started < 5000) {
+      if (!document.querySelector('.locator-search button[type="submit"]')?.disabled) break;
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  };
   document.querySelector('.locator-search__utilities button')?.click();
   await new Promise((resolve) => setTimeout(resolve, 180));
   const geolocationCopy = document.querySelector('.locator-search__status')?.textContent;
@@ -102,14 +110,25 @@ const interaction = await evaluate(`(async () => {
     Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, value);
     input.dispatchEvent(new Event('input', { bubbles: true }));
   };
-  setValue('Texas');
+  setValue('United States');
   document.querySelector('.locator-search').requestSubmit();
-  await pause();
-  const texasCount = document.querySelector('.locator-results-heading p').textContent;
+  await waitForSearch();
+  const countryCount = document.querySelector('.locator-results-heading p').textContent;
+
+  setValue('Club Champion');
+  document.querySelector('.locator-search').requestSubmit();
+  await waitForSearch();
+  const retailerCount = document.querySelector('.locator-results-heading p').textContent;
+
+  setValue('1005 Holcomb Woods Parkway');
+  document.querySelector('.locator-search').requestSubmit();
+  await waitForSearch();
+  const addressCount = document.querySelector('.locator-results-heading p').textContent;
+  const enrichedAddressVisible = document.querySelector('.dealer-card__address')?.textContent.includes('1005 Holcomb Woods Parkway') ?? false;
 
   setValue('99999');
   document.querySelector('.locator-search').requestSubmit();
-  await pause();
+  await waitForSearch();
   const emptyCopy = document.querySelector('.locator-empty p')?.textContent;
 
   document.querySelector('.locator-search__utilities button:last-child')?.click();
@@ -117,9 +136,23 @@ const interaction = await evaluate(`(async () => {
   const resetCount = document.querySelector('.locator-results-heading p').textContent;
   const externalLinksCanonical = [...document.querySelectorAll('a[href^="http"][href*="upswinggolf.com"]')]
     .every((link) => link.href.startsWith('https://www.upswinggolf.com/'));
-  const directionsWorks = document.querySelector('.dealer-card__actions a')?.href.includes('google.com/maps/dir/') ?? false;
-  return { geolocationCopy, texasCount, emptyCopy, resetCount, externalLinksCanonical, directionsWorks };
+  const directionsWorks = Boolean(document.querySelector('.dealer-card__actions a[href*="google.com/maps/dir/"]'));
+  const phoneWorks = Boolean(document.querySelector('.dealer-card__actions a[href^="tel:"]'));
+  const dealerWebsiteWorks = Boolean(document.querySelector('.dealer-card__actions a[href*="pgatoursuperstore.com/stores/detail"]'));
+  return { geolocationCopy, countryCount, retailerCount, addressCount, enrichedAddressVisible, emptyCopy, resetCount, externalLinksCanonical, directionsWorks, phoneWorks, dealerWebsiteWorks };
 })()`);
 
 socket.close();
-console.log(JSON.stringify({ viewports: reports, interaction }, null, 2));
+const failures = [];
+for (const report of reports) {
+  if (report.scrollWidth > report.clientWidth || report.bodyScrollWidth > report.clientWidth) failures.push(`${report.width}px has horizontal overflow`);
+  if (report.cardWidth > report.clientWidth) failures.push(`${report.width}px dealer card exceeds viewport`);
+  if (report.mapHeight < 300) failures.push(`${report.width}px map is too short`);
+}
+if (interaction.countryCount !== '63 locations for “United States”') failures.push('Country search failed');
+if (interaction.retailerCount !== '50 locations for “Club Champion”') failures.push('Retailer search failed');
+if (!interaction.addressCount?.includes('within 50 miles') || !interaction.enrichedAddressVisible) failures.push('Address search failed');
+if (!interaction.emptyCopy || interaction.resetCount !== '70 locations') failures.push('Empty or reset state failed');
+if (!interaction.externalLinksCanonical || !interaction.directionsWorks || !interaction.phoneWorks || !interaction.dealerWebsiteWorks) failures.push('Dealer or Shopify action validation failed');
+console.log(JSON.stringify({ viewports: reports, interaction, failures }, null, 2));
+if (failures.length) process.exitCode = 1;

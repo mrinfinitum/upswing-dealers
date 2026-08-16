@@ -1,46 +1,51 @@
-# Phase 1 architecture
+# Phase 1 and 2 architecture
 
 ## Rendering boundaries
 
 - `app/page.tsx` remains a server component. It loads dealers through the repository boundary and renders the branded page shell.
 - The header and footer are server-rendered. Mobile navigation uses native `details`/`summary` behavior.
-- `components/dealer-locator/dealer-locator.tsx` is the narrow client boundary for search, selection, geolocation, reset, empty states, and future distance sorting.
-- Dealer cards, result list, and fallback map are separate components rather than one monolithic locator.
+- `components/dealer-locator/dealer-locator.tsx` is the client boundary for search, selection, geolocation, radius filtering, and empty/error states.
+- Dealer cards, result list, Google map, and fallback map are separate components rather than one monolithic locator.
 
 ## Data flow
 
 ```text
-Workbook rows → raw source records → normalizer → DealerRepository → server page → locator client
+Workbook rows → raw source records → normalizer → verified enrichment overlay → reviewed coordinate overlay → Supabase import → DealerRepository → server page → locator client
 ```
 
-Every normalized record carries workbook, sheet, row, and raw values. A future Supabase repository can implement the same `DealerRepository` interface without changing presentation components. A future XLSX/CSV parser can emit the same `RawDealerRow` shape and reuse the normalizer.
+Every normalized record carries workbook, sheet, row, and raw values. The Supabase repository implements the same `DealerRepository` interface without changing presentation components; a workbook repository remains the failure-safe fallback. A future XLSX/CSV parser can emit the same `RawDealerRow` shape and reuse the normalizer.
 
-The typed model supports addresses, coordinates, contact fields, category, active status, and notes, but Phase 1 only populates fields supported by the workbook.
+## Administration and persistence
+
+`/admin` is a separate, no-index application surface using Supabase cookie authentication. Postgres Row Level Security is authoritative: anonymous access is limited to public columns on active, verified dealers, while signed JWT claims with protected `app_metadata.role = "admin"` can manage all rows. Proxy refreshes sessions and improves redirects, but every mutation verifies the signed claims again in its Server Action.
+
+The deterministic import upserts all 71 preserved records by stable ID, including Preston as non-public. Admin edits retain imported provenance and evidence; admin-created records receive explicit `Admin` provenance rather than fabricated workbook attribution.
+
+The typed model supports addresses, coordinates, contact fields, category, active status, notes, verification status, and enrichment evidence. Only source-supported fields are populated.
 
 ## Search and geolocation
 
-- Current offline search matches dealer name, city, US state abbreviation/full name, and country.
+- Offline search matches dealer name, verified address/postal data, city, US state abbreviation/full name, and country.
 - Empty query returns all current rows. Clear resets text, selection, geolocation status, and mobile expansion.
-- Postal-code-shaped queries receive a specific source-data explanation instead of a misleading generic failure.
+- With Google configured, address, ZIP/postal, city, and state searches are geocoded. Retailer and country searches remain lexical.
 - Browser geolocation is optional and only requested after a user action. The app remains fully usable without permission.
-- `lib/geo/distance.ts` provides Haversine distance and nearest-first sorting. It becomes active automatically when dealer coordinates are present.
+- `lib/geo/distance.ts` provides Haversine distance, nearest-first sorting, and 25/50/100-mile filtering. These activate automatically when verified dealer coordinates are present.
 
 ## Map strategy
 
-`lib/maps/provider.ts` defines the shared provider props and adapter metadata for Mapbox, Google Maps, or the fallback. Phase 1 intentionally ships the fallback because there are no credentials and no authoritative dealer coordinates. The fallback is labeled as list mode, stays useful when a vendor fails, and never implies inaccurate pin placement.
-
-To activate a real provider later:
-
-1. Choose Mapbox or Google Maps.
-2. Add a domain-restricted browser token/key. Keep geocoding or administrative credentials server-only.
-3. Supply verified dealer street addresses and coordinates.
-4. Implement the provider adapter behind the existing boundary.
-5. Add provider load/error handling while preserving the list fallback.
+`lib/maps/provider.ts` selects Google Maps or the fallback without leaking Google concepts into the repository/data layer. Google Maps uses Advanced Markers, visible-result bounds, marker/card synchronization, and client-side geocoding. The list-mode fallback remains usable if configuration is absent, loading fails, or authorization is rejected.
 
 ## Remaining decisions
 
-- Final production hostname and `NEXT_PUBLIC_SITE_URL`.
-- Mapbox versus Google Maps and associated billing/usage limits.
-- Authoritative location-enrichment process and who owns corrections.
-- Whether postal/address geocoding is performed server-side and which provider owns it.
+- Production canonical hostname is `https://dealers.upswinggolf.com`; `NEXT_PUBLIC_SITE_URL` should match it in every deployed environment.
+- Google Maps billing alerts, quotas, restricted production key, and map style ID.
+- Who owns human review of enrichment proposals and ongoing retailer changes.
+- Applying the Supabase migration/import and provisioning the first admin-role user.
+- Public terms and privacy URLs required for Google Maps production use.
 - Whether dealer detail links should eventually point to UpSwing SEO pages, dealer sites, or both.
+
+## Phase 2 enrichment and maps
+
+`source.ts` remains unchanged. `enrichment-proposals.ts` records independently sourced proposals, while `enrichment.ts` validates and merges only records explicitly marked `verified`. Browser-side Google results are preserved separately in `reports/google-browser-geocodes.json`; `coordinates.ts` applies only results that pass `geocode-review.ts`. The generated audits retain all 71 originals, proposed changes, evidence, confidence, status, precision, and discrepancies.
+
+The locator receives a `MapConfiguration` from the server component. Google-specific loading, markers, and geocoding are isolated under `lib/maps` and `google-map.tsx`; the locator state consumes only coordinates and provider-neutral dealer records. Missing or failed map configuration falls through to the existing list-mode panel.

@@ -1,0 +1,161 @@
+import type { DealerEnrichmentFields, DealerEnrichmentProposal } from "@/types/dealer";
+
+const directoryUrl = "https://www.pgatoursuperstore.com/stores/";
+const retrievedAt = "2026-08-14";
+const officialFields: Array<keyof DealerEnrichmentFields> = [
+  "canonicalLocationName", "addressLine1", "city", "stateProvince", "postalCode", "country", "phone", "website",
+];
+
+function officialStore(
+  dealerId: string,
+  storeId: string,
+  addressLine1: string,
+  city: string,
+  stateProvince: string,
+  postalCode: string,
+  phone: string,
+  discrepancies: string[] = [],
+): DealerEnrichmentProposal {
+  const website = `https://www.pgatoursuperstore.com/stores/detail?StoreID=${storeId}`;
+  return {
+    dealerId,
+    proposed: { canonicalLocationName: `PGA TOUR Superstore ${city}`, addressLine1, city, stateProvince, postalCode, country: "United States", phone, website },
+    verificationStatus: "verified",
+    confidence: "high",
+    sources: [{
+      type: "official-retailer",
+      label: "PGA TOUR Superstore official store directory",
+      url: directoryUrl,
+      retrievedAt,
+      fields: officialFields,
+    }],
+    discrepancies,
+  };
+}
+
+function verifiedLocation(
+  dealerId: string,
+  canonicalLocationName: string,
+  addressLine1: string,
+  city: string,
+  stateProvince: string,
+  postalCode: string,
+  country: string,
+  phone: string,
+  website: string,
+  options: { latitude?: number; longitude?: number; discrepancies?: string[] } = {},
+): DealerEnrichmentProposal {
+  const proposed: DealerEnrichmentFields = {
+    canonicalLocationName, addressLine1, city, stateProvince, postalCode, country, phone, website,
+    ...(options.latitude !== undefined && options.longitude !== undefined
+      ? { latitude: options.latitude, longitude: options.longitude }
+      : {}),
+  };
+  return {
+    dealerId,
+    proposed,
+    verificationStatus: "verified",
+    confidence: "high",
+    sources: [{
+      type: "official-retailer",
+      label: `${canonicalLocationName} official location page`,
+      url: website,
+      retrievedAt,
+      fields: Object.keys(proposed) as Array<keyof DealerEnrichmentFields>,
+    }],
+    discrepancies: options.discrepancies ?? [],
+  };
+}
+
+export const dealerEnrichmentProposals: DealerEnrichmentProposal[] = [
+  officialStore("pga-tour-superstore-roswell-ga-united-states", "0101", "1005 Holcomb Woods Parkway", "Roswell", "GA", "30076-2738", "770-640-0933"),
+  officialStore("pga-tour-superstore-southlake-tx-united-states", "0403", "2241 East Southlake Blvd", "Southlake", "TX", "76092-6852", "817-722-5190"),
+  officialStore("pga-tour-superstore-greenwood-village-co-united-states", "0601", "9451 East Arapahoe Road", "Greenwood Village", "CO", "80112-3632", "720-266-2400", ["Original workbook city is misspelled as Greenwodd Village; the normalized and official city is Greenwood Village."]),
+  officialStore("pga-tour-superstore-downers-grove-il-united-states", "0702", "1017 Butterfield Road", "Downers Grove", "IL", "60515-1007", "630-824-2080"),
+  officialStore("pga-tour-superstore-paramus-nj-united-states", "0901", "295 Route 17 South", "Paramus", "NJ", "07652-2905", "201-649-9170"),
+  officialStore("pga-tour-superstore-sandy-ut-united-states", "1204", "10355 S State Street", "Sandy", "UT", "84070-4114", "801-308-5760"),
+  officialStore("pga-tour-superstore-austin-tx-united-states", "1218", "10515 N Mopac Expy", "Austin", "TX", "78759-5324", "512-382-4000"),
+  officialStore("pga-tour-superstore-braintree-ma-united-states", "1220", "450 Grossman Drive", "Braintree", "MA", "02184-4941", "781-817-8988"),
+  officialStore("pga-tour-superstore-east-hanover-nj-united-states", "1221", "98 NJ-10", "East Hanover", "NJ", "07936-2103", "973-526-1111"),
+  officialStore("pga-tour-superstore-white-plains-ny-united-states", "1227", "459 Tarrytown Road", "White Plains", "NY", "10607-1313", "914-323-5578"),
+  officialStore("pga-tour-superstore-charlotte-nc-united-states", "1231", "5341 Ballantyne Commons Pkwy", "Charlotte", "NC", "28277-0525", "980-256-3582"),
+  officialStore("pga-tour-superstore-oklahoma-city-ok-united-states", "1245", "2727 West Memorial Road", "Oklahoma City", "OK", "73134-8034", "405-832-4482"),
+  officialStore("pga-tour-superstore-commack-ny-united-states", "1246", "84 Jericho Turnpike", "Commack", "NY", "11725-3009", "631-980-8148"),
+  {
+    dealerId: "pga-tour-superstore-woodlands-tx-united-states",
+    proposed: {
+      canonicalLocationName: "PGA TOUR Superstore Woodlands",
+      addressLine1: "19075 I-45 S, 105", city: "Shenandoah", stateProvince: "TX",
+      postalCode: "77385-8705", country: "United States", phone: "832-616-4400",
+      website: "https://www.pgatoursuperstore.com/stores/detail?StoreID=1206",
+    },
+    verificationStatus: "verified",
+    confidence: "high",
+    sources: [{ type: "official-retailer", label: "PGA TOUR Superstore official store directory", url: directoryUrl, retrievedAt, fields: officialFields }],
+    discrepancies: ["Source city is Woodlands; official directory names the store Woodlands but lists the municipality as Shenandoah."],
+  },
+  {
+    dealerId: "pga-tour-superstore-preston-wa-united-states",
+    proposed: {},
+    verificationStatus: "needs-review",
+    confidence: "low",
+    sources: [{ type: "official-retailer", label: "PGA TOUR Superstore official store directory", url: directoryUrl, retrievedAt, fields: [] }],
+    discrepancies: ["No PGA TOUR Superstore in Preston, Washington was found in the official directory. Two stores use Plano, Texas addresses associated with Preston Road, so no candidate was selected."],
+  },
+  verifiedLocation("scheels-rapid-city-sd-united-states", "Rapid City SCHEELS", "1225 Eglin St", "Rapid City", "SD", "57701", "United States", "1-605-342-9033", "https://www.scheels.com/store/rapid-city/076"),
+  verifiedLocation("scheels-sioux-city-ia-united-states", "Sioux City SCHEELS", "4400 Sergeant Road #54", "Sioux City", "IA", "51106", "United States", "1-712-252-1551", "https://www.scheels.com/store/sioux-city/050"),
+  verifiedLocation("scheels-meridian-id-united-states", "Meridian SCHEELS", "700 S Wayfinder Ave", "Meridian", "ID", "83642", "United States", "1-208-347-7005", "https://www.scheels.com/store/meridian/030"),
+  verifiedLocation("scheels-johnstown-co-united-states", "Johnstown SCHEELS", "4755 Ronald Reagan Blvd", "Johnstown", "CO", "80534", "United States", "1-970-663-7800", "https://www.scheels.com/store/johnstown/092"),
+  verifiedLocation("scheels-eden-prairie-mn-united-states", "Eden Prairie SCHEELS", "8301 Flying Cloud Dr", "Eden Prairie", "MN", "55344", "United States", "1-952-826-0067", "https://www.scheels.com/store/?StoreID=098"),
+  verifiedLocation("scheels-tulsa-ok-united-states", "Tulsa SCHEELS", "6929 South Memorial Dr.", "Tulsa", "OK", "74133", "United States", "1-918-953-8212", "https://www.scheels.com/store/tulsa/028"),
+  verifiedLocation("club-champion-santa-monica-ca-united-states", "Club Champion Santa Monica", "2929 Santa Monica Blvd", "Santa Monica", "CA", "90404-2413", "United States", "(424) 744-8645", "https://clubchampion.com/locations/santa-monica"),
+  verifiedLocation("club-champion-newport-beach-ca-united-states", "Club Champion Newport Beach", "3601 Jamboree Road", "Newport Beach", "CA", "92660", "United States", "(949) 861-3822", "https://clubchampion.com/locations/newport-beach"),
+  verifiedLocation("club-champion-del-mar-ca-united-states", "Club Champion Del Mar", "2710 Via de la Valle, Suite B270", "Del Mar", "CA", "92014", "United States", "(858) 847-2400", "https://clubchampion.com/locations/del-mar"),
+  verifiedLocation("club-champion-san-carlos-ca-united-states", "Club Champion San Carlos", "1123 Industrial Road", "San Carlos", "CA", "94070", "United States", "(650) 453-3062", "https://clubchampion.com/locations/san-carlos"),
+  verifiedLocation("club-champion-highlands-ranch-co-united-states", "Club Champion Highlands Ranch", "2670 E County Line Rd, Suite O", "Highlands Ranch", "CO", "80126", "United States", "(720) 638-4633", "https://clubchampion.com/locations/highlands-ranch"),
+  verifiedLocation("club-champion-orlando-fl-united-states", "Club Champion Orlando", "7720 Turkey Lake Rd., Ste 108", "Orlando", "FL", "32819-5224", "United States", "(407) 745-5660", "https://clubchampion.com/locations/orlando"),
+  verifiedLocation("club-champion-jacksonville-fl-united-states", "Club Champion Jacksonville", "13529 Beach Blvd, Suite 202B", "Jacksonville", "FL", "32224", "United States", "(904) 683-0080", "https://clubchampion.com/locations/jacksonville"),
+  verifiedLocation("club-champion-bradenton-fl-united-states", "Club Champion Bradenton", "5275 University Pkwy, Suite 110", "Bradenton", "FL", "34201", "United States", "(941) 216-1443", "https://clubchampion.com/locations/bradenton"),
+  verifiedLocation("club-champion-sandy-springs-ga-united-states", "Club Champion Sandy Springs", "6690 Roswell Rd, Suite 540", "Sandy Springs", "GA", "30328-3161", "United States", "(404) 303-8322", "https://clubchampion.com/locations/sandy-springs"),
+  verifiedLocation("club-champion-willowbrook-il-united-states", "Club Champion Willowbrook", "810 75th St", "Willowbrook", "IL", "60527-7582", "United States", "(630) 654-8887", "https://clubchampion.com/locations/willowbrook"),
+  verifiedLocation("club-champion-chicago-il-united-states", "Club Champion Chicago", "216 W Ohio St, Floor 2", "Chicago", "IL", "60654-5698", "United States", "(312) 846-1197", "https://clubchampion.com/locations/chicago"),
+  verifiedLocation("club-champion-deerfield-il-united-states", "Club Champion Deerfield", "37 Waukegan Rd, #37", "Deerfield", "IL", "60015-4901", "United States", "(847) 386-6820", "https://clubchampion.com/locations/deerfield"),
+  verifiedLocation("club-champion-schaumburg-il-united-states", "Club Champion Schaumburg", "152 E. Golf Rd", "Schaumburg", "IL", "60173", "United States", "(630) 635-2180", "https://clubchampion.com/locations/schaumburg"),
+  verifiedLocation("club-champion-indianapolis-in-united-states", "Club Champion Indianapolis", "5025 E. 82nd St, Suite 1400", "Indianapolis", "IN", "46250", "United States", "(317) 288-7103", "https://clubchampion.com/locations/indianapolis"),
+  verifiedLocation("club-champion-overland-park-ks-united-states", "Club Champion Overland Park", "7400 W. 121st Street", "Overland Park", "KS", "66213", "United States", "(913) 498-8580", "https://clubchampion.com/locations/overland-park"),
+  verifiedLocation("club-champion-needham-ma-united-states", "Club Champion Needham", "924 Great Plain Ave", "Needham", "MA", "02492-3030", "United States", "(781) 449-1397", "https://clubchampion.com/locations/needham"),
+  verifiedLocation("club-champion-grand-rapids-mi-united-states", "Club Champion Grand Rapids", "2048 E. Beltline Ave NE", "Grand Rapids", "MI", "49525", "United States", "(616) 278-1308", "https://clubchampion.com/locations/grand-rapids"),
+  verifiedLocation("club-champion-creve-coeur-mo-united-states", "Club Champion Creve Coeur", "11923 Olive Boulevard", "Creve Coeur", "MO", "63141", "United States", "(314) 801-7522", "https://clubchampion.com/locations/creve-coeur"),
+  verifiedLocation("club-champion-charlotte-nc-united-states", "Club Champion Charlotte", "3920 Sharon Rd, Suite 170", "Charlotte", "NC", "28211", "United States", "(980) 585-2926", "https://clubchampion.com/locations/charlotte"),
+  verifiedLocation("club-champion-wilmington-nc-united-states", "Club Champion Wilmington", "5500 Market Street, Suite 100", "Wilmington", "NC", "28405", "United States", "(910) 408-3369", "https://clubchampion.com/locations/wilmington"),
+  verifiedLocation("club-champion-cherry-hill-nj-united-states", "Club Champion Cherry Hill", "706 Haddonfield Road", "Cherry Hill", "NJ", "08002", "United States", "(856) 486-0150", "https://clubchampion.com/locations/cherry-hill"),
+  verifiedLocation("club-champion-livingston-nj-united-states", "Club Champion Livingston", "277 Eisenhower Parkway, Suite 120", "Livingston", "NJ", "07039", "United States", "(862) 281-6528", "https://clubchampion.com/locations/livingston"),
+  verifiedLocation("club-champion-west-long-branch-nj-united-states", "Club Champion West Long Branch", "310 RT 36, Unit 5", "West Long Branch", "NJ", "07764", "United States", "(732) 419-7813", "https://clubchampion.com/locations/west-long-branch"),
+  verifiedLocation("club-champion-las-vegas-nv-united-states", "Club Champion Las Vegas", "1009 South Rampart Blvd", "Las Vegas", "NV", "89145", "United States", "(702) 202-3889", "https://clubchampion.com/locations/las-vegas"),
+  verifiedLocation("club-champion-new-york-ny-united-states", "Club Champion Manhattan", "220 E 42nd Street", "New York", "NY", "10017", "United States", "(212) 419-3880", "https://clubchampion.com/locations/manhattan", { discrepancies: ["The workbook uses New York; the official location name is Manhattan."] }),
+  verifiedLocation("club-champion-white-plains-ny-united-states", "Club Champion White Plains", "214 Main Street", "White Plains", "NY", "10601", "United States", "(914) 948-2651", "https://clubchampion.com/locations/white-plains"),
+  verifiedLocation("club-champion-tigard-or-united-states", "Club Champion Tigard", "7215 SW Hazel Fern Road", "Tigard", "OR", "97224", "United States", "(503) 352-4782", "https://clubchampion.com/locations/tigard"),
+  verifiedLocation("club-champion-pittsburgh-pa-united-states", "Club Champion Pittsburgh", "6563 Steubenville Pike", "Pittsburgh", "PA", "15205", "United States", "(412) 787-0292", "https://clubchampion.com/locations/pittsburgh"),
+  verifiedLocation("club-champion-wayne-pa-united-states", "Club Champion Wayne", "179 East Swedesford Rd", "Wayne", "PA", "19087", "United States", "(610) 596-1169", "https://clubchampion.com/locations/wayne"),
+  verifiedLocation("club-champion-greenville-sc-united-states", "Club Champion Greenville", "8000 Pelham Road", "Greenville", "SC", "29615", "United States", "(864) 239-8584", "https://clubchampion.com/locations/greenville"),
+  verifiedLocation("club-champion-columbia-sc-united-states", "Club Champion Columbia", "106 Percival Road", "Columbia", "SC", "29203", "United States", "(803) 866-1605", "https://clubchampion.com/locations/columbia"),
+  verifiedLocation("club-champion-franklin-tn-united-states", "Club Champion Franklin", "1910 Galleria Blvd, Suite 110", "Franklin", "TN", "37067", "United States", "(615) 778-1289", "https://clubchampion.com/locations/franklin"),
+  verifiedLocation("club-champion-houston-tx-united-states", "Club Champion Houston", "10321 Katy Fwy, Suite C", "Houston", "TX", "77024-1120", "United States", "(713) 973-3939", "https://clubchampion.com/locations/houston"),
+  verifiedLocation("club-champion-plano-tx-united-states", "Club Champion Plano", "4701 W Park Blvd, Suite 210", "Plano", "TX", "75093-2326", "United States", "(972) 985-4240", "https://clubchampion.com/locations/plano"),
+  verifiedLocation("club-champion-austin-tx-united-states", "Club Champion Austin", "3801 N. Capitol of Texas Hwy", "Austin", "TX", "78746", "United States", "(512) 953-5900", "https://clubchampion.com/locations/austin", { discrepancies: ["The official page title and address identify Austin, but one duplicated on-page heading incorrectly says Agoura Hills."] }),
+  verifiedLocation("club-champion-dallas-tx-united-states", "Club Champion Dallas", "5331 E. Mockingbird Lane", "Dallas", "TX", "75206", "United States", "(469) 322-0303", "https://clubchampion.com/locations/dallas"),
+  verifiedLocation("club-champion-shenandoah-tx-united-states", "Club Champion Shenandoah", "19075 I-45 S", "Shenandoah", "TX", "77385", "United States", "(346) 413-6085", "https://clubchampion.com/locations/shenandoah", { latitude: 30.181235, longitude: -95.45104 }),
+  verifiedLocation("club-champion-fairfax-va-united-states", "Club Champion Fairfax", "9940 Fairfax Blvd", "Fairfax", "VA", "22030", "United States", "(571) 459-2218", "https://clubchampion.com/locations/fairfax"),
+  verifiedLocation("club-champion-virginia-beach-va-united-states", "Club Champion Virginia Beach", "4625 Virginia Beach Blvd", "Virginia Beach", "VA", "23462", "United States", "(757) 497-4145", "https://clubchampion.com/locations/virginia-beach"),
+  verifiedLocation("club-champion-richmond-va-united-states", "Club Champion Richmond", "11747 W. Broad Street", "Richmond", "VA", "23233", "United States", "(804) 956-3209", "https://clubchampion.com/locations/richmond"),
+  verifiedLocation("club-champion-ashburn-va-united-states", "Club Champion Ashburn", "44795 Dulles Overlook Drive, Suite 150", "Ashburn", "VA", "20147", "United States", "(571) 686-6921", "https://clubchampion.com/locations/ashburn"),
+  verifiedLocation("club-champion-bellevue-wa-united-states", "Club Champion Bellevue", "10622 NE 10th Street", "Bellevue", "WA", "98004", "United States", "(425) 223-5925", "https://clubchampion.com/locations/bellevue"),
+  verifiedLocation("club-champion-brookfield-wi-united-states", "Club Champion Brookfield", "95 N Moorland Road", "Brookfield", "WI", "53005", "United States", "(262) 505-6460", "https://clubchampion.com/locations/brookfield"),
+  verifiedLocation("club-champion-alexandria-australia", "Club Champion Sydney", "1/62-64 O'Riordan Street", "Alexandria", "NSW", "2015", "Australia", "+61 2 9669-3200", "https://clubchampion.com.au/locations/sydney", { latitude: -33.9149398, longitude: 151.195816, discrepancies: ["The workbook omits the state; the official location page identifies Alexandria, New South Wales."] }),
+  verifiedLocation("club-champion-basingstoke-united-kingdom", "Club Champion Basingstoke", "Unit 7 Vickers Business Centre, Priestley Road", "Basingstoke", "Hampshire", "RG24 9NP", "United Kingdom", "01256 359865", "https://clubchampiongolf.co.uk/locations/basingstoke", { discrepancies: ["The workbook omits the region. Some official directory snippets show RG24 9RA and spell Priestly Road; the dedicated location page and official contact address use RG24 9NP and Priestley Road."] }),
+  verifiedLocation("club-champion-eagle-farm-australia", "Club Champion Brisbane", "39 Bunya Street", "Eagle Farm", "QLD", "4009", "Australia", "+61 7 2140 1520", "https://clubchampion.com.au/locations/brisbane", { latitude: -27.4312944, longitude: 153.0835237, discrepancies: ["The workbook omits the state; the official location page identifies Eagle Farm, Queensland."] }),
+  verifiedLocation("club-champion-hawthorn-east-australia", "Club Champion Melbourne Central", "2-3/61-63 Camberwell Road", "Hawthorn East", "VIC", "3123", "Australia", "+61 3 7503 0033", "https://clubchampion.com.au/locations/melbourne-central", { discrepancies: ["The workbook omits the state; the official location page identifies Hawthorn East, Victoria."] }),
+  verifiedLocation("club-champion-heatherton-australia", "Club Champion Melbourne South", "385 Centre Dandenong Road", "Heatherton", "VIC", "3202", "Australia", "+61 3 9583 8108", "https://clubchampion.com.au/locations/melbourne-south", { discrepancies: ["The workbook omits the state; the official location page identifies Heatherton, Victoria."] }),
+  verifiedLocation("club-champion-mississauga-canada", "Club Champion Mississauga", "3105 Unity Drive, Unit 20", "Mississauga", "ON", "L5L 4L2", "Canada", "(416) 331-9229", "https://clubchampion.ca/locations/mississauga", { discrepancies: ["The workbook omits the province; the official location page identifies Mississauga, Ontario."] }),
+  verifiedLocation("club-champion-toronto-canada", "Club Champion Toronto", "31 Scarsdale Road, Unit 3", "North York", "ON", "M3B 2R2", "Canada", "(416) 331-9229", "https://clubchampion.ca/locations/toronto", { discrepancies: ["The workbook uses Toronto and omits the province; the official location page uses North York, Ontario, for the postal municipality."] }),
+];

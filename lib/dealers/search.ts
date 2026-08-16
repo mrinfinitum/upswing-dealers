@@ -9,6 +9,13 @@ const stateNames: Record<string, string> = {
   TX: "texas", UT: "utah", VA: "virginia", WA: "washington", WI: "wisconsin",
 };
 
+const countryAliases: Record<string, string> = {
+  "United States": "us usa",
+  "United Kingdom": "uk gb great britain",
+  Australia: "aus",
+  Canada: "can",
+};
+
 const clean = (value: string) => value.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, " ").trim();
 
 export function searchDealers(dealers: Dealer[], query: string): Dealer[] {
@@ -19,7 +26,7 @@ export function searchDealers(dealers: Dealer[], query: string): Dealer[] {
     const regionName = dealer.stateProvince ? stateNames[dealer.stateProvince] : "";
     const haystack = clean([
       dealer.name, dealer.addressLine1, dealer.addressLine2, dealer.city,
-      dealer.stateProvince, regionName, dealer.postalCode, dealer.country,
+      dealer.stateProvince, regionName, dealer.postalCode, dealer.country, countryAliases[dealer.country],
     ].filter(Boolean).join(" "));
     return terms.every((term) => haystack.includes(term));
   });
@@ -28,4 +35,18 @@ export function searchDealers(dealers: Dealer[], query: string): Dealer[] {
 export function queryLooksPostal(query: string) {
   const value = query.trim();
   return /^\d{5}(?:-\d{4})?$/.test(value) || /^[A-Z]\d[A-Z][ -]?\d[A-Z]\d$/i.test(value);
+}
+
+export function queryMatchesDealerName(dealers: Dealer[], query: string) {
+  const normalizedQuery = clean(query);
+  if (!normalizedQuery) return false;
+  return dealers.some((dealer) => clean(dealer.name).includes(normalizedQuery));
+}
+
+export function queryMatchesCountry(dealers: Dealer[], query: string) {
+  const normalizedQuery = clean(query);
+  return Boolean(normalizedQuery) && dealers.some((dealer) => {
+    const names = [dealer.country, ...(countryAliases[dealer.country]?.split(" ") ?? [])];
+    return names.some((name) => clean(name) === normalizedQuery);
+  });
 }
