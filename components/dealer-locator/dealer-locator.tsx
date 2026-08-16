@@ -160,7 +160,15 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
           </button>
         )}
       </div>
-      <MapPanel config={mapConfig} dealers={results} selectedDealer={selectedDealer} origin={origin} originIsUserLocation={Boolean(userLocation)} onSelectDealer={selectDealer} />
+      <MapPanel
+        config={mapConfig}
+        dealers={results}
+        selectedDealer={selectedDealer}
+        origin={origin}
+        originIsUserLocation={Boolean(userLocation)}
+        useUnitedStatesOverview={!activeQuery && !origin}
+        onSelectDealer={selectDealer}
+      />
     </section>
   );
 }

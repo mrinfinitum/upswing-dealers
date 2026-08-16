@@ -12,10 +12,11 @@ type MapPanelProps = {
   selectedDealer?: Dealer;
   origin?: DealerCoordinates;
   originIsUserLocation: boolean;
+  useUnitedStatesOverview: boolean;
   onSelectDealer: (dealerId: string) => void;
 };
 
-export function MapPanel({ config, dealers, selectedDealer, origin, originIsUserLocation, onSelectDealer }: MapPanelProps) {
+export function MapPanel({ config, dealers, selectedDealer, origin, originIsUserLocation, useUnitedStatesOverview, onSelectDealer }: MapPanelProps) {
   const [mapFailed, setMapFailed] = useState(false);
   const handleFailure = useCallback(() => setMapFailed(true), []);
   const useGoogleMap = config.provider === "google" && !mapFailed;
@@ -28,7 +29,7 @@ export function MapPanel({ config, dealers, selectedDealer, origin, originIsUser
       </div>
       <div className="map-panel__canvas">
         {useGoogleMap && (
-          <GoogleMap config={config} dealers={dealers} selectedDealerId={selectedDealer?.id} origin={origin} originLabel={originIsUserLocation ? "Your location" : "Search location"} onSelectDealer={onSelectDealer} onFailure={handleFailure} />
+          <GoogleMap config={config} dealers={dealers} selectedDealerId={selectedDealer?.id} origin={origin} originLabel={originIsUserLocation ? "Your location" : "Search location"} useUnitedStatesOverview={useUnitedStatesOverview} onSelectDealer={onSelectDealer} onFailure={handleFailure} />
         )}
         {!useGoogleMap && (
           <>

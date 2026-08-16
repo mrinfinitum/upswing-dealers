@@ -13,6 +13,7 @@ type GoogleMapProps = {
   selectedDealerId?: string;
   origin?: DealerCoordinates;
   originLabel: string;
+  useUnitedStatesOverview: boolean;
   onSelectDealer: (dealerId: string) => void;
   onFailure: () => void;
 };
@@ -82,7 +83,7 @@ function createDealerInfoCard(dealer: Dealer) {
   return card;
 }
 
-export function GoogleMap({ config, dealers, selectedDealerId, origin, originLabel, onSelectDealer, onFailure }: GoogleMapProps) {
+export function GoogleMap({ config, dealers, selectedDealerId, origin, originLabel, useUnitedStatesOverview, onSelectDealer, onFailure }: GoogleMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<google.maps.Map | undefined>(undefined);
   const markersRef = useRef<google.maps.marker.AdvancedMarkerElement[]>([]);
@@ -168,7 +169,14 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
     const markers = [...dealerMarkers, ...auxiliaryMarkers];
     markersRef.current = markers;
     clustererRef.current = new MarkerClusterer({ map, markers: dealerMarkers });
-    if (!bounds.isEmpty()) {
+    if (useUnitedStatesOverview) {
+      map.fitBounds({
+        north: 49.384358,
+        south: 24.396308,
+        east: -66.885444,
+        west: -124.848974,
+      }, 54);
+    } else if (!bounds.isEmpty()) {
       map.fitBounds(bounds, 54);
       if (getMappableDealers(dealers).length === 1 && !origin) {
         google.maps.event.addListenerOnce(map, "idle", () => { if ((map.getZoom() ?? 0) > 13) map.setZoom(13); });
@@ -186,7 +194,7 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
       clustererRef.current?.clearMarkers();
       markers.forEach((marker) => { marker.map = null; });
     };
-  }, [dealers, libraries, onSelectDealer, openDealerId, origin, originLabel, selectedDealerId]);
+  }, [dealers, libraries, onSelectDealer, openDealerId, origin, originLabel, selectedDealerId, useUnitedStatesOverview]);
 
   return (
     <div
