@@ -200,10 +200,11 @@ button { color: inherit; }
 .site-header__actions-contact { padding: 10px 2px; color: #d4d4d4; font-size: 10.5px; font-weight: 500; letter-spacing: .09em; text-transform: uppercase; transition: color .2s ease; }
 .site-header__actions-contact:hover { color: #fff; }
 .site-header__actions-shop { min-height: 42px; display: inline-flex; align-items: center; gap: 18px; padding: 0 15px; background: #fff; color: #000; font-size: 10.5px; font-weight: 500; letter-spacing: .09em; text-transform: uppercase; transition: background-color .2s ease, color .2s ease; }
+.site-header__actions-shop { border-radius: 999px; }
 .site-header__actions-shop:hover { background: var(--blue); color: #fff; }
 .site-header__actions-shop span { font-size: 14px; transition: transform .2s ease; }
 .site-header__actions-shop:hover span { transform: translate(2px, -2px); }
-.site-header__actions-cart { width: 42px; height: 42px; display: grid; place-items: center; border: 1px solid #3b3b3b; color: #fff; transition: border-color .2s ease, background-color .2s ease; }
+.site-header__actions-cart { width: 42px; height: 42px; display: grid; place-items: center; border: 1px solid #3b3b3b; border-radius: 50%; color: #fff; transition: border-color .2s ease, background-color .2s ease; }
 .site-header__actions-cart:hover { border-color: #fff; background: #181818; }
 .site-header__mobile-menu { display: none; justify-self: end; }
 .site-header__mobile-menu summary { width: 48px; height: 48px; display: grid; place-content: center; gap: 5px; cursor: pointer; list-style: none; }
@@ -237,20 +238,37 @@ button { color: inherit; }
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(90deg, #000 0 43%, rgb(0 0 0 / .55) 67%, rgb(0 0 0 / .2));
+  background: linear-gradient(90deg, #000 0 39%, rgb(0 0 0 / .92) 48%, rgb(0 0 0 / .42) 68%, rgb(0 0 0 / .08) 100%);
+}
+.locator-hero__media {
+  position: absolute;
+  inset: 0 0 0 43%;
+  z-index: -3;
+  overflow: hidden;
+}
+.locator-hero__media-backdrop {
+  object-fit: cover;
+  object-position: center 54%;
+  filter: blur(22px) brightness(.45) saturate(.9);
+  transform: scale(1.1);
+}
+.locator-hero__media-subject {
+  object-fit: contain;
+  object-position: 88% center;
+  filter: saturate(.96) contrast(1.04);
+  transform: scale(1.04);
+  transform-origin: right center;
 }
 .locator-hero__texture {
   position: absolute;
   inset: 0;
   z-index: -2;
   background:
-    radial-gradient(ellipse at 80% 52%, transparent 0 7%, rgb(52 126 228 / .5) 7.2% 7.5%, transparent 7.8% 15%, rgb(211 75 71 / .45) 15.2% 15.5%, transparent 15.8%),
-    radial-gradient(circle at 82% 54%, rgb(255 255 255 / .18) 0 1px, transparent 2px),
-    repeating-linear-gradient(115deg, transparent 0 44px, rgb(255 255 255 / .045) 45px, transparent 46px 90px),
-    linear-gradient(135deg, #151515, #050505);
-  transform: scale(1.12);
+    linear-gradient(90deg, transparent 0 58%, rgb(52 126 228 / .12) 74%, transparent 86%),
+    repeating-linear-gradient(115deg, transparent 0 54px, rgb(255 255 255 / .035) 55px, transparent 56px 110px);
+  mix-blend-mode: screen;
 }
-.locator-hero__content { padding-block: 80px; }
+.locator-hero__content { position: relative; z-index: 1; padding-block: 80px; }
 .locator-hero__content .eyebrow { margin-bottom: 24px; color: #b8b8b8; }
 .locator-hero h1 { max-width: 850px; margin: 0; font-size: clamp(54px, 6.2vw, 94px); font-weight: 500; letter-spacing: -.045em; line-height: .96; }
 .locator-hero__content > p:not(.eyebrow) { max-width: 590px; margin: 30px 0 34px; color: #d8d8d8; font-size: 18px; line-height: 1.5; }
@@ -272,6 +290,7 @@ button { color: inherit; }
   transition: background-color .25s ease, color .25s ease;
 }
 .locator-hero__content > a:hover { background: var(--blue); color: #fff; }
+.locator-hero__content > a { min-height: 56px; padding-inline: 30px; border-radius: 999px; }
 
 .locator-section-wrap { padding-block: 70px 90px; }
 .locator-shell { min-height: 760px; display: grid; grid-template-columns: minmax(390px, 470px) minmax(0, 1fr); border: 1px solid #cfcfcb; background: #fff; }
@@ -394,6 +413,9 @@ button { color: inherit; }
   .site-header__logo { width: 104px; }
   .locator-hero { min-height: 460px; align-items: flex-end; }
   .locator-hero::after { background: linear-gradient(0deg, #000 0 32%, rgb(0 0 0 / .3) 75%); }
+  .locator-hero__media { inset: 0; opacity: .6; }
+  .locator-hero__media-backdrop { object-position: center 48%; filter: blur(15px) brightness(.42) saturate(.9); }
+  .locator-hero__media-subject { object-position: 92% center; transform: scale(.92); transform-origin: right center; }
   .locator-hero__texture { background-position: center; }
   .locator-hero__content { padding-block: 58px; }
   .locator-hero h1 { font-size: clamp(43px, 12vw, 66px); }
