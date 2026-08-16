@@ -358,54 +358,6 @@ button { color: inherit; }
 .map-panel__topline i.is-live { background: #2878d1; }
 .map-panel__canvas { position: relative; flex: 1; min-height: 0; overflow: hidden; display: grid; place-items: center; isolation: isolate; border: 1px solid #d8dde3; border-radius: 20px; background: #e7eaee; box-shadow: 0 8px 26px rgb(20 32 49 / .08); }
 .map-panel__google-map { position: absolute; inset: 0; width: 100%; height: 100%; }
-.dealer-map-marker {
-  position: relative;
-  width: 38px;
-  height: 38px;
-  display: grid;
-  place-items: center;
-  border: 3px solid #fff;
-  border-radius: 9px;
-  background: var(--red);
-  box-shadow: 0 5px 13px rgb(20 25 31 / .28);
-  transition: transform .18s ease, background-color .18s ease, box-shadow .18s ease;
-}
-.dealer-map-marker::after {
-  content: "";
-  position: absolute;
-  bottom: -8px;
-  left: 50%;
-  width: 11px;
-  height: 11px;
-  border-right: 3px solid #fff;
-  border-bottom: 3px solid #fff;
-  border-radius: 0 0 3px;
-  background: var(--red);
-  transform: translateX(-50%) rotate(45deg);
-}
-.dealer-map-marker span { position: relative; z-index: 1; width: 10px; height: 10px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgb(0 0 0 / .12); }
-.dealer-map-marker.is-selected { background: var(--blue); box-shadow: 0 0 0 4px rgb(52 126 228 / .2), 0 8px 18px rgb(20 25 31 / .32); transform: scale(1.18) translateY(-2px); }
-.dealer-map-marker.is-selected::after { background: var(--blue); }
-.dealer-map-cluster {
-  position: relative;
-  isolation: isolate;
-  width: 42px;
-  height: 42px;
-  display: grid;
-  place-items: center;
-  border: 3px solid #fff;
-  border-radius: 10px;
-  background: var(--red);
-  color: #fff;
-  font-family: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  box-shadow: 0 6px 15px rgb(20 25 31 / .3);
-}
-.dealer-map-cluster::before,
-.dealer-map-cluster::after { content: ""; position: absolute; z-index: -1; width: 34px; height: 34px; border: 3px solid #fff; border-radius: 9px; background: var(--red); box-shadow: 0 4px 10px rgb(20 25 31 / .18); }
-.dealer-map-cluster::before { top: -10px; left: -11px; transform: rotate(-5deg); }
-.dealer-map-cluster::after { right: -11px; bottom: -9px; transform: rotate(5deg); }
 .map-panel__grid { position: absolute; inset: -20%; z-index: -1; background: repeating-linear-gradient(32deg, transparent 0 48px, rgb(0 0 0 / .055) 49px, transparent 50px 98px), repeating-linear-gradient(118deg, transparent 0 64px, rgb(0 0 0 / .04) 65px, transparent 66px 130px); transform: rotate(-4deg); }
 .map-panel__grid::before, .map-panel__grid::after { content: ""; position: absolute; border: 2px solid rgb(255 255 255 / .9); border-radius: 48%; }
 .map-panel__grid::before { width: 76%; height: 44%; top: 10%; right: 3%; transform: rotate(17deg); }

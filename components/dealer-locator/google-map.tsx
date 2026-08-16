@@ -17,22 +17,6 @@ type GoogleMapProps = {
   onFailure: () => void;
 };
 
-function createDealerMarkerContent(selected: boolean) {
-  const content = document.createElement("div");
-  content.className = `dealer-map-marker${selected ? " is-selected" : ""}`;
-  content.setAttribute("aria-hidden", "true");
-  content.append(document.createElement("span"));
-  return content;
-}
-
-function createClusterContent(count: number) {
-  const content = document.createElement("div");
-  content.className = "dealer-map-cluster";
-  content.textContent = String(count);
-  content.setAttribute("aria-label", `${count} dealer locations`);
-  return content;
-}
-
 export function GoogleMap({ config, dealers, selectedDealerId, origin, originLabel, onSelectDealer, onFailure }: GoogleMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<google.maps.Map | undefined>(undefined);
@@ -80,14 +64,14 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
     for (const dealer of getMappableDealers(dealers)) {
       const coordinates = dealer.coordinates!;
       const selected = dealer.id === selectedDealerId;
-      const position = { lat: coordinates.latitude, lng: coordinates.longitude };
-      const marker = new markerLibrary.AdvancedMarkerElement({
-        map,
-        position,
-        title: `${dealer.name}, ${dealer.city}`,
-        content: createDealerMarkerContent(selected),
-        zIndex: selected ? 900 : 1,
+      const pin = new markerLibrary.PinElement({
+        background: selected ? "#2878d1" : "#111111",
+        borderColor: "#ffffff",
+        glyphColor: "#ffffff",
+        scale: selected ? 1.2 : 1,
       });
+      const position = { lat: coordinates.latitude, lng: coordinates.longitude };
+      const marker = new markerLibrary.AdvancedMarkerElement({ map, position, title: `${dealer.name}, ${dealer.city}`, content: pin });
       marker.addEventListener("gmp-click", () => onSelectDealer(dealer.id));
       dealerMarkers.push(marker);
       bounds.extend(position);
@@ -102,18 +86,7 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
 
     const markers = [...dealerMarkers, ...auxiliaryMarkers];
     markersRef.current = markers;
-    clustererRef.current = new MarkerClusterer({
-      map,
-      markers: dealerMarkers,
-      renderer: {
-        render: ({ count, position }) => new markerLibrary.AdvancedMarkerElement({
-          position,
-          content: createClusterContent(count),
-          title: `${count} dealer locations`,
-          zIndex: 1000 + count,
-        }),
-      },
-    });
+    clustererRef.current = new MarkerClusterer({ map, markers: dealerMarkers });
     if (!bounds.isEmpty()) {
       map.fitBounds(bounds, 54);
       if (getMappableDealers(dealers).length === 1 && !origin) {
