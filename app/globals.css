@@ -90,6 +90,8 @@ button { color: inherit; }
 .admin-button--primary:hover { border-color: var(--blue); background: var(--blue); }
 .admin-button--danger { border-color: #9a312e; background: #9a312e; color: #fff; }
 .admin-button:disabled { cursor: wait; opacity: .6; }
+.admin-add-button { min-height: 48px; gap: 18px; padding-inline: 22px 14px; box-shadow: 0 10px 24px rgb(0 0 0 / .12); }
+.admin-add-button span { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; background: #fff; color: #050505; font-size: 17px; font-weight: 400; line-height: 1; }
 .admin-dashboard { max-width: 1180px; margin: 0 auto; }
 .admin-dashboard .admin-page__heading { margin: 18px 0 46px; }
 .admin-dashboard .admin-page__heading h1 { font-size: clamp(54px, 6vw, 78px); }
