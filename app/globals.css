@@ -81,7 +81,7 @@ button { color: inherit; }
 .admin-page__heading .eyebrow { margin-bottom: 9px; color: var(--blue); }
 .admin-page__heading h1 { margin: 0; font-size: clamp(38px, 5vw, 58px); font-weight: 500; letter-spacing: -.045em; line-height: 1; }
 .admin-page__heading p:not(.eyebrow) { margin: 12px 0 0; color: var(--muted); }
-.admin-button { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 0 20px; border: 1px solid #999; border-radius: 0; background: #fff; color: #000; font-size: 11px; font-weight: 500; letter-spacing: .07em; text-decoration: none; text-transform: uppercase; cursor: pointer; }
+.admin-button { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 12px; padding: 0 20px; border: 1px solid #999; border-radius: 999px; background: #fff; color: #000; font-size: 11px; font-weight: 500; letter-spacing: .07em; text-decoration: none; text-transform: uppercase; cursor: pointer; }
 .admin-button:hover { border-color: #000; }
 .admin-button--primary { border-color: #000; background: #000; color: #fff; }
 .admin-button--primary:hover { border-color: var(--blue); background: var(--blue); }
@@ -297,6 +297,62 @@ button { color: inherit; }
 .admin-user-membership:last-child { margin-bottom: 0; }
 .admin-user-membership strong, .admin-user-membership small { display: block; }
 .admin-user-membership small { margin-top: 2px; color: var(--muted); font-size: 10px; text-transform: capitalize; }
+
+/* Premium admin surfaces */
+.admin-root { background: linear-gradient(145deg, #f5f6f8 0%, #eff2f6 48%, #f3f3f0 100%); }
+.admin-account-menu__panel, .admin-login__card { overflow: hidden; border-radius: 20px; }
+.admin-dealer-directory > a, .admin-account-card, .admin-toolbar, .admin-table-wrap, .admin-location-form fieldset, .admin-access-summary > a, .admin-access-panel, .admin-access-members, .admin-organization-settings, .admin-organization-section, .admin-user-summary article, .admin-user-directory { border-color: #dde2e7; border-radius: 22px; box-shadow: 0 14px 38px rgb(31 45 68 / .065), 0 2px 5px rgb(31 45 68 / .035); }
+.admin-dealer-directory > a, .admin-access-summary > a { background: linear-gradient(145deg, #fff 0%, #fbfcfe 100%); }
+.admin-dealer-directory > a:hover, .admin-access-summary > a:hover { border-color: #aac7ed; box-shadow: 0 22px 48px rgb(31 68 120 / .12); transform: translateY(-4px); }
+.admin-user-create, .admin-membership-grid > article, .admin-dealer-location-grid > article { border-color: #e0e4e8; border-radius: 18px; background: linear-gradient(145deg, #fafbfc 0%, #f5f7fa 100%); box-shadow: 0 8px 24px rgb(31 45 68 / .045); }
+.admin-field input, .admin-field select, .admin-field textarea, .admin-toolbar input { border-color: #cfd4da; border-radius: 12px; box-shadow: inset 0 1px 2px rgb(31 45 68 / .025); }
+.admin-permissions label { border-color: #dce1e6; border-radius: 13px; background: #fff; }
+.admin-table-wrap, .admin-dealer-list-wrap, .admin-user-table-wrap { overflow-x: auto; border-color: #dde2e7; border-radius: 18px; }
+.admin-status, .admin-user-role { border-radius: 999px; }
+.admin-notice, .admin-form-error, .admin-setup, .admin-coordinate-status, .admin-delete-confirm { border-radius: 14px; }
+
+/* Dealer overview */
+.admin-dealer-portal-hero { position: relative; isolation: isolate; min-height: 440px; display: flex; flex-direction: column; overflow: hidden; margin-bottom: 20px; padding: 38px; border: 1px solid #242c3a; border-radius: 30px; background: linear-gradient(120deg, #050607 0%, #0b1420 58%, #172a45 100%); box-shadow: 0 28px 75px rgb(18 30 49 / .2); color: #fff; }
+.admin-dealer-portal-hero::before { position: absolute; z-index: -1; top: -180px; right: -120px; width: 520px; height: 520px; border-radius: 50%; background: radial-gradient(circle, rgb(52 126 228 / .38) 0%, rgb(52 126 228 / .08) 48%, transparent 70%); content: ""; }
+.admin-dealer-portal-hero::after { position: absolute; z-index: -1; inset: 0; opacity: .12; background-image: linear-gradient(120deg, transparent 0 48%, #fff 48% 48.2%, transparent 48.2% 62%, #fff 62% 62.2%, transparent 62.2%); content: ""; }
+.admin-dealer-portal-hero__top { display: flex; align-items: center; justify-content: space-between; gap: 25px; }
+.admin-dealer-portal-hero__top img { width: 132px; height: auto; }
+.admin-dealer-portal-hero__top > span, .admin-dealer-portal-tags span { width: max-content; padding: 8px 12px; border: 1px solid rgb(255 255 255 / .22); border-radius: 999px; background: rgb(255 255 255 / .07); color: #dce7f8; font-size: 9px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+.admin-dealer-portal-hero__body { display: grid; grid-template-columns: 110px minmax(0, 720px); align-items: end; gap: 30px; margin: auto 0 34px; }
+.admin-dealer-portal-mark { width: 110px; height: 110px; display: grid; place-items: center; border: 1px solid rgb(255 255 255 / .24); border-radius: 28px; background: linear-gradient(145deg, rgb(255 255 255 / .17), rgb(255 255 255 / .06)); box-shadow: inset 0 1px 0 rgb(255 255 255 / .18), 0 16px 38px rgb(0 0 0 / .22); font-size: 31px; font-weight: 600; letter-spacing: -.04em; }
+.admin-dealer-portal-hero .eyebrow { color: #72aaff; }
+.admin-dealer-portal-hero h1 { margin: 8px 0 14px; font-size: clamp(46px, 6vw, 78px); font-weight: 500; letter-spacing: -.06em; line-height: .92; }
+.admin-dealer-portal-hero__body p:not(.eyebrow) { max-width: 690px; margin: 0; color: #b9c3d0; font-size: 15px; line-height: 1.6; }
+.admin-dealer-portal-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.admin-dealer-portal-hero > .admin-button { align-self: flex-end; border-color: #fff; }
+.admin-button--light { background: #fff; color: #050505; }
+.admin-dealer-portal-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 20px; }
+.admin-dealer-portal-stats article { min-height: 145px; display: flex; flex-direction: column; padding: 22px; border: 1px solid #dde2e7; border-radius: 20px; background: rgb(255 255 255 / .88); box-shadow: 0 12px 32px rgb(31 45 68 / .055); }
+.admin-dealer-portal-stats span { color: var(--blue); font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.admin-dealer-portal-stats strong { margin-top: auto; font-size: 40px; font-weight: 500; letter-spacing: -.05em; line-height: 1; }
+.admin-dealer-portal-stats small { margin-top: 6px; overflow: hidden; color: var(--muted); text-overflow: ellipsis; white-space: nowrap; }
+.admin-dealer-portal-locations { padding: 30px; border: 1px solid #dde2e7; border-radius: 24px; background: rgb(255 255 255 / .9); box-shadow: 0 18px 48px rgb(31 45 68 / .07); }
+.admin-dealer-portal-locations > header { display: flex; align-items: end; justify-content: space-between; gap: 25px; margin-bottom: 24px; }
+.admin-dealer-portal-locations h2 { margin: 6px 0 7px; font-size: 34px; font-weight: 500; letter-spacing: -.04em; }
+.admin-dealer-portal-locations header p:last-child { margin: 0; color: var(--muted); }
+.admin-dealer-portal-locations > header > span { padding: 8px 12px; border-radius: 999px; background: #edf4fd; color: #2b5f9f; font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+
+@media (max-width: 900px) {
+  .admin-dealer-portal-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 760px) {
+  .admin-dealer-portal-hero { min-height: 520px; padding: 26px; border-radius: 24px; }
+  .admin-dealer-portal-hero__top { align-items: flex-start; flex-direction: column; }
+  .admin-dealer-portal-hero__body { grid-template-columns: 1fr; align-items: start; gap: 20px; margin: 42px 0 28px; }
+  .admin-dealer-portal-mark { width: 82px; height: 82px; border-radius: 22px; font-size: 24px; }
+  .admin-dealer-portal-hero h1 { font-size: clamp(42px, 14vw, 64px); }
+  .admin-dealer-portal-hero > .admin-button { align-self: flex-start; }
+  .admin-dealer-portal-stats { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .admin-dealer-portal-stats article { min-height: 125px; padding: 18px; }
+  .admin-dealer-portal-locations { padding: 22px 16px; border-radius: 20px; }
+  .admin-dealer-portal-locations > header { align-items: flex-start; flex-direction: column; }
+}
 
 /* Dealer partner portal */
 .portal-root { min-height: 100vh; background-color: #f2f7f5; color: #071b18; }
