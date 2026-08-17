@@ -87,13 +87,23 @@ button { color: inherit; }
 .admin-button--primary:hover { border-color: var(--blue); background: var(--blue); }
 .admin-button--danger { border-color: #9a312e; background: #9a312e; color: #fff; }
 .admin-button:disabled { cursor: wait; opacity: .6; }
-.admin-dashboard-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
-.admin-dashboard-grid a { min-height: 280px; display: flex; flex-direction: column; padding: 30px; border: 1px solid #d4d4d0; background: #fff; color: #000; text-decoration: none; transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease; }
-.admin-dashboard-grid a:hover { border-color: #9abdec; box-shadow: 0 14px 34px rgb(52 126 228 / .1); transform: translateY(-2px); }
-.admin-dashboard-grid span { color: var(--blue); font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
-.admin-dashboard-grid h2 { margin: auto 0 9px; font-size: clamp(32px, 4vw, 48px); font-weight: 500; letter-spacing: -.045em; }
-.admin-dashboard-grid p { max-width: 520px; margin: 0 0 28px; color: var(--muted); }
-.admin-dashboard-grid strong { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+.admin-dashboard { max-width: 1180px; margin: 0 auto; }
+.admin-dashboard .admin-page__heading { margin: 18px 0 46px; }
+.admin-dashboard .admin-page__heading h1 { font-size: clamp(54px, 6vw, 78px); }
+.admin-dashboard-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.admin-dashboard-grid a { position: relative; isolation: isolate; min-height: 360px; display: flex; flex-direction: column; overflow: hidden; padding: 36px; border: 1px solid #dde2e8; border-radius: 28px; background: linear-gradient(145deg, #fff 0%, #fbfcfe 70%, #f1f6fd 100%); box-shadow: 0 18px 50px rgb(31 45 68 / .08), 0 2px 5px rgb(31 45 68 / .04); color: #000; text-decoration: none; transition: border-color .22s ease, box-shadow .22s ease, transform .22s ease; }
+.admin-dashboard-grid a::before { position: absolute; z-index: -1; top: -105px; right: -85px; width: 270px; height: 270px; border-radius: 50%; background: radial-gradient(circle at 35% 60%, rgb(52 126 228 / .15), rgb(52 126 228 / .04) 45%, transparent 72%); content: ""; transition: transform .3s ease; }
+.admin-dashboard-grid a:hover { border-color: #aac7ed; box-shadow: 0 28px 70px rgb(31 68 120 / .14), 0 5px 14px rgb(31 45 68 / .05); transform: translateY(-5px); }
+.admin-dashboard-grid a:hover::before { transform: scale(1.12); }
+.admin-dashboard-grid a:focus-visible { outline: 3px solid rgb(52 126 228 / .35); outline-offset: 4px; }
+.admin-dashboard-grid span { width: max-content; padding: 8px 12px; border: 1px solid #d7e6fa; border-radius: 999px; background: rgb(234 243 255 / .78); color: var(--blue); font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.admin-dashboard-grid i { position: absolute; top: 30px; right: 30px; width: 48px; height: 48px; display: grid; place-items: center; border: 1px solid #e0e3e7; border-radius: 50%; background: rgb(255 255 255 / .8); box-shadow: 0 8px 22px rgb(31 45 68 / .07); font-size: 19px; font-style: normal; transition: background .2s ease, color .2s ease, transform .2s ease; }
+.admin-dashboard-grid a:hover i { background: #000; color: #fff; transform: rotate(5deg); }
+.admin-dashboard-grid h2 { margin: auto 0 11px; font-size: clamp(42px, 4.4vw, 62px); font-weight: 500; letter-spacing: -.055em; line-height: .95; }
+.admin-dashboard-grid p { max-width: 430px; margin: 0 0 30px; color: #656b73; font-size: 15px; line-height: 1.55; }
+.admin-dashboard-grid strong { width: max-content; min-height: 42px; display: inline-flex; align-items: center; gap: 18px; padding: 0 18px; border-radius: 999px; background: #080808; color: #fff; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; transition: background .2s ease, padding .2s ease; }
+.admin-dashboard-grid strong b { font-size: 15px; font-weight: 400; }
+.admin-dashboard-grid a:hover strong { padding-right: 22px; background: var(--blue); }
 .admin-dealer-directory { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
 .admin-dealer-directory > a { min-height: 245px; display: flex; flex-direction: column; padding: 28px; border: 1px solid #d4d4d0; background: #fff; color: #000; text-decoration: none; transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease; }
 .admin-dealer-directory > a:hover { border-color: #9abdec; box-shadow: 0 12px 30px rgb(52 126 228 / .1); transform: translateY(-2px); }
@@ -550,6 +560,11 @@ button { color: inherit; }
   .admin-location-view-actions { width: 100%; align-items: stretch; flex-wrap: wrap; }
   .admin-dealer-location-grid dl { grid-template-columns: 1fr; }
   .admin-user-summary { grid-template-columns: 1fr 1fr; }
+  .admin-dashboard .admin-page__heading { margin-top: 0; margin-bottom: 32px; }
+  .admin-dashboard .admin-page__heading h1 { font-size: clamp(48px, 15vw, 68px); }
+  .admin-dashboard-grid { gap: 16px; }
+  .admin-dashboard-grid a { min-height: 310px; padding: 26px; border-radius: 22px; }
+  .admin-dashboard-grid i { top: 22px; right: 22px; width: 44px; height: 44px; }
 }
 
 .site-header {
