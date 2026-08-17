@@ -1,9 +1,6 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
-import { requireDealerPortal } from "@/lib/portal/auth";
-import { getDealerPortalLocations } from "@/lib/portal/data";
 import { createClient } from "@/lib/supabase/server";
 import type { PortalFormState } from "@/lib/portal/form-state";
 
@@ -48,46 +45,4 @@ export async function dealerLogoutAction() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect("/partner/login");
-}
-
-export async function submitLocationChangeRequestAction(dealerId: string, formData: FormData) {
-  const identity = await requireDealerPortal("locations");
-  const locations = await getDealerPortalLocations();
-  const location = locations.find((candidate) => candidate.dealerId === dealerId);
-  if (!location) redirect("/partner/locations?error=not-assigned");
-
-  const allowedFields = [
-    "locationName", "addressLine1", "addressLine2", "city", "stateProvince",
-    "postalCode", "country", "phone", "website", "email",
-  ] as const;
-  const proposedChanges: Record<string, string | null> = {};
-  for (const key of allowedFields) {
-    const value = text(formData, key);
-    const current = location[key] ?? "";
-    if (value !== current) proposedChanges[key] = value || null;
-  }
-
-  if (!Object.keys(proposedChanges).length) redirect(`/partner/locations/${encodeURIComponent(dealerId)}?unchanged=1`);
-  const website = proposedChanges.website;
-  if (website) {
-    try {
-      const parsed = new URL(website);
-      if (!["http:", "https:"].includes(parsed.protocol)) throw new Error();
-    } catch {
-      redirect(`/partner/locations/${encodeURIComponent(dealerId)}?error=website`);
-    }
-  }
-  const email = proposedChanges.email;
-  if (email && !/^\S+@\S+\.\S+$/.test(email)) redirect(`/partner/locations/${encodeURIComponent(dealerId)}?error=email`);
-
-  const supabase = await createClient();
-  const { error } = await supabase.from("dealer_location_change_requests").insert({
-    dealer_id: dealerId,
-    organization_id: location.organizationId,
-    requested_by: identity.id,
-    proposed_changes: proposedChanges,
-  });
-  if (error) redirect(`/partner/locations/${encodeURIComponent(dealerId)}?error=save`);
-  revalidatePath(`/partner/locations/${dealerId}`);
-  redirect(`/partner/locations/${encodeURIComponent(dealerId)}?submitted=1`);
 }

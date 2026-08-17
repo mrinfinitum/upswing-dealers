@@ -30,6 +30,7 @@ export default async function DealersPage({ searchParams }: { searchParams: Prom
 
   return (
     <div className="admin-page admin-dealers-page">
+      <Link className="admin-back-link" href="/admin">← Administration</Link>
       <header className="admin-page__heading"><div><p className="eyebrow">Dealer network</p><h1>Dealers</h1><p>Choose a dealer to manage only that retailer’s locations.</p></div><Link className="admin-button admin-button--primary" href="/admin/locations/new">Add location</Link></header>
       {setupRequired ? <section className="admin-setup"><h2>Database setup required</h2><p>Apply the Supabase migration and run the dealer import before managing dealers. See <code>docs/supabase-admin.md</code>.</p></section> : <>
         <form className="admin-toolbar"><label htmlFor="dealer-directory-search">Search dealers</label><div><input id="dealer-directory-search" name="q" defaultValue={q} placeholder="Dealer or operating country" /><button className="admin-button" type="submit">Search</button>{q ? <Link href="/admin/dealers">Clear</Link> : null}</div></form>

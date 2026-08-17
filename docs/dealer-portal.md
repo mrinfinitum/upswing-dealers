@@ -9,7 +9,6 @@ The dealer portal is part of the locator application because it shares the same 
 - `/partner/locations` — safe assigned-location fields
 - `/partner/brand` — UpSwing standards and approved downloads
 - `/admin/users` — combined user directory, dealer invitations, organization assignment, and page permissions
-- `/admin/requests` — review queue for dealer-submitted location corrections
 
 All portal and admin routes are `noindex` and protected by Supabase cookie sessions. Proxy redirects improve navigation, but each protected layout and every mutation independently validates authorization.
 
@@ -19,6 +18,7 @@ Apply migrations in order:
 
 1. `202608150001_create_dealers.sql`
 2. `202608170001_create_dealer_portal.sql`
+3. `202608170002_remove_location_change_requests.sql`
 
 The portal migration seeds `PGA TOUR Superstore` as the first organization and assigns its active, verified `PGATSS` records. Preston, Washington remains excluded because it is not verified. It creates no user automatically.
 
@@ -26,7 +26,7 @@ The portal migration seeds `PGA TOUR Superstore` as the first organization and a
 
 1. Confirm `SUPABASE_SERVICE_ROLE_KEY` is present only in `.env.local` and the Vercel server environment.
 2. Add `https://dealers.upswinggolf.com/partner/reset-password` to the Supabase Auth redirect allowlist.
-3. Sign in as an UpSwing administrator and open `/admin/users`.
+3. Sign in as an UpSwing administrator and open `/admin/users` to create or manage dealer accounts.
 4. Enter the PGA TOUR Superstore contact, select the organization, and choose permitted pages.
 5. The recipient follows the secure Supabase invitation to create a password.
 
@@ -38,12 +38,11 @@ Inviting the same non-admin email again can add another organization membership 
 - `dealer`: limited to active memberships and the pages listed on each membership.
 - Organization memberships support both a single-location organization and a multi-location retailer.
 - Dealers cannot query the complete dealer table. A guarded RPC returns only name, public address/contact fields, organization, and active status for assigned verified locations.
-- Dealers submit proposed changes. They cannot directly publish, change verification state, edit coordinates, or alter provenance.
-- Admins verify evidence, update/geocode the authoritative dealer record in the existing location editor, and then mark the request applied or rejected.
+- Dealers have read-only access to the safe public fields for assigned locations. They cannot publish, change verification state, edit coordinates, or alter provenance.
 
 ## Secrets and production configuration
 
-`SUPABASE_SERVICE_ROLE_KEY` bypasses Row Level Security. It is used only by server-only import and invitation code. Never prefix it with `NEXT_PUBLIC_`, include it in screenshots/logs, or send it to a browser bundle. Rotate it immediately if exposed.
+`SUPABASE_SERVICE_ROLE_KEY` bypasses Row Level Security. It is used only by server-only import and user-administration code. Never prefix it with `NEXT_PUBLIC_`, include it in screenshots/logs, or send it to a browser bundle. Rotate it immediately if exposed.
 
 The canonical portal origin is `https://dealers.upswinggolf.com`. Preview hosts should not be added as canonical URLs. Add preview redirect URLs only when a deliberate preview invitation workflow is required.
 

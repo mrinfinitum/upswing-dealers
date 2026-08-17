@@ -2,7 +2,6 @@ import Link from "next/link";
 
 const administrationLinks = [
   { href: "/admin/dealers", eyebrow: "Dealer network", title: "Dealers", description: "Choose a retailer, then manage only that dealer’s locations." },
-  { href: "/admin/requests", eyebrow: "Review queue", title: "Update requests", description: "Review location changes submitted by authorized dealer admins." },
   { href: "/admin/users", eyebrow: "Access control", title: "Users", description: "Manage all users, dealer organizations, memberships, groups, and page permissions." },
 ];
 

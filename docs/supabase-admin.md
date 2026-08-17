@@ -35,7 +35,7 @@ The project URL and publishable key may be used by browser code because Row Leve
    ```
 
 5. Have the administrator sign out and back in so the refreshed JWT contains the role.
-6. Apply `supabase/migrations/202608170001_create_dealer_portal.sql` to add dealer organizations, memberships, page permissions, update requests, and the safe portal location function.
+6. Apply `supabase/migrations/202608170001_create_dealer_portal.sql` to add dealer organizations, memberships, page permissions, and the safe portal location function, then apply `202608170002_remove_location_change_requests.sql` to remove the retired request feature.
 7. In Supabase Auth URL Configuration, allow both `https://dealers.upswinggolf.com/admin/reset-password` and `https://dealers.upswinggolf.com/partner/reset-password` as additional redirect URLs. Add localhost equivalents only to the development project when local invitation testing is required.
 
 ## Access model
@@ -46,7 +46,7 @@ The project URL and publishable key may be used by browser code because Row Leve
 - Dealer users carry protected `app_metadata.role = "dealer"`. They can read their own active profile, organization memberships, and page permissions. A security-definer function returns only the safe location columns for assigned organizations; internal notes, provenance, and evidence remain inaccessible.
 - Proxy route protection improves navigation behavior, but every Server Action independently validates signed JWT claims before mutating data.
 - The admin has no public sign-up route and admin pages are `noindex`.
-- `/admin/users` is the master Supabase Auth directory. It combines protected Auth metadata with dealer organization memberships, supports search/group filters/sorting, and lets an existing administrator invite either an UpSwing administrator or a dealer admin. Dealer invitations require an organization and explicit portal-page permissions. Existing administrator roles are never converted by the invitation form.
+- `/admin/users` is the master Supabase Auth directory. It combines protected Auth metadata with dealer organization memberships, supports search/group filters/sorting, and lets an administrator invite or directly create either an UpSwing administrator or dealer user. Dealer accounts require an organization and explicit portal-page permissions. Administrators can delete other accounts but cannot delete the account they are currently using.
 
 ## Public locator behavior
 

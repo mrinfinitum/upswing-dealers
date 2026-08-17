@@ -7,7 +7,7 @@ import type { PortalPageKey } from "@/types/portal";
 
 const pages: { key: PortalPageKey; label: string; description: string }[] = [
   { key: "dashboard", label: "Overview", description: "Portal home and organization summary" },
-  { key: "locations", label: "Locations", description: "Assigned stores and update requests" },
+  { key: "locations", label: "Locations", description: "View assigned dealer locations" },
   { key: "brand", label: "Brand resources", description: "Standards and approved downloads" },
 ];
 
