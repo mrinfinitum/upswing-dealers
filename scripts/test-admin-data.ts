@@ -48,8 +48,10 @@ assert.equal(safeAdminReturnPath("/admin/locations?q=PGA%20TOUR"), "/admin/locat
 assert.equal(safeAdminReturnPath("https://example.com/admin/dealers/pga"), "/admin/locations");
 assert.equal(safeAdminReturnPath("//example.com/admin/dealers/pga"), "/admin/locations");
 assert.match(adminUserAction, /await requireAdmin\(\)/, "admin invitations recheck authorization");
-assert.match(adminUserAction, /app_metadata:[\s\S]*role: "admin"/, "admin role is stored in protected metadata");
+assert.match(adminUserAction, /role !== "admin" && role !== "dealer"/, "only supported account groups can be assigned");
+assert.match(adminUserAction, /app_metadata:[\s\S]*role },/, "account group is stored in protected metadata");
 assert.match(adminUserAction, /Existing roles are not changed automatically/, "existing roles cannot be silently promoted");
+assert.match(adminUserAction, /page_permissions: pagePermissions/, "dealer page permissions are assigned with membership");
 assert.match(adminUserDirectory, /import "server-only"/, "master Auth directory is server-only");
 
 console.log("Admin data checks passed: 71 preserved, 70 publishable, RLS migration present.");

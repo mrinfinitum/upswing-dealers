@@ -46,7 +46,7 @@ The project URL and publishable key may be used by browser code because Row Leve
 - Dealer users carry protected `app_metadata.role = "dealer"`. They can read their own active profile, organization memberships, and page permissions. A security-definer function returns only the safe location columns for assigned organizations; internal notes, provenance, and evidence remain inaccessible.
 - Proxy route protection improves navigation behavior, but every Server Action independently validates signed JWT claims before mutating data.
 - The admin has no public sign-up route and admin pages are `noindex`.
-- `/admin/users` is the master Supabase Auth directory. It combines protected Auth metadata with dealer organization memberships and lets an existing administrator invite another administrator. Existing account roles are never overwritten by the invitation form.
+- `/admin/users` is the master Supabase Auth directory. It combines protected Auth metadata with dealer organization memberships, supports search/group filters/sorting, and lets an existing administrator invite either an UpSwing administrator or a dealer admin. Dealer invitations require an organization and explicit portal-page permissions. Existing administrator roles are never converted by the invitation form.
 
 ## Public locator behavior
 
