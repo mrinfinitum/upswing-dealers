@@ -226,7 +226,9 @@ button { color: inherit; }
 .admin-membership-grid h3 { margin: 5px 0 0; font-size: 20px; }
 .admin-membership-grid header p { margin: 2px 0 0; color: var(--muted); font-size: 12px; }
 .admin-membership-form .admin-checkbox { margin: 0; }
-.admin-back-link { display: inline-block; margin-bottom: 32px; color: var(--muted); text-underline-offset: 4px; }
+.admin-back-link { min-height: 40px; display: inline-flex; align-items: center; gap: 9px; margin-bottom: 32px; padding: 0 16px; border: 1px solid #d6dce3; border-radius: 999px; background: rgb(255 255 255 / .82); box-shadow: 0 7px 20px rgb(31 45 68 / .055); color: #505861; font-size: 10px; font-weight: 600; letter-spacing: .07em; text-decoration: none; text-transform: uppercase; transition: border-color .18s ease, background .18s ease, color .18s ease, transform .18s ease; }
+.admin-back-link:hover { border-color: #abc7ec; background: #fff; color: var(--blue); transform: translateX(-2px); }
+.admin-back-link:focus-visible { outline: 3px solid rgb(52 126 228 / .28); outline-offset: 3px; }
 .admin-organization-settings { display: grid; grid-template-columns: minmax(240px, .7fr) minmax(420px, 1.3fr); gap: 55px; margin-bottom: 24px; padding: 32px; border: 1px solid #d4d4d0; background: #fff; }
 .admin-organization-settings h2, .admin-organization-section h2 { margin: 7px 0; font-size: 30px; }
 .admin-organization-settings > div > p:last-child, .admin-organization-section > header p:last-child { color: var(--muted); }
