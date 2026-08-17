@@ -58,6 +58,7 @@ assert.match(adminUserDirectory, /import "server-only"/, "master Auth directory 
 assert.match(adminLayout, /href="\/admin\/account"/, "account menu links to the administrator profile");
 assert.match(adminLayout, /href="\/admin"/, "account menu links to the central admin hub");
 assert.doesNotMatch(adminLayout, /<nav aria-label="Admin navigation"/, "management functions are removed from the header navigation");
-for (const href of ["/admin/locations", "/admin/dealers", "/admin/requests", "/admin/users"]) assert.match(adminDashboard, new RegExp(`href: "${href}"`), `${href} is available from the admin hub`);
+for (const href of ["/admin/locations", "/admin/requests", "/admin/users"]) assert.match(adminDashboard, new RegExp(`href: "${href}"`), `${href} is available from the admin hub`);
+assert.doesNotMatch(adminDashboard, /href: "\/admin\/dealers"/, "dealer access is combined into the Users section");
 
 console.log("Admin data checks passed: 71 preserved, 70 publishable, RLS migration present.");

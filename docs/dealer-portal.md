@@ -8,7 +8,7 @@ The dealer portal is part of the locator application because it shares the same 
 - `/partner` — permitted organization overview
 - `/partner/locations` — safe assigned-location fields
 - `/partner/brand` — UpSwing standards and approved downloads
-- `/admin/dealers` — dealer invitation, organization assignment, and page permissions
+- `/admin/users` — combined user directory, dealer invitations, organization assignment, and page permissions
 - `/admin/requests` — review queue for dealer-submitted location corrections
 
 All portal and admin routes are `noindex` and protected by Supabase cookie sessions. Proxy redirects improve navigation, but each protected layout and every mutation independently validates authorization.
@@ -26,7 +26,7 @@ The portal migration seeds `PGA TOUR Superstore` as the first organization and a
 
 1. Confirm `SUPABASE_SERVICE_ROLE_KEY` is present only in `.env.local` and the Vercel server environment.
 2. Add `https://dealers.upswinggolf.com/partner/reset-password` to the Supabase Auth redirect allowlist.
-3. Sign in as an UpSwing administrator and open `/admin/dealers`.
+3. Sign in as an UpSwing administrator and open `/admin/users`.
 4. Enter the PGA TOUR Superstore contact, select the organization, and choose permitted pages.
 5. The recipient follows the secure Supabase invitation to create a password.
 

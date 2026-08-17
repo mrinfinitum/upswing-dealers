@@ -1,10 +1,12 @@
 import type { User } from "@supabase/supabase-js";
+import Link from "next/link";
 import { InviteUserForm } from "@/components/admin/invite-administrator-form";
 import { AdminUserDirectoryError, listAuthUsers } from "@/lib/admin/users";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 type Membership = { user_id: string; organization_id: string; active: boolean; page_permissions: string[] };
 type Organization = { id: string; name: string; active: boolean };
+type OrganizationLocation = { organization_id: string; dealer_id: string };
 type UserGroup = "all" | "admin" | "dealer" | "unassigned" | "invited";
 type UserSort = "name" | "group" | "newest" | "last-sign-in";
 
@@ -45,17 +47,20 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
   let users: Awaited<ReturnType<typeof listAuthUsers>> = [];
   let memberships: Membership[] = [];
   let organizations: Organization[] = [];
+  let organizationLocations: OrganizationLocation[] = [];
 
   try {
     users = await listAuthUsers();
     const supabase = createSupabaseAdminClient();
-    const [membershipResult, organizationResult] = await Promise.all([
+    const [membershipResult, organizationResult, locationResult] = await Promise.all([
       supabase.from("dealer_memberships").select("user_id, organization_id, active, page_permissions"),
       supabase.from("dealer_organizations").select("id, name, active"),
+      supabase.from("dealer_organization_locations").select("organization_id, dealer_id"),
     ]);
-    if (membershipResult.error || organizationResult.error) throw new AdminUserDirectoryError("Dealer groups and permissions could not be loaded.");
+    if (membershipResult.error || organizationResult.error || locationResult.error) throw new AdminUserDirectoryError("Dealer groups and permissions could not be loaded.");
     memberships = (membershipResult.data || []) as Membership[];
     organizations = (organizationResult.data || []) as Organization[];
+    organizationLocations = (locationResult.data || []) as OrganizationLocation[];
   } catch (error) {
     setupError = error instanceof AdminUserDirectoryError ? error.message : "The server-only Supabase user administration configuration is unavailable.";
   }
@@ -74,6 +79,8 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
   const dealerCount = users.filter((user) => roleFor(user) === "dealer").length;
   const pendingCount = users.filter((user) => !user.email_confirmed_at).length;
   const activeOrganizations = organizations.filter((organization) => organization.active).sort((left, right) => left.name.localeCompare(right.name));
+  const locationCount = (organizationId: string) => organizationLocations.filter((location) => location.organization_id === organizationId).length;
+  const memberCount = (organizationId: string) => memberships.filter((membership) => membership.organization_id === organizationId).length;
 
   return (
     <div className="admin-page admin-users-page">
@@ -81,6 +88,10 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
       {setupError ? <section className="admin-setup"><h2>User directory unavailable</h2><p>{setupError}</p></section> : <>
         <section className="admin-user-summary"><article><span>Total accounts</span><strong>{users.length}</strong></article><article><span>Administrators</span><strong>{administratorCount}</strong></article><article><span>Dealer admins</span><strong>{dealerCount}</strong></article><article><span>Pending invitations</span><strong>{pendingCount}</strong></article></section>
         <section className="admin-user-invite"><div><p className="eyebrow">Access assignment</p><h2>Invite a user</h2><p>Choose the user group first. Dealer admins can then be assigned to an organization with access to only the portal pages they need.</p></div><InviteUserForm organizations={activeOrganizations} /></section>
+        <section className="admin-user-organizations" id="dealer-organizations">
+          <header><div><p className="eyebrow">Dealer access</p><h2>Dealer organizations</h2><p>Open an organization to manage its locations, authorized users, membership status, and portal-page permissions.</p></div></header>
+          <div className="admin-access-summary">{[...organizations].sort((left, right) => left.name.localeCompare(right.name)).map((organization) => <Link href={`/admin/dealers/${organization.id}`} key={organization.id}><span>{organization.active ? "Active organization" : "Inactive organization"}</span><h3>{organization.name}</h3><p>{memberCount(organization.id)} {memberCount(organization.id) === 1 ? "dealer admin" : "dealer admins"} · {locationCount(organization.id)} {locationCount(organization.id) === 1 ? "location" : "locations"}</p><strong>Manage organization →</strong></Link>)}</div>
+        </section>
         <section className="admin-user-directory">
           <header><div><p className="eyebrow">Master directory</p><h2>All users</h2><p>{visibleUsers.length} of {users.length} accounts shown</p></div></header>
           <form className="admin-user-filters">
@@ -89,7 +100,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
             <div className="admin-field"><label htmlFor="userSort">Sort by</label><select id="userSort" name="sort" defaultValue={sort}><option value="name">Name</option><option value="group">Group</option><option value="newest">Newest</option><option value="last-sign-in">Last sign in</option></select></div>
             <button className="admin-button" type="submit">Apply</button>
           </form>
-          <div className="admin-user-table-wrap"><table className="admin-user-table"><thead><tr><th>User</th><th>Group</th><th>Dealer access</th><th>Account status</th><th>Last sign in</th><th>Created</th></tr></thead><tbody>{visibleUsers.map((user) => { const role = roleFor(user); const userMemberships = memberships.filter((membership) => membership.user_id === user.id); return <tr key={user.id}><td><strong>{nameFor(user)}</strong><span>{user.email}</span><small className="admin-record-id">{user.id}</small></td><td><span className={`admin-user-role admin-user-role--${role}`}>{roleLabel(role)}</span></td><td>{userMemberships.length ? userMemberships.map((membership) => { const organization = organizations.find((item) => item.id === membership.organization_id); return <span className="admin-user-membership" key={membership.organization_id}><strong>{organization?.name || "Unknown dealer"}</strong><small>{membership.active ? membership.page_permissions.join(", ") : "Paused"}</small></span>; }) : <span className="is-muted">None</span>}</td><td>{user.email_confirmed_at ? <span className="admin-status admin-status--verified">Confirmed</span> : <span className="admin-status admin-status--needs-review">Invited</span>}</td><td>{formatDate(user.last_sign_in_at)}</td><td>{formatDate(user.created_at)}</td></tr>; })}</tbody></table>{visibleUsers.length === 0 ? <p className="admin-empty">No users match these filters.</p> : null}</div>
+          <div className="admin-user-table-wrap"><table className="admin-user-table"><thead><tr><th>User</th><th>Group</th><th>Dealer access</th><th>Account status</th><th>Last sign in</th><th>Created</th></tr></thead><tbody>{visibleUsers.map((user) => { const role = roleFor(user); const userMemberships = memberships.filter((membership) => membership.user_id === user.id); return <tr key={user.id}><td><strong>{nameFor(user)}</strong><span>{user.email}</span><small className="admin-record-id">{user.id}</small></td><td><span className={`admin-user-role admin-user-role--${role}`}>{roleLabel(role)}</span></td><td>{userMemberships.length ? userMemberships.map((membership) => { const organization = organizations.find((item) => item.id === membership.organization_id); return <Link className="admin-user-membership" href={`/admin/dealers/${membership.organization_id}`} key={membership.organization_id}><strong>{organization?.name || "Unknown dealer"}</strong><small>{membership.active ? membership.page_permissions.join(", ") : "Paused"}</small></Link>; }) : <span className="is-muted">None</span>}</td><td>{user.email_confirmed_at ? <span className="admin-status admin-status--verified">Confirmed</span> : <span className="admin-status admin-status--needs-review">Invited</span>}</td><td>{formatDate(user.last_sign_in_at)}</td><td>{formatDate(user.created_at)}</td></tr>; })}</tbody></table>{visibleUsers.length === 0 ? <p className="admin-empty">No users match these filters.</p> : null}</div>
         </section>
       </>}
     </div>

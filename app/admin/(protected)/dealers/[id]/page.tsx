@@ -36,7 +36,7 @@ export default async function DealerOrganizationPage({ params, searchParams }: {
 
   return (
     <div className="admin-page admin-organization-page">
-      <Link className="admin-back-link" href="/admin/dealers">← Dealer admins</Link>
+      <Link className="admin-back-link" href="/admin/users#dealer-organizations">← Users</Link>
       <header className="admin-page__heading"><div><p className="eyebrow">Dealer organization</p><h1>{organization.name}</h1><p>{dealers.length} linked {dealers.length === 1 ? "location" : "locations"} · {memberships.length} portal {memberships.length === 1 ? "user" : "users"}</p></div><span className={organization.active ? "admin-status admin-status--verified" : "admin-status"}>{organization.active ? "Active" : "Inactive"}</span></header>
 
       <section className="admin-organization-settings"><div><p className="eyebrow">Organization settings</p><h2>Dealer details</h2><p>These settings control the dealer organization and portal access. Individual public location information is edited below.</p></div><DealerOrganizationForm organization={organization} /></section>

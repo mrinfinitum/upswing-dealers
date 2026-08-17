@@ -2,9 +2,8 @@ import Link from "next/link";
 
 const administrationLinks = [
   { href: "/admin/locations", eyebrow: "Dealer network", title: "Locations", description: "Create, review, geocode, and publish dealer locations." },
-  { href: "/admin/dealers", eyebrow: "Portal access", title: "Dealer admins", description: "Manage dealer organizations, locations, memberships, and page access." },
   { href: "/admin/requests", eyebrow: "Review queue", title: "Update requests", description: "Review location changes submitted by authorized dealer admins." },
-  { href: "/admin/users", eyebrow: "Access control", title: "Users", description: "View every account, invite users, and assign groups and permissions." },
+  { href: "/admin/users", eyebrow: "Access control", title: "Users", description: "Manage all users, dealer organizations, memberships, groups, and page permissions." },
 ];
 
 export default function AdminDashboardPage() {
