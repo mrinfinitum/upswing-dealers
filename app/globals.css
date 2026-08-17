@@ -61,10 +61,10 @@ button { color: inherit; }
 
 /* Dealer administration */
 .admin-root { min-height: 100vh; background: #f1f1ef; }
-.admin-header { min-height: 76px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 34px; padding: 0 32px; background: #000; color: #fff; }
+.admin-header { min-height: 76px; display: grid; grid-template-columns: auto auto 1fr; align-items: center; gap: 24px; padding: 0 32px; background: #000; color: #fff; }
 .admin-header > a { display: flex; }
 .admin-header img, .admin-login__logo img { width: 116px; height: auto; }
-.admin-header > nav { justify-self: center; display: flex; align-items: center; gap: 3px; padding: 4px; border: 1px solid #292929; border-radius: 999px; background: #101010; }
+.admin-header > nav { justify-self: start; display: flex; align-items: center; gap: 3px; padding: 4px; border: 1px solid #292929; border-radius: 999px; background: #101010; }
 .admin-header > nav a { min-height: 40px; display: inline-flex; align-items: center; padding: 0 20px; border-radius: 999px; color: #aaa; font-size: 10px; font-weight: 600; letter-spacing: .08em; text-decoration: none; text-transform: uppercase; transition: background .18s ease, color .18s ease; }
 .admin-header > nav a:hover, .admin-header > nav a:focus-visible { background: #fff; color: #050505; outline: 0; }
 .admin-account-menu { position: relative; justify-self: end; font-size: 12px; }
