@@ -92,3 +92,24 @@ export async function updateDealerMembershipAction(_: PortalFormState, formData:
   revalidatePath("/admin/dealers");
   return { success: true, message: "Dealer access updated." };
 }
+
+export async function updateDealerOrganizationAction(_: PortalFormState, formData: FormData): Promise<PortalFormState> {
+  await requireAdmin();
+  const organizationId = text(formData, "organizationId");
+  const name = text(formData, "name");
+  const active = formData.get("active") === "on";
+  if (!organizationId) return { message: "The dealer organization could not be identified." };
+  if (!name) return { message: "Dealer name is required." };
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("dealer_organizations").update({
+    name,
+    active,
+    updated_at: new Date().toISOString(),
+  }).eq("id", organizationId);
+  if (error) return { message: "Dealer details could not be saved. The name may already be in use." };
+
+  revalidatePath("/admin/dealers");
+  revalidatePath(`/admin/dealers/${organizationId}`);
+  return { success: true, message: "Dealer organization updated." };
+}
