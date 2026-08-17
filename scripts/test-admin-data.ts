@@ -41,6 +41,8 @@ const adminLayout = readFileSync("app/admin/(protected)/layout.tsx", "utf8");
 const adminDashboard = readFileSync("app/admin/(protected)/page.tsx", "utf8");
 const adminDealerDirectory = readFileSync("app/admin/(protected)/dealers/page.tsx", "utf8");
 const adminDealerLocations = readFileSync("app/admin/(protected)/dealers/locations/page.tsx", "utf8");
+const adminBatchImport = readFileSync("app/admin/(protected)/locations/new/actions.ts", "utf8");
+const adminBatchTemplate = readFileSync("app/admin/(protected)/locations/new/template/route.ts", "utf8");
 assert.match(migration, /enable row level security/i);
 assert.match(migration, /is_dealer_admin/);
 assert.match(migration, /active and verification_status = 'verified'/);
@@ -72,5 +74,11 @@ assert.doesNotMatch(adminDashboard, /admin\/requests/, "update requests are remo
 assert.doesNotMatch(adminDashboard, /href: "\/admin\/locations"/, "raw locations are grouped behind Dealers in the admin hub");
 assert.match(adminDealerDirectory, /groupDealers\(dealers\)/, "the dealer directory groups current location records by retailer");
 assert.match(adminDealerLocations, /location\.name\.localeCompare\(dealerName/, "dealer location pages enforce an exact retailer match");
+assert.match(adminBatchImport, /await requireAdmin\(\)/, "batch imports recheck administrator authorization");
+assert.match(adminBatchImport, /verificationStatus: "unverified"/, "batch imports cannot self-verify dealer records");
+assert.match(adminBatchImport, /Nothing was imported/, "batch validation fails atomically instead of dropping rows");
+assert.match(adminBatchImport, /existingFingerprints/, "batch imports reject existing dealer address duplicates");
+assert.match(adminBatchImport, /MAX_ROWS = 500/, "batch imports have a bounded row count");
+assert.match(adminBatchTemplate, /await requireAdmin\(\)/, "template downloads require administrator authorization");
 
 console.log("Admin data checks passed: 71 preserved, 70 publishable, RLS migration present.");

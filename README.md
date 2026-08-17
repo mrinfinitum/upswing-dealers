@@ -42,6 +42,8 @@ Current Phase 2 coordinate status: 70 approved coordinates, including 3 retailer
 
 The authenticated `/admin` hub manages Supabase dealer records without changing the approved public locator UI. Its primary navigation links to Dealers, Users, and the public locator, while the account menu provides profile and session controls. Dealers opens a retailer-level directory and scopes the next screen to that dealer’s locations. At `/admin/users`, administrators can search and filter all accounts, directly create UpSwing administrators and dealer users, delete accounts, and assign dealer organizations and portal-page permissions. Apply the migrations and import, then provision the first admin-role Supabase Auth user by following `docs/supabase-admin.md`.
 
+The Add Dealer workflow supports a single location or an all-or-nothing batch upload of up to 500 CSV/XLSX rows. A protected CSV template is downloadable from the batch screen. Batch records are always created as unverified with no coordinates; administrators must review each authoritative address before verification and geographic publication. Legacy `.xls` files must be saved as `.xlsx` or CSV before upload.
+
 ## Dealer partner portal
 
 The no-index `/partner` area gives limited `dealer` users read-only access to assigned locations and explicitly enabled pages, plus an UpSwing brand standards/download page. Administrators manage accounts, memberships, and page permissions in `/admin/users`. See `docs/dealer-portal.md`.

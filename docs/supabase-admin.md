@@ -48,6 +48,10 @@ The project URL and publishable key may be used by browser code because Row Leve
 - The admin has no public sign-up route and admin pages are `noindex`.
 - `/admin/users` is the master Supabase Auth directory. It combines protected Auth metadata with dealer organization memberships, supports search/group filters/sorting, and lets an administrator directly create either an UpSwing administrator or dealer user. Dealer accounts require an organization and explicit portal-page permissions. Administrators can delete other accounts but cannot delete the account they are currently using.
 
+## Dealer batch imports
+
+The Add Dealer screen supports CSV and XLSX uploads of up to 500 locations and 4 MB per file. Use the protected CSV template linked from the page and keep its header names unchanged. The import validates all rows and existing-address duplicates before writing anything; if one row fails, no rows are inserted. Uploaded locations preserve the filename and source row as provenance and always enter as `unverified` without coordinates. Legacy `.xls` workbooks must be saved as `.xlsx` or CSV before upload.
+
 ## Public locator behavior
 
 At request time the public locator reads active, verified Supabase rows. Until the migration exists—or during a Supabase query failure—it falls back to the preserved workbook-backed 70-record dataset so the locator remains usable. A valid empty database response remains empty and is never replaced with stale workbook rows.
