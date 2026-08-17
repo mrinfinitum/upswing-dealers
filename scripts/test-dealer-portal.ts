@@ -12,6 +12,7 @@ const brandPage = read("app/partner/(protected)/brand/page.tsx");
 const dealerLocationsPage = read("app/partner/(protected)/locations/page.tsx");
 const adminDealerPage = read("app/admin/(protected)/dealers/[id]/page.tsx");
 const viewToggle = read("components/layout/location-view-toggle.tsx");
+const portalLayout = read("app/partner/(protected)/layout.tsx");
 
 assert.match(migration, /role text not null default 'dealer'/, "dealer role is stored explicitly");
 assert.match(migration, /page_permissions text\[\]/, "memberships contain page permissions");
@@ -30,5 +31,6 @@ assert.match(brandPage, /Written style/, "brand portal includes voice guidance")
 assert.match(dealerLocationsPage, /view === "list"/, "dealer locations support list view");
 assert.match(adminDealerPage, /view === "list"/, "admin dealer locations support list view");
 assert.match(viewToggle, /aria-current/, "location view control exposes its current state accessibly");
+assert.match(portalLayout, /href: "\/partner\/brand", label: "Brand"/, "brand page is included in the primary dealer navigation");
 
 console.log("Dealer portal authorization and brand-surface checks passed.");

@@ -8,7 +8,7 @@ export default async function DealerPortalLayout({ children }: Readonly<{ childr
   const nav = [
     { key: "dashboard", href: "/partner", label: "Overview" },
     { key: "locations", href: "/partner/locations", label: "Locations" },
-    { key: "brand", href: "/partner/brand", label: "Brand resources" },
+    { key: "brand", href: "/partner/brand", label: "Brand" },
   ] as const;
 
   return (
