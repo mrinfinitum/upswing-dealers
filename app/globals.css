@@ -94,6 +94,14 @@ button { color: inherit; }
 .admin-dashboard-grid h2 { margin: auto 0 9px; font-size: clamp(32px, 4vw, 48px); font-weight: 500; letter-spacing: -.045em; }
 .admin-dashboard-grid p { max-width: 520px; margin: 0 0 28px; color: var(--muted); }
 .admin-dashboard-grid strong { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+.admin-dealer-directory { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+.admin-dealer-directory > a { min-height: 245px; display: flex; flex-direction: column; padding: 28px; border: 1px solid #d4d4d0; background: #fff; color: #000; text-decoration: none; transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease; }
+.admin-dealer-directory > a:hover { border-color: #9abdec; box-shadow: 0 12px 30px rgb(52 126 228 / .1); transform: translateY(-2px); }
+.admin-dealer-directory span { color: var(--blue); font-size: 10px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; }
+.admin-dealer-directory h2 { margin: 18px 0 7px; font-size: 30px; font-weight: 500; letter-spacing: -.035em; }
+.admin-dealer-directory p { margin: 0 0 7px; color: var(--muted); }
+.admin-dealer-directory small { color: #747474; }
+.admin-dealer-directory strong { margin-top: auto; padding-top: 28px; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
 .admin-account-card { display: grid; grid-template-columns: 90px repeat(3, minmax(0, 1fr)); align-items: center; gap: 26px; padding: 30px; border: 1px solid #d4d4d0; background: #fff; }
 .admin-account-card__icon { width: 74px; height: 74px; display: grid; place-items: center; border-radius: 50%; background: #000; color: #fff; }
 .admin-account-card__icon svg { width: 34px; height: 34px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.6; }

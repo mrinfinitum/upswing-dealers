@@ -40,7 +40,7 @@ Current Phase 2 coordinate status: 70 approved coordinates, including 3 retailer
 
 ## Dealer administration
 
-The authenticated `/admin` hub manages Supabase dealer records without changing the approved public locator UI. Its account menu links to the administrator profile and central dashboard, while the dashboard provides access to locations, requests, and one combined Users section. At `/admin/users`, administrators can manage dealer organizations, search and filter all accounts, invite either UpSwing administrators or dealer admins, and assign dealer organizations and portal-page permissions. Apply the migration and import, then provision the first admin-role Supabase Auth user by following `docs/supabase-admin.md`.
+The authenticated `/admin` hub manages Supabase dealer records without changing the approved public locator UI. Its account menu links to the administrator profile and central dashboard, while the dashboard provides access to Dealers, requests, and one combined Users section. Dealers opens a retailer-level directory and scopes the next screen to that dealer’s locations. At `/admin/users`, administrators can manage dealer organizations, search and filter all accounts, invite either UpSwing administrators or dealer admins, and assign dealer organizations and portal-page permissions. Apply the migration and import, then provision the first admin-role Supabase Auth user by following `docs/supabase-admin.md`.
 
 ## Dealer partner portal
 

@@ -191,12 +191,15 @@ export async function updateLocationAction(id: string, _: AdminFormState, formDa
   redirect(`/admin/locations/${encodeURIComponent(id)}?${query.toString()}`);
 }
 
-export async function deleteLocationAction(id: string) {
+export async function deleteLocationAction(id: string, returnPath: string) {
   await requireAdmin();
+  const returnTo = safeAdminReturnPath(returnPath);
   const supabase = await createClient();
   const { error } = await supabase.from("dealers").delete().eq("id", id);
-  if (error) redirect(`/admin/locations/${encodeURIComponent(id)}?error=delete`);
+  if (error) redirect(`/admin/locations/${encodeURIComponent(id)}?error=delete&returnTo=${encodeURIComponent(returnTo)}`);
   revalidatePath("/");
   revalidatePath("/admin/locations");
-  redirect("/admin/locations?deleted=1");
+  revalidatePath("/admin/dealers");
+  const separator = returnTo.includes("?") ? "&" : "?";
+  redirect(`${returnTo}${separator}deleted=1`);
 }

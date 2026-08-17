@@ -39,6 +39,8 @@ const adminUserAction = readFileSync("app/admin/(protected)/users/actions.ts", "
 const adminUserDirectory = readFileSync("lib/admin/users.ts", "utf8");
 const adminLayout = readFileSync("app/admin/(protected)/layout.tsx", "utf8");
 const adminDashboard = readFileSync("app/admin/(protected)/page.tsx", "utf8");
+const adminDealerDirectory = readFileSync("app/admin/(protected)/dealers/page.tsx", "utf8");
+const adminDealerLocations = readFileSync("app/admin/(protected)/dealers/locations/page.tsx", "utf8");
 assert.match(migration, /enable row level security/i);
 assert.match(migration, /is_dealer_admin/);
 assert.match(migration, /active and verification_status = 'verified'/);
@@ -58,7 +60,9 @@ assert.match(adminUserDirectory, /import "server-only"/, "master Auth directory 
 assert.match(adminLayout, /href="\/admin\/account"/, "account menu links to the administrator profile");
 assert.match(adminLayout, /href="\/admin"/, "account menu links to the central admin hub");
 assert.doesNotMatch(adminLayout, /<nav aria-label="Admin navigation"/, "management functions are removed from the header navigation");
-for (const href of ["/admin/locations", "/admin/requests", "/admin/users"]) assert.match(adminDashboard, new RegExp(`href: "${href}"`), `${href} is available from the admin hub`);
-assert.doesNotMatch(adminDashboard, /href: "\/admin\/dealers"/, "dealer access is combined into the Users section");
+for (const href of ["/admin/dealers", "/admin/requests", "/admin/users"]) assert.match(adminDashboard, new RegExp(`href: "${href}"`), `${href} is available from the admin hub`);
+assert.doesNotMatch(adminDashboard, /href: "\/admin\/locations"/, "raw locations are grouped behind Dealers in the admin hub");
+assert.match(adminDealerDirectory, /groupDealers\(dealers\)/, "the dealer directory groups current location records by retailer");
+assert.match(adminDealerLocations, /location\.name\.localeCompare\(dealerName/, "dealer location pages enforce an exact retailer match");
 
 console.log("Admin data checks passed: 71 preserved, 70 publishable, RLS migration present.");
