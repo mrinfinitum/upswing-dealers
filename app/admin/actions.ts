@@ -147,7 +147,7 @@ export async function loginAction(_: AdminFormState, formData: FormData): Promis
     await supabase.auth.signOut();
     return { message: "This account does not have dealer administrator access." };
   }
-  redirect("/admin/locations");
+  redirect("/admin");
 }
 
 export async function logoutAction() {

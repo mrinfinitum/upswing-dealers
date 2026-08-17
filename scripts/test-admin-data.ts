@@ -37,6 +37,8 @@ assert.deepEqual(roundTrip.enrichmentSources, sample.enrichmentSources);
 const migration = readFileSync("supabase/migrations/202608150001_create_dealers.sql", "utf8");
 const adminUserAction = readFileSync("app/admin/(protected)/users/actions.ts", "utf8");
 const adminUserDirectory = readFileSync("lib/admin/users.ts", "utf8");
+const adminLayout = readFileSync("app/admin/(protected)/layout.tsx", "utf8");
+const adminDashboard = readFileSync("app/admin/(protected)/page.tsx", "utf8");
 assert.match(migration, /enable row level security/i);
 assert.match(migration, /is_dealer_admin/);
 assert.match(migration, /active and verification_status = 'verified'/);
@@ -53,5 +55,9 @@ assert.match(adminUserAction, /app_metadata:[\s\S]*role },/, "account group is s
 assert.match(adminUserAction, /Existing roles are not changed automatically/, "existing roles cannot be silently promoted");
 assert.match(adminUserAction, /page_permissions: pagePermissions/, "dealer page permissions are assigned with membership");
 assert.match(adminUserDirectory, /import "server-only"/, "master Auth directory is server-only");
+assert.match(adminLayout, /href="\/admin\/account"/, "account menu links to the administrator profile");
+assert.match(adminLayout, /href="\/admin"/, "account menu links to the central admin hub");
+assert.doesNotMatch(adminLayout, /<nav aria-label="Admin navigation"/, "management functions are removed from the header navigation");
+for (const href of ["/admin/locations", "/admin/dealers", "/admin/requests", "/admin/users"]) assert.match(adminDashboard, new RegExp(`href: "${href}"`), `${href} is available from the admin hub`);
 
 console.log("Admin data checks passed: 71 preserved, 70 publishable, RLS migration present.");
