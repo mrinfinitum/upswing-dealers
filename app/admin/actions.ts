@@ -10,6 +10,7 @@ import type { Dealer, DealerVerificationStatus } from "@/types/dealer";
 import type { AdminFormState } from "@/lib/admin/form-state";
 import { dealerAddressFingerprint } from "@/lib/geo/address";
 import { reviewGeocodeCandidate, type GeocodeCandidate } from "@/lib/geo/geocode-review";
+import { safeAdminReturnPath } from "@/lib/admin/return-path";
 
 const statuses: DealerVerificationStatus[] = ["unverified", "needs-review", "verified", "rejected"];
 const text = (formData: FormData, key: string) => String(formData.get(key) ?? "").trim();
@@ -185,7 +186,9 @@ export async function updateLocationAction(id: string, _: AdminFormState, formDa
   revalidatePath("/");
   revalidatePath("/admin/locations");
   revalidatePath(`/admin/locations/${id}`);
-  redirect(`/admin/locations/${encodeURIComponent(id)}?saved=updated`);
+  const returnTo = safeAdminReturnPath(text(formData, "returnTo"));
+  const query = new URLSearchParams({ saved: "updated", returnTo });
+  redirect(`/admin/locations/${encodeURIComponent(id)}?${query.toString()}`);
 }
 
 export async function deleteLocationAction(id: string) {

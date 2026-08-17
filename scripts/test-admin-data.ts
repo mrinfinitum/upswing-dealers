@@ -7,6 +7,7 @@ import { googleBrowserGeocodeBatch } from "../lib/dealers/google-geocodes";
 import { normalizeDealerRows } from "../lib/dealers/normalize";
 import { rawDealerRows } from "../lib/dealers/source";
 import { dealerRowToDealer, dealerToMutation } from "../lib/dealers/supabase-mapper";
+import { safeAdminReturnPath } from "../lib/admin/return-path";
 
 const normalized = normalizeDealerRows(rawDealerRows).dealers;
 const enriched = applyVerifiedEnrichments(normalized, dealerEnrichmentProposals).dealers;
@@ -39,5 +40,10 @@ assert.match(migration, /is_dealer_admin/);
 assert.match(migration, /active and verification_status = 'verified'/);
 assert.match(migration, /grant select \(/i);
 assert.doesNotMatch(migration, /service_role.*policy/i);
+
+assert.equal(safeAdminReturnPath("/admin/dealers/pga?view=list"), "/admin/dealers/pga?view=list");
+assert.equal(safeAdminReturnPath("/admin/locations?q=PGA%20TOUR"), "/admin/locations?q=PGA%20TOUR");
+assert.equal(safeAdminReturnPath("https://example.com/admin/dealers/pga"), "/admin/locations");
+assert.equal(safeAdminReturnPath("//example.com/admin/dealers/pga"), "/admin/locations");
 
 console.log("Admin data checks passed: 71 preserved, 70 publishable, RLS migration present.");

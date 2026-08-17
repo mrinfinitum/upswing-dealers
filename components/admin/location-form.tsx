@@ -13,7 +13,7 @@ function FieldError({ error }: { error?: string }) {
   return error ? <span className="admin-field__error">{error}</span> : null;
 }
 
-export function LocationForm({ dealer, mapConfig }: { dealer?: Dealer; mapConfig: MapConfiguration }) {
+export function LocationForm({ dealer, mapConfig, cancelHref = "/admin/locations" }: { dealer?: Dealer; mapConfig: MapConfiguration; cancelHref?: string }) {
   const serverAction = dealer ? updateLocationAction.bind(null, dealer.id) : createLocationAction;
   async function geocodingAction(previousState: typeof initialAdminFormState, formData: FormData) {
     const addressChanged = !dealer || formAddressFingerprint(formData) !== dealerAddressFingerprint(dealer);
@@ -33,6 +33,7 @@ export function LocationForm({ dealer, mapConfig }: { dealer?: Dealer; mapConfig
 
   return (
     <form action={action} className="admin-location-form">
+      {dealer ? <input type="hidden" name="returnTo" value={cancelHref} /> : null}
       {state.message ? <p className="admin-form-error" role="alert">{state.message}</p> : null}
       <fieldset>
         <legend>Location identity</legend>
@@ -72,7 +73,7 @@ export function LocationForm({ dealer, mapConfig }: { dealer?: Dealer; mapConfig
           <div className="admin-field admin-field--wide"><label htmlFor="notes">Internal notes</label><textarea id="notes" name="notes" rows={4} defaultValue={dealer?.notes} /></div>
         </div>
       </fieldset>
-      <div className="admin-form-actions"><button className="admin-button admin-button--primary" disabled={pending} type="submit">{pending ? "Validating address…" : dealer ? "Save changes" : "Create location"}</button><Link className="admin-button" href="/admin/locations">Cancel</Link></div>
+      <div className="admin-form-actions"><button className="admin-button admin-button--primary" disabled={pending} type="submit">{pending ? "Validating address…" : dealer ? "Save changes" : "Create location"}</button><Link className="admin-button" href={cancelHref}>Cancel</Link></div>
     </form>
   );
 }
