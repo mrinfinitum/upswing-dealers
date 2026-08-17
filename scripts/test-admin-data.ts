@@ -39,6 +39,9 @@ const adminUserAction = readFileSync("app/admin/(protected)/users/actions.ts", "
 const adminUserDirectory = readFileSync("lib/admin/users.ts", "utf8");
 const adminLayout = readFileSync("app/admin/(protected)/layout.tsx", "utf8");
 const adminDashboard = readFileSync("app/admin/(protected)/page.tsx", "utf8");
+const adminAuth = readFileSync("lib/admin/auth.ts", "utf8");
+const adminBrandPage = readFileSync("app/admin/(protected)/brand/page.tsx", "utf8");
+const adminGalleryPage = readFileSync("app/admin/(protected)/gallery/page.tsx", "utf8");
 const adminDealerDirectory = readFileSync("app/admin/(protected)/dealers/page.tsx", "utf8");
 const adminDealerLocations = readFileSync("app/admin/(protected)/dealers/locations/page.tsx", "utf8");
 const adminBatchImport = readFileSync("app/admin/(protected)/locations/new/actions.ts", "utf8");
@@ -68,8 +71,16 @@ assert.match(adminLayout, /href="\/admin"/, "account menu links to the central a
 assert.match(adminLayout, /<nav aria-label="Admin navigation"/, "the protected admin layout includes primary navigation");
 assert.match(adminLayout, /href="\/admin\/dealers"/, "Dealers is available in primary admin navigation");
 assert.match(adminLayout, /href="\/admin\/users"/, "Users is available in primary admin navigation");
+assert.match(adminLayout, /href="\/admin\/brand"/, "Brand Portal is available in primary admin navigation");
+assert.match(adminLayout, /href="\/admin\/gallery"/, "Image Gallery is available in primary admin navigation");
 assert.match(adminLayout, /href="\/" target="_blank" rel="noreferrer">View locator/, "the public locator is available as an external admin navigation link");
 for (const href of ["/admin/dealers", "/admin/users"]) assert.match(adminDashboard, new RegExp(`href: "${href}"`), `${href} is available from the admin hub`);
+assert.match(adminAuth, /displayName:/, "the protected admin identity supplies a friendly display name");
+assert.match(adminDashboard, /Welcome, \{admin\.displayName\}/, "the admin hub welcomes the signed-in administrator");
+assert.match(adminDashboard, /href: "\/admin\/brand"/, "the reserved Brand Portal appears on the admin hub");
+assert.match(adminDashboard, /href: "\/admin\/gallery"/, "the reserved Image Gallery appears on the admin hub");
+assert.match(adminBrandPage, /Coming soon/, "the Brand Portal route has a reserved workspace state");
+assert.match(adminGalleryPage, /Coming soon/, "the Image Gallery route has a reserved workspace state");
 assert.doesNotMatch(adminDashboard, /admin\/requests/, "update requests are removed from the admin hub");
 assert.doesNotMatch(adminDashboard, /href: "\/admin\/locations"/, "raw locations are grouped behind Dealers in the admin hub");
 assert.match(adminDealerDirectory, /groupDealers\(dealers\)/, "the dealer directory groups current location records by retailer");

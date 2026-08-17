@@ -10,9 +10,15 @@ export async function getAdminIdentity() {
 
   if (error || claims?.app_metadata?.role !== "admin") return null;
 
+  const email = typeof claims.email === "string" ? claims.email : "Administrator";
+  const metadata = claims.user_metadata && typeof claims.user_metadata === "object" ? claims.user_metadata as Record<string, unknown> : {};
+  const metadataName = typeof metadata.display_name === "string" ? metadata.display_name.trim() : "";
+  const fallbackName = email.split("@")[0].split(/[._-]+/).filter(Boolean).map((part) => part[0]?.toUpperCase() + part.slice(1)).join(" ");
+
   return {
     id: claims.sub,
-    email: typeof claims.email === "string" ? claims.email : "Administrator",
+    email,
+    displayName: metadataName || fallbackName || "Administrator",
   };
 }
 
