@@ -147,6 +147,23 @@ button { color: inherit; }
 .admin-directory-heading nav a.is-active { background: #fff; box-shadow: 0 3px 10px rgb(31 45 68 / .1); color: #000; }
 .admin-dealer-directory-list { border-radius: 20px; box-shadow: 0 14px 38px rgb(31 45 68 / .06); }
 .admin-dealer-directory-list .admin-table td:first-child strong { font-size: 15px; }
+.admin-gallery-count { width: max-content; padding: 10px 15px; border: 1px solid #cfd8e4; border-radius: 999px; background: #fff; color: #5f6873; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.admin-gallery-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.admin-gallery-grid article { overflow: hidden; border: 1px solid #dce2e9; border-radius: 24px; background: #fff; box-shadow: 0 14px 38px rgb(31 45 68 / .07); }
+.admin-gallery-thumbnail { aspect-ratio: 4 / 3; overflow: hidden; background: linear-gradient(145deg, #e9edf2, #f7f9fb); }
+.admin-gallery-thumbnail img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s ease; }
+.admin-gallery-grid article:hover .admin-gallery-thumbnail img { transform: scale(1.025); }
+.admin-gallery-card__body { padding: 22px; }
+.admin-gallery-card__body > span { display: block; overflow: hidden; color: var(--blue); font-size: 9px; font-weight: 700; letter-spacing: .09em; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
+.admin-gallery-card__body h2 { min-height: 2.5em; margin: 10px 0 8px; overflow-wrap: anywhere; font-size: 19px; font-weight: 550; letter-spacing: -.025em; line-height: 1.25; }
+.admin-gallery-card__body p { margin: 0 0 20px; color: #717983; font-size: 11px; }
+.admin-gallery-card__body .admin-button { min-height: 40px; }
+.admin-gallery-setup { position: relative; isolation: isolate; min-height: 440px; display: flex; flex-direction: column; justify-content: center; overflow: hidden; padding: 54px; border: 1px solid #d9e2ef; border-radius: 30px; background: linear-gradient(135deg, #fff 0%, #f7faff 48%, #e8f2ff 100%); box-shadow: 0 22px 60px rgb(31 68 120 / .1); }
+.admin-gallery-setup::before { position: absolute; z-index: -1; top: -170px; right: -70px; width: 440px; height: 440px; border: 1px solid rgb(52 126 228 / .13); border-radius: 50%; box-shadow: 0 0 0 65px rgb(52 126 228 / .035), 0 0 0 130px rgb(52 126 228 / .025); content: ""; }
+.admin-gallery-setup > span { width: max-content; padding: 8px 12px; border-radius: 999px; background: #e8f2ff; color: var(--blue); font-size: 9px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
+.admin-gallery-setup h2 { max-width: 720px; margin: 24px 0 16px; font-size: clamp(43px, 6vw, 70px); font-weight: 500; letter-spacing: -.055em; line-height: .96; }
+.admin-gallery-setup p { max-width: 650px; margin: 0 0 9px; color: #626b76; line-height: 1.6; }
+.admin-gallery-setup .admin-button { width: max-content; margin-top: 24px; }
 .admin-account-card { display: grid; grid-template-columns: 90px repeat(3, minmax(0, 1fr)); align-items: center; gap: 26px; padding: 30px; border: 1px solid #d4d4d0; background: #fff; }
 .admin-account-card__icon { width: 74px; height: 74px; display: grid; place-items: center; border-radius: 50%; background: #000; color: #fff; }
 .admin-account-card__icon svg { width: 34px; height: 34px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.6; }
@@ -633,6 +650,7 @@ button { color: inherit; }
 @media (max-width: 1050px) {
   .admin-dealer-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .admin-dealer-search { grid-column: 1 / -1; }
+  .admin-gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .admin-dashboard-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
   .admin-dashboard-welcome { align-items: flex-start; flex-direction: column; }
   .admin-dashboard-welcome__actions { justify-content: flex-start; }
@@ -659,6 +677,8 @@ button { color: inherit; }
 @media (max-width: 760px) {
   .admin-dealer-controls { grid-template-columns: 1fr; }
   .admin-dealer-search { grid-column: auto; }
+  .admin-gallery-grid { grid-template-columns: 1fr; }
+  .admin-gallery-setup { min-height: 420px; padding: 36px 24px; border-radius: 24px; }
   .portal-content, .brand-portal { width: min(calc(100% - 28px), 1480px); }
   .portal-header { position: relative; grid-template-columns: 1fr auto; gap: 10px; padding: 14px 16px 0; }
   .portal-header nav { grid-column: 1 / -1; grid-row: 2; justify-content: start; overflow-x: auto; }
