@@ -35,6 +35,8 @@ assert.deepEqual(roundTrip.source, sample.source);
 assert.deepEqual(roundTrip.enrichmentSources, sample.enrichmentSources);
 
 const migration = readFileSync("supabase/migrations/202608150001_create_dealers.sql", "utf8");
+const adminUserAction = readFileSync("app/admin/(protected)/users/actions.ts", "utf8");
+const adminUserDirectory = readFileSync("lib/admin/users.ts", "utf8");
 assert.match(migration, /enable row level security/i);
 assert.match(migration, /is_dealer_admin/);
 assert.match(migration, /active and verification_status = 'verified'/);
@@ -45,5 +47,9 @@ assert.equal(safeAdminReturnPath("/admin/dealers/pga?view=list"), "/admin/dealer
 assert.equal(safeAdminReturnPath("/admin/locations?q=PGA%20TOUR"), "/admin/locations?q=PGA%20TOUR");
 assert.equal(safeAdminReturnPath("https://example.com/admin/dealers/pga"), "/admin/locations");
 assert.equal(safeAdminReturnPath("//example.com/admin/dealers/pga"), "/admin/locations");
+assert.match(adminUserAction, /await requireAdmin\(\)/, "admin invitations recheck authorization");
+assert.match(adminUserAction, /app_metadata:[\s\S]*role: "admin"/, "admin role is stored in protected metadata");
+assert.match(adminUserAction, /Existing roles are not changed automatically/, "existing roles cannot be silently promoted");
+assert.match(adminUserDirectory, /import "server-only"/, "master Auth directory is server-only");
 
 console.log("Admin data checks passed: 71 preserved, 70 publishable, RLS migration present.");

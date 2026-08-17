@@ -40,7 +40,7 @@ Current Phase 2 coordinate status: 70 approved coordinates, including 3 retailer
 
 ## Dealer administration
 
-The authenticated `/admin` area manages Supabase dealer records without changing the approved public locator UI. Apply the migration and import, then provision an admin-role Supabase Auth user by following `docs/supabase-admin.md`.
+The authenticated `/admin` area manages Supabase dealer records without changing the approved public locator UI. It also includes a master user directory and secure administrator invitations at `/admin/users`. Apply the migration and import, then provision the first admin-role Supabase Auth user by following `docs/supabase-admin.md`.
 
 ## Dealer partner portal
 
