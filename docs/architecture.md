@@ -21,6 +21,8 @@ Every normalized record carries workbook, sheet, row, and raw values. The Supaba
 
 The deterministic import upserts all 71 preserved records by stable ID, including Preston as non-public. Admin edits retain imported provenance and evidence; admin-created records receive explicit `Admin` provenance rather than fabricated workbook attribution.
 
+`/partner` is a separate no-index dealer surface. A protected `dealer` role is connected to one or more `dealer_organizations` through memberships. Every membership has an explicit page-permission array; organizations own their allowed location set. Dealers never receive direct access to the full `dealers` row. `get_dealer_portal_locations()` returns only approved operational fields after checking the signed user and active membership. Location edits enter an approval queue rather than mutating verified public records or coordinates directly.
+
 The typed model supports addresses, coordinates, contact fields, category, active status, notes, verification status, and enrichment evidence. Only source-supported fields are populated.
 
 ## Search and geolocation
@@ -40,7 +42,7 @@ The typed model supports addresses, coordinates, contact fields, category, activ
 - Production canonical hostname is `https://dealers.upswinggolf.com`; `NEXT_PUBLIC_SITE_URL` should match it in every deployed environment.
 - Google Maps billing alerts, quotas, restricted production key, and map style ID.
 - Who owns human review of enrichment proposals and ongoing retailer changes.
-- Applying the Supabase migration/import and provisioning the first admin-role user.
+- Applying the Supabase migrations/import, provisioning the first admin-role user, and inviting the initial PGA TOUR Superstore dealer contact.
 - Public terms and privacy URLs required for Google Maps production use.
 - Whether dealer detail links should eventually point to UpSwing SEO pages, dealer sites, or both.
 

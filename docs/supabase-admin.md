@@ -12,7 +12,7 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 ```
 
-The project URL and publishable key may be used by browser code because Row Level Security controls access. `SUPABASE_SERVICE_ROLE_KEY` bypasses RLS and must remain server-only. This application only uses it in the manually invoked import script; it is never imported by the Next.js runtime.
+The project URL and publishable key may be used by browser code because Row Level Security controls access. `SUPABASE_SERVICE_ROLE_KEY` bypasses RLS and must remain server-only. It is used by the manually invoked import script and the authenticated admin-only dealer invitation action. It is imported only by a `server-only` module and must never be exposed to client components.
 
 ## One-time database setup
 
@@ -35,12 +35,15 @@ The project URL and publishable key may be used by browser code because Row Leve
    ```
 
 5. Have the administrator sign out and back in so the refreshed JWT contains the role.
+6. Apply `supabase/migrations/202608170001_create_dealer_portal.sql` to add dealer organizations, memberships, page permissions, update requests, and the safe portal location function.
+7. In Supabase Auth URL Configuration, allow `https://dealers.upswinggolf.com/partner/reset-password` as an additional redirect URL. Add the localhost equivalent only to the development project when local invitation testing is required.
 
 ## Access model
 
 - Anonymous clients may select only active, verified records and only the explicitly granted public columns; provenance, evidence, and internal notes remain inaccessible.
-- Authenticated users without `app_metadata.role = "admin"` receive no dealer-table access.
+- Authenticated users without an authorized protected role receive no direct dealer-table access.
 - Administrators can read, insert, update, and delete through RLS-protected requests.
+- Dealer users carry protected `app_metadata.role = "dealer"`. They can read their own active profile, organization memberships, and page permissions. A security-definer function returns only the safe location columns for assigned organizations; internal notes, provenance, and evidence remain inaccessible.
 - Proxy route protection improves navigation behavior, but every Server Action independently validates signed JWT claims before mutating data.
 - The admin has no public sign-up route and admin pages are `noindex`.
 

@@ -24,6 +24,10 @@ export async function updateSession(request: NextRequest) {
   const isPasswordRecovery = pathname === "/admin/reset-password";
   const isAdminRoute = pathname === "/admin" || pathname.startsWith("/admin/");
   const isAdmin = data?.claims?.app_metadata?.role === "admin";
+  const isPartnerLogin = pathname === "/partner/login";
+  const isPartnerRecovery = pathname === "/partner/reset-password";
+  const isPartnerRoute = pathname === "/partner" || pathname.startsWith("/partner/");
+  const isDealer = data?.claims?.app_metadata?.role === "dealer";
 
   if (isAdminRoute && !isLogin && !isPasswordRecovery && !isAdmin) {
     const loginUrl = request.nextUrl.clone();
@@ -37,6 +41,20 @@ export async function updateSession(request: NextRequest) {
     locationsUrl.pathname = "/admin/locations";
     locationsUrl.search = "";
     return NextResponse.redirect(locationsUrl);
+  }
+
+  if (isPartnerRoute && !isPartnerLogin && !isPartnerRecovery && !isDealer) {
+    const loginUrl = request.nextUrl.clone();
+    loginUrl.pathname = "/partner/login";
+    loginUrl.search = "";
+    return NextResponse.redirect(loginUrl);
+  }
+
+  if (isPartnerLogin && isDealer) {
+    const portalUrl = request.nextUrl.clone();
+    portalUrl.pathname = "/partner";
+    portalUrl.search = "";
+    return NextResponse.redirect(portalUrl);
   }
 
   return response;

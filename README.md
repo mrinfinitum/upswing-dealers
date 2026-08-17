@@ -41,3 +41,7 @@ Current Phase 2 coordinate status: 70 approved coordinates, including 3 retailer
 ## Dealer administration
 
 The authenticated `/admin` area manages Supabase dealer records without changing the approved public locator UI. Apply the migration and import, then provision an admin-role Supabase Auth user by following `docs/supabase-admin.md`.
+
+## Dealer partner portal
+
+The no-index `/partner` area gives limited `dealer` users access only to assigned organizations and explicitly enabled pages. Phase 1 of the portal includes an overview, assigned-location review and change requests, plus an UpSwing brand standards/download page. Administrators manage invitations, organization memberships, and page permissions at `/admin/dealers`; submitted location changes are reviewed at `/admin/requests`. See `docs/dealer-portal.md`.
