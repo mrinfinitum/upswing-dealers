@@ -21,6 +21,7 @@ export default async function DealerPortalDashboard({ searchParams }: { searchPa
         <section className="portal-dashboard-grid" aria-label="Portal sections">
           {canViewLocations ? <Link href="/partner/locations" className="portal-dashboard-card portal-dashboard-card--blue"><span>01 / Locations</span><h2>Keep every store easy to find.</h2><p>Review the storefront details currently published for your assigned locations.</p><strong>View locations →</strong></Link> : null}
           {identity.permissions.includes("brand") ? <Link href="/partner/brand" className="portal-dashboard-card portal-dashboard-card--dark"><span>02 / Brand</span><h2>One brand. Every touchpoint.</h2><p>Find approved logos, colors, usage guidance, and ready-to-use assets.</p><strong>Open brand resources →</strong></Link> : null}
+          <Link href="/image-gallery" className="portal-dashboard-card portal-dashboard-card--blue"><span>03 / Image gallery</span><h2>Approved imagery. Ready when you are.</h2><p>Browse and download current UpSwing product and marketing images.</p><strong>Open image gallery →</strong></Link>
         </section>
       </div>
     </div>

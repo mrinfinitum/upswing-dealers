@@ -1,38 +1,41 @@
 import "server-only";
 
 export class DropboxConfigurationError extends Error {
-  constructor(message: string) {
+  constructor(message = "Dropbox server configuration is incomplete.") {
     super(message);
     this.name = "DropboxConfigurationError";
   }
 }
 
-export type DropboxConfig = {
-  appKey?: string;
-  appSecret?: string;
-  refreshToken?: string;
-  accessToken?: string;
-  galleryFolder: string;
-};
-
-function normalizeFolder(folder: string | undefined) {
-  const trimmed = folder?.trim();
-  if (!trimmed || trimmed === "/") return "";
-  return `/${trimmed.replace(/^\/+|\/+$/g, "")}`;
+function required(name: "DROPBOX_APP_KEY" | "DROPBOX_APP_SECRET" | "DROPBOX_REDIRECT_URI" | "DROPBOX_REFRESH_TOKEN") {
+  const value = process.env[name]?.trim();
+  if (!value) throw new DropboxConfigurationError(`Required Dropbox setting ${name} is missing.`);
+  return value;
 }
 
-export function getDropboxConfig(): DropboxConfig {
-  const config = {
-    appKey: process.env.DROPBOX_APP_KEY?.trim(),
-    appSecret: process.env.DROPBOX_APP_SECRET?.trim(),
-    refreshToken: process.env.DROPBOX_REFRESH_TOKEN?.trim(),
-    accessToken: process.env.DROPBOX_ACCESS_TOKEN?.trim(),
-    galleryFolder: normalizeFolder(process.env.DROPBOX_GALLERY_FOLDER),
+export function getDropboxOAuthConfig() {
+  return {
+    appKey: required("DROPBOX_APP_KEY"),
+    appSecret: required("DROPBOX_APP_SECRET"),
+    redirectUri: required("DROPBOX_REDIRECT_URI"),
   };
+}
 
-  if (!config.accessToken && !(config.appKey && config.appSecret && config.refreshToken)) {
-    throw new DropboxConfigurationError("Dropbox is not connected yet. Add the server-only Dropbox environment variables to load the gallery.");
-  }
+export function getDropboxServerConfig() {
+  return {
+    ...getDropboxOAuthConfig(),
+    refreshToken: required("DROPBOX_REFRESH_TOKEN"),
+    galleryPath: normalizeGalleryPath(process.env.DROPBOX_GALLERY_PATH),
+  };
+}
 
-  return config;
+export function normalizeGalleryPath(value: string | undefined) {
+  const path = value?.trim();
+  if (!path || path === "/") return "";
+  if (path.includes("\0")) throw new DropboxConfigurationError("DROPBOX_GALLERY_PATH is invalid.");
+  return `/${path.replace(/^\/+|\/+$/g, "")}`;
+}
+
+export function isDropboxBootstrapEnabled() {
+  return process.env.DROPBOX_OAUTH_BOOTSTRAP_ENABLED === "true" && !process.env.DROPBOX_REFRESH_TOKEN?.trim();
 }

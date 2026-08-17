@@ -4,7 +4,7 @@ import { requireAdmin } from "@/lib/admin/auth";
 const administrationLinks = [
   { href: "/admin/dealers", eyebrow: "Dealer network", title: "Dealers", description: "Choose a retailer, then manage only that dealer’s locations." },
   { href: "/admin/users", eyebrow: "Access control", title: "Users", description: "Manage user accounts, groups, dealer access, and page permissions." },
-  { href: "/admin/gallery", eyebrow: "Media library", title: "Image gallery", description: "Browse and download approved imagery from the connected Dropbox library." },
+  { href: "/image-gallery", eyebrow: "Media library", title: "Image gallery", description: "Browse and download approved imagery from the connected Dropbox library." },
 ];
 
 const reservedSections = [

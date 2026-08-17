@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "test": "npm run test:dropbox && npm run test:admin && npm run test:portal && npm run test:phase2",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -16,6 +17,7 @@
     "test:phase2": "tsx scripts/test-phase2.ts",
     "test:admin": "tsx scripts/test-admin-data.ts",
     "test:portal": "tsx scripts/test-dealer-portal.ts",
+    "test:dropbox": "tsx scripts/test-dropbox.ts",
     "supabase:import": "tsx --env-file=.env.local scripts/import-dealers-to-supabase.ts"
   },
   "dependencies": {

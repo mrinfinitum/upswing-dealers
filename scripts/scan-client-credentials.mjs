@@ -5,6 +5,8 @@ const root = process.cwd();
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 const mapId = process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID;
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const dropboxAppSecret = process.env.DROPBOX_APP_SECRET;
+const dropboxRefreshToken = process.env.DROPBOX_REFRESH_TOKEN;
 const textExtensions = new Set([".js", ".mjs", ".cjs", ".ts", ".tsx", ".json", ".md", ".css", ".html", ".txt", ".map", ".rsc", ".segment", ".meta", ".body"]);
 const excludedDirectories = new Set([".git", ".next", "node_modules"]);
 const restrictedPatterns = [
@@ -12,6 +14,7 @@ const restrictedPatterns = [
   /SUPABASE_SERVICE_ROLE_KEY\s*[:=]\s*["'][^"']+/,
   /GOOGLE_APPLICATION_CREDENTIALS\s*[:=]\s*["'][^"']+/,
   /sk_live_[0-9A-Za-z]+/,
+  /DROPBOX_(?:APP_SECRET|REFRESH_TOKEN)\s*[:=]\s*["'][^"']+/,
 ];
 
 async function filesUnder(directory, exclusions = excludedDirectories) {
@@ -48,6 +51,10 @@ const clientKeyMatches = await countExactValue(clientDeliverables, apiKey);
 const clientMapIdMatches = await countExactValue(clientDeliverables, mapId);
 const sourceServiceRoleValueMatches = await countExactValue(sourceFiles, supabaseServiceRoleKey);
 const clientServiceRoleValueMatches = await countExactValue(clientDeliverables, supabaseServiceRoleKey);
+const sourceDropboxSecretMatches = await countExactValue(sourceFiles, dropboxAppSecret);
+const clientDropboxSecretMatches = await countExactValue(clientDeliverables, dropboxAppSecret);
+const sourceDropboxRefreshTokenMatches = await countExactValue(sourceFiles, dropboxRefreshToken);
+const clientDropboxRefreshTokenMatches = await countExactValue(clientDeliverables, dropboxRefreshToken);
 const restrictedClientMatches = [];
 
 for (const file of clientDeliverables) {
@@ -63,6 +70,10 @@ if (sourceKeyMatches) failures.push("The configured browser key is hard-coded ou
 if (sourceMapIdMatches) failures.push("The configured Map ID is hard-coded outside the ignored environment file.");
 if (sourceServiceRoleValueMatches) failures.push("The configured Supabase service-role value is hard-coded outside the ignored environment file.");
 if (clientServiceRoleValueMatches) failures.push("The configured Supabase service-role value was found in a client deliverable.");
+if (sourceDropboxSecretMatches) failures.push("The configured Dropbox App Secret is hard-coded outside the ignored environment file.");
+if (clientDropboxSecretMatches) failures.push("The configured Dropbox App Secret was found in a client deliverable.");
+if (sourceDropboxRefreshTokenMatches) failures.push("The configured Dropbox refresh token is hard-coded outside the ignored environment file.");
+if (clientDropboxRefreshTokenMatches) failures.push("The configured Dropbox refresh token was found in a client deliverable.");
 if (restrictedClientMatches.length) failures.push("A server-only credential pattern was found in the client build.");
 
 console.log(JSON.stringify({
@@ -73,6 +84,10 @@ console.log(JSON.stringify({
   clientFilesContainingExpectedPublicMapId: clientMapIdMatches,
   sourceFilesContainingSupabaseServiceRoleValue: sourceServiceRoleValueMatches,
   clientFilesContainingSupabaseServiceRoleValue: clientServiceRoleValueMatches,
+  sourceFilesContainingDropboxAppSecretValue: sourceDropboxSecretMatches,
+  clientFilesContainingDropboxAppSecretValue: clientDropboxSecretMatches,
+  sourceFilesContainingDropboxRefreshTokenValue: sourceDropboxRefreshTokenMatches,
+  clientFilesContainingDropboxRefreshTokenValue: clientDropboxRefreshTokenMatches,
   clientFilesContainingServerSecretPatterns: restrictedClientMatches.length,
   failures,
 }, null, 2));

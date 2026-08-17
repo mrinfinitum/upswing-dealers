@@ -1,38 +1,61 @@
 # Dropbox image gallery
 
-The protected admin image gallery reads supported image files recursively from one Dropbox folder. Dropbox credentials remain server-only; the browser receives thumbnails and downloads through authenticated application routes.
+`/image-gallery` is a protected, read-only media library for authenticated UpSwing administrators and active dealer users. Dropbox remains the image source of truth. Supabase continues to provide application authentication and role enforcement; Dropbox credentials and image binaries are not stored in Supabase.
 
-## Create the Dropbox app
+## Dropbox app configuration
 
-1. Create a scoped Dropbox API app in the Dropbox App Console.
-2. Prefer **App folder** access and place the gallery inside that app folder. Select **Full Dropbox** only when the gallery must read a pre-existing folder elsewhere in the account.
-3. Enable only `files.metadata.read` and `files.content.read`.
-4. In the OAuth authorization request, include `token_access_type=offline` so Dropbox returns a refresh token.
-5. Exchange the authorization code once and store the resulting refresh token as a secret. Do not commit it.
+Create a scoped Dropbox API app. Prefer **App folder** access when the gallery can live inside the app namespace. Use **Full Dropbox** only if the app must read a pre-existing folder elsewhere in the account.
 
-Dropbox's server-side authorization URL can be created from this pattern:
+Enable exactly these read scopes:
+
+- `account_info.read`
+- `files.metadata.read`
+- `files.content.read`
+
+Register this exact production redirect URI in the Dropbox App Console:
 
 ```text
-https://www.dropbox.com/oauth2/authorize?client_id=YOUR_APP_KEY&response_type=code&token_access_type=offline
+https://dealers.upswinggolf.com/api/dropbox/callback
 ```
-
-Exchange the returned authorization code at `https://api.dropboxapi.com/oauth2/token` using the app key and secret, `grant_type=authorization_code`, and the code. The refresh token is returned only when offline access was requested.
 
 ## Environment variables
 
-Add these to `.env.local` and to the corresponding Vercel environments:
+Add these server-only settings to the relevant Vercel environments and `.env.local` when testing locally:
 
 ```text
 DROPBOX_APP_KEY=
 DROPBOX_APP_SECRET=
+DROPBOX_REDIRECT_URI=https://dealers.upswinggolf.com/api/dropbox/callback
 DROPBOX_REFRESH_TOKEN=
-DROPBOX_GALLERY_FOLDER=/Image Gallery
+DROPBOX_GALLERY_PATH=
+DROPBOX_OAUTH_BOOTSTRAP_ENABLED=false
 ```
 
-`DROPBOX_GALLERY_FOLDER` is relative to the app namespace. Use an empty value for its root. A short-lived `DROPBOX_ACCESS_TOKEN` can be used for local testing instead of the three OAuth values, but is not recommended for production.
+Never prefix a Dropbox setting with `NEXT_PUBLIC_`. `DROPBOX_GALLERY_PATH` is relative to the Dropbox app namespace. Leave it empty to recursively use the root of an App Folder; otherwise use a normalized Dropbox path such as `/Approved Images`. No personal folder name is hard-coded.
 
-After changing local variables, restart the Next.js development server. The gallery is available to authenticated UpSwing administrators at `/admin/gallery`.
+## One-time OAuth bootstrap
 
-## Supported images
+1. Temporarily set `DROPBOX_OAUTH_BOOTSTRAP_ENABLED=true` in Vercel and redeploy.
+2. Sign in as an UpSwing administrator.
+3. Open `https://dealers.upswinggolf.com/api/dropbox/connect`.
+4. Approve the read-only Dropbox scopes.
+5. The callback validates a short-lived, secure, HTTP-only OAuth state cookie and exchanges the code server-side.
+6. The callback returns a one-time `text/plain` response containing `DROPBOX_REFRESH_TOKEN=...`. Copy that line into Vercel. The response has no script, is not HTML, and is marked `no-store` and `no-referrer`.
+7. Remove `DROPBOX_OAUTH_BOOTSTRAP_ENABLED` or set it to `false`, then redeploy.
+8. Close the callback tab. Do not paste the token into source control, logs, chat, screenshots, or client-side settings.
 
-The Dropbox thumbnail API currently supports BMP, GIF, JPEG, PNG, PPM, TIFF, and WebP. Other files remain untouched in Dropbox but are not shown in this image gallery.
+Bootstrap routes fail closed unless the signed-in user is an administrator, the explicit bootstrap flag is enabled, and no refresh token is currently configured. Once `DROPBOX_REFRESH_TOKEN` exists, normal gallery requests automatically exchange it for short-lived access tokens and the bootstrap routes return disabled.
+
+## Gallery behavior
+
+- Dropbox metadata is listed recursively and paginated through `files/list_folder` and `files/list_folder/continue`.
+- Only `.jpg`, `.jpeg`, `.png`, `.webp`, and `.gif` files are shown.
+- Hidden files/folders, `.DS_Store`, `Thumbs.db`, and non-image files are ignored.
+- Images are sorted newest first using Dropbox server/client modification metadata, then by filename.
+- Metadata is cached in server memory for 10 minutes per application instance.
+- The grid uses `files/get_thumbnail_v2`; it does not preload full-resolution originals.
+- The viewer and download action use `files/download` only when requested.
+- Browser routes receive signed opaque image IDs. A valid ID resolves only to a Dropbox file ID returned by the configured gallery listing; arbitrary paths cannot be supplied.
+- Thumbnail and original responses use private browser caching. Explicit downloads are `no-store` and retain the Dropbox filename.
+
+The integration implements no upload, delete, move, rename, share, or other Dropbox write operation.

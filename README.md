@@ -40,7 +40,7 @@ Current Phase 2 coordinate status: 70 approved coordinates, including 3 retailer
 
 ## Dealer administration
 
-The protected admin image gallery can read approved images recursively from a dedicated Dropbox folder, render authenticated thumbnails, and provide original-file downloads. Configuration and least-privilege Dropbox app setup are documented in [`docs/dropbox-gallery.md`](docs/dropbox-gallery.md).
+The protected `/image-gallery` is available to administrators and all active dealer users. It reads approved images recursively from a dedicated Dropbox folder, renders authenticated thumbnails, and provides original-file downloads. Configuration, one-time OAuth bootstrap, and least-privilege Dropbox app setup are documented in [`docs/dropbox-gallery.md`](docs/dropbox-gallery.md).
 
 The authenticated `/admin` hub manages Supabase dealer records without changing the approved public locator UI. Its primary navigation links to Dealers, Users, and the public locator, while the account menu provides profile and session controls. Dealers opens a retailer-level directory and scopes the next screen to that dealer’s locations. At `/admin/users`, administrators can search and filter all accounts, directly create UpSwing administrators and dealer users, delete accounts, and assign dealer organizations and portal-page permissions. Apply the migrations and import, then provision the first admin-role Supabase Auth user by following `docs/supabase-admin.md`.
 
@@ -48,4 +48,4 @@ The Add Dealer workflow supports a single location or an all-or-nothing batch up
 
 ## Dealer partner portal
 
-The no-index `/partner` area gives limited `dealer` users read-only access to assigned locations and explicitly enabled pages, plus an UpSwing brand standards/download page. Administrators manage accounts, memberships, and page permissions in `/admin/users`. See `docs/dealer-portal.md`.
+The no-index `/partner` area gives limited `dealer` users read-only access to assigned locations and explicitly enabled pages, plus the shared read-only `/image-gallery`. Administrators manage accounts, memberships, and page permissions in `/admin/users`. See `docs/dealer-portal.md`.
