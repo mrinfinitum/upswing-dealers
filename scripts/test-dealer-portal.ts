@@ -9,6 +9,9 @@ const proxy = read("lib/supabase/proxy.ts");
 const serviceClient = read("lib/supabase/admin.ts");
 const portalAuth = read("lib/portal/auth.ts");
 const brandPage = read("app/partner/(protected)/brand/page.tsx");
+const dealerLocationsPage = read("app/partner/(protected)/locations/page.tsx");
+const adminDealerPage = read("app/admin/(protected)/dealers/[id]/page.tsx");
+const viewToggle = read("components/layout/location-view-toggle.tsx");
 
 assert.match(migration, /role text not null default 'dealer'/, "dealer role is stored explicitly");
 assert.match(migration, /page_permissions text\[\]/, "memberships contain page permissions");
@@ -24,5 +27,8 @@ assert.doesNotMatch(serviceClient, /NEXT_PUBLIC_SUPABASE_SERVICE/, "service role
 assert.match(brandPage, /Approved downloads/, "brand portal includes approved downloads");
 assert.match(brandPage, /Logo standards/, "brand portal includes logo standards");
 assert.match(brandPage, /Written style/, "brand portal includes voice guidance");
+assert.match(dealerLocationsPage, /view === "list"/, "dealer locations support list view");
+assert.match(adminDealerPage, /view === "list"/, "admin dealer locations support list view");
+assert.match(viewToggle, /aria-current/, "location view control exposes its current state accessibly");
 
 console.log("Dealer portal authorization and brand-surface checks passed.");
