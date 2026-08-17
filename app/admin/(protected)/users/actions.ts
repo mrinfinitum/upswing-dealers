@@ -4,7 +4,6 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin/auth";
 import type { AdminUserFormState } from "@/lib/admin/user-form-state";
 import { listAuthUsers } from "@/lib/admin/users";
-import { canonicalSiteUrl } from "@/lib/site";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { portalPageKeys, type PortalPageKey } from "@/types/portal";
 
@@ -20,14 +19,13 @@ export async function addUserAction(_: AdminUserFormState, formData: FormData): 
   const email = text(formData, "email").toLowerCase();
   const displayName = text(formData, "displayName");
   const role = text(formData, "role");
-  const setupMode = text(formData, "setupMode") === "direct" ? "direct" : "invite";
   const password = text(formData, "password");
   const organizationId = text(formData, "organizationId");
   const pagePermissions = permissions(formData);
 
   if (!emailPattern.test(email)) return { message: "Enter a valid email address." };
   if (role !== "admin" && role !== "dealer") return { message: "Choose an account group." };
-  if (setupMode === "direct" && password.length < 12) return { message: "Directly created users require a temporary password of at least 12 characters." };
+  if (password.length < 12) return { message: "Enter a temporary password of at least 12 characters." };
   if (role === "dealer" && !organizationId) return { message: "Choose a dealer organization." };
   if (role === "dealer" && !pagePermissions.length) return { message: "Enable at least one dealer portal page." };
 
@@ -39,45 +37,17 @@ export async function addUserAction(_: AdminUserFormState, formData: FormData): 
     }
 
     const existingUsers = await listAuthUsers();
-    let user = existingUsers.find((candidate) => candidate.email?.toLowerCase() === email);
-    let invited = false;
-    let createdDirectly = false;
+    if (existingUsers.some((candidate) => candidate.email?.toLowerCase() === email)) return { message: "An account with this email already exists. Existing roles are not changed automatically." };
 
-    if (setupMode === "direct" && user) return { message: "An account with this email already exists." };
-    if (user?.app_metadata?.role === "admin") {
-      return { message: role === "admin" ? "This account is already an administrator." : "Administrator accounts cannot be converted to dealer accounts." };
-    }
-    if (role === "admin" && user) {
-      return { message: "An account with this email already exists. Existing roles are not changed automatically." };
-    }
-    if (!user) {
-      if (setupMode === "direct") {
-        const { data, error } = await supabase.auth.admin.createUser({
-          email,
-          password,
-          email_confirm: true,
-          app_metadata: { role },
-          user_metadata: { display_name: displayName },
-        });
-        if (error || !data.user) return { message: error?.message || "The user account could not be created." };
-        user = data.user;
-        createdDirectly = true;
-      } else {
-        const { data, error } = await supabase.auth.admin.inviteUserByEmail(email, {
-          data: { display_name: displayName },
-          redirectTo: `${canonicalSiteUrl}/${role === "admin" ? "admin" : "partner"}/reset-password`,
-        });
-        if (error || !data.user) return { message: error?.message || "The user invitation could not be sent." };
-        user = data.user;
-        invited = true;
-      }
-    }
-
-    const { error: roleError } = await supabase.auth.admin.updateUserById(user.id, {
-      app_metadata: { ...user.app_metadata, role },
-      user_metadata: { ...user.user_metadata, display_name: displayName || user.user_metadata?.display_name },
+    const { data, error: createError } = await supabase.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+      app_metadata: { role },
+      user_metadata: { display_name: displayName },
     });
-    if (roleError) return { message: "The account was created, but its group could not be assigned. Review the account in Supabase before it signs in." };
+    if (createError || !data.user) return { message: createError?.message || "The user account could not be created." };
+    const user = data.user;
 
     if (role === "dealer") {
       const { error: profileError } = await supabase.from("dealer_portal_users").upsert({
@@ -87,7 +57,10 @@ export async function addUserAction(_: AdminUserFormState, formData: FormData): 
         role: "dealer",
         active: true,
       });
-      if (profileError) return { message: "The account was created, but its dealer portal profile could not be saved." };
+      if (profileError) {
+        await supabase.auth.admin.deleteUser(user.id);
+        return { message: "The dealer profile could not be saved, so the new account was rolled back." };
+      }
 
       const { error: membershipError } = await supabase.from("dealer_memberships").upsert({
         user_id: user.id,
@@ -95,14 +68,16 @@ export async function addUserAction(_: AdminUserFormState, formData: FormData): 
         page_permissions: pagePermissions,
         active: true,
       });
-      if (membershipError) return { message: "The account was created, but its dealer organization permissions could not be saved." };
+      if (membershipError) {
+        await supabase.auth.admin.deleteUser(user.id);
+        return { message: "Dealer permissions could not be saved, so the new account was rolled back." };
+      }
       revalidatePath("/admin/dealers");
     }
 
     revalidatePath("/admin/users");
     const groupLabel = role === "admin" ? "administrator" : "dealer";
-    if (createdDirectly) return { success: true, message: `${groupLabel[0].toUpperCase()}${groupLabel.slice(1)} account created for ${email}.` };
-    return { success: true, message: invited ? `${groupLabel[0].toUpperCase()}${groupLabel.slice(1)} invitation sent to ${email}.` : `${email} was assigned to the dealer portal.` };
+    return { success: true, message: `${groupLabel[0].toUpperCase()}${groupLabel.slice(1)} account created for ${email}.` };
   } catch {
     return { message: "User administration requires the server-only Supabase service role configuration." };
   }

@@ -14,22 +14,19 @@ const pages: { key: PortalPageKey; label: string; description: string }[] = [
 export function AddUserForm({ organizations }: { organizations: { id: string; name: string }[] }) {
   const [state, action, pending] = useActionState(addUserAction, initialAdminUserFormState);
   const [role, setRole] = useState<"admin" | "dealer">("dealer");
-  const [setupMode, setSetupMode] = useState<"invite" | "direct">("invite");
 
   return (
-    <form action={action} className="admin-user-invite-form">
+    <form action={action} className="admin-user-create-form">
       <div className="admin-form-grid">
         <div className="admin-field"><label htmlFor="userDisplayName">Name</label><input id="userDisplayName" name="displayName" autoComplete="name" /></div>
         <div className="admin-field"><label htmlFor="userEmail">Email</label><input id="userEmail" name="email" type="email" autoComplete="email" required /></div>
         <div className="admin-field"><label htmlFor="userRole">User group</label><select id="userRole" name="role" value={role} onChange={(event) => setRole(event.target.value as "admin" | "dealer")}><option value="dealer">Dealer</option><option value="admin">UpSwing administrator</option></select></div>
-        <div className="admin-field"><label htmlFor="userSetupMode">Account setup</label><select id="userSetupMode" name="setupMode" value={setupMode} onChange={(event) => setSetupMode(event.target.value as "invite" | "direct")}><option value="invite">Send email invitation</option><option value="direct">Create account directly</option></select></div>
-        {setupMode === "direct" ? <div className="admin-field admin-field--wide"><label htmlFor="userPassword">Temporary password</label><input id="userPassword" name="password" type="password" minLength={12} autoComplete="new-password" required /><small className="admin-field-help">At least 12 characters. Share it securely and ask the user to change it after signing in.</small></div> : null}
+        <div className="admin-field admin-field--wide"><label htmlFor="userPassword">Temporary password</label><input id="userPassword" name="password" type="password" minLength={12} autoComplete="new-password" required /><small className="admin-field-help">At least 12 characters</small></div>
         {role === "dealer" ? <div className="admin-field admin-field--wide"><label htmlFor="userOrganization">Dealer organization</label><select id="userOrganization" name="organizationId" required><option value="">Choose organization</option>{organizations.map((organization) => <option value={organization.id} key={organization.id}>{organization.name}</option>)}</select></div> : null}
       </div>
       {role === "dealer" ? <fieldset className="admin-permissions"><legend>Page permissions</legend>{pages.map((page) => <label key={page.key}><input type="checkbox" name={`permission-${page.key}`} defaultChecked /><span><strong>{page.label}</strong><small>{page.description}</small></span></label>)}</fieldset> : <p className="admin-form-help">UpSwing administrators receive full access to dealers, locations, users, and account permissions.</p>}
-      <p className="admin-form-help">{setupMode === "invite" ? "The user will receive a secure email invitation to create a password." : "The account will be active immediately without sending an invitation."} Account groups are stored in protected metadata.</p>
       {state.message ? <p className={state.success ? "admin-notice" : "admin-form-error"} role="status">{state.message}</p> : null}
-      <button className="admin-button admin-button--primary" disabled={pending} type="submit">{pending ? "Saving user…" : setupMode === "invite" ? "Invite user" : "Create user"}</button>
+      <button className="admin-button admin-button--primary admin-add-button" disabled={pending} type="submit">{pending ? "Creating…" : <>Add user <span aria-hidden="true">＋</span></>}</button>
     </form>
   );
 }

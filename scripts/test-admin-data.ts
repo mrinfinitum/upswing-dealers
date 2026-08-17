@@ -57,6 +57,7 @@ assert.match(adminUserAction, /app_metadata:[\s\S]*role },/, "account group is s
 assert.match(adminUserAction, /Existing roles are not changed automatically/, "existing roles cannot be silently promoted");
 assert.match(adminUserAction, /page_permissions: pagePermissions/, "dealer page permissions are assigned with membership");
 assert.match(adminUserAction, /auth\.admin\.createUser/, "admins can create users without invitations");
+assert.doesNotMatch(adminUserAction, /inviteUserByEmail/, "the retired invitation workflow is not used");
 assert.match(adminUserAction, /auth\.admin\.deleteUser/, "admins can delete users");
 assert.match(adminUserAction, /userId === currentAdmin\.id/, "admins cannot delete their current account");
 assert.match(adminUserDirectory, /import "server-only"/, "master Auth directory is server-only");
@@ -65,6 +66,7 @@ assert.match(adminLayout, /href="\/admin"/, "account menu links to the central a
 assert.match(adminLayout, /<nav aria-label="Admin navigation"/, "the protected admin layout includes primary navigation");
 assert.match(adminLayout, /href="\/admin\/dealers"/, "Dealers is available in primary admin navigation");
 assert.match(adminLayout, /href="\/admin\/users"/, "Users is available in primary admin navigation");
+assert.match(adminLayout, /href="\/" target="_blank" rel="noreferrer">View locator/, "the public locator is available as an external admin navigation link");
 for (const href of ["/admin/dealers", "/admin/users"]) assert.match(adminDashboard, new RegExp(`href: "${href}"`), `${href} is available from the admin hub`);
 assert.doesNotMatch(adminDashboard, /admin\/requests/, "update requests are removed from the admin hub");
 assert.doesNotMatch(adminDashboard, /href: "\/admin\/locations"/, "raw locations are grouped behind Dealers in the admin hub");

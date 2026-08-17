@@ -8,7 +8,7 @@ The dealer portal is part of the locator application because it shares the same 
 - `/partner` — permitted organization overview
 - `/partner/locations` — safe assigned-location fields
 - `/partner/brand` — UpSwing standards and approved downloads
-- `/admin/users` — combined user directory, dealer invitations, organization assignment, and page permissions
+- `/admin/users` — combined user directory, direct account creation, organization assignment, and page permissions
 
 All portal and admin routes are `noindex` and protected by Supabase cookie sessions. Proxy redirects improve navigation, but each protected layout and every mutation independently validates authorization.
 
@@ -28,7 +28,7 @@ The portal migration seeds `PGA TOUR Superstore` as the first organization and a
 2. Add `https://dealers.upswinggolf.com/partner/reset-password` to the Supabase Auth redirect allowlist.
 3. Sign in as an UpSwing administrator and open `/admin/users` to create or manage dealer accounts.
 4. Enter the PGA TOUR Superstore contact, select the organization, and choose permitted pages.
-5. The recipient follows the secure Supabase invitation to create a password.
+5. Share the temporary password securely with the recipient and have them sign in to the dealer portal.
 
 Inviting the same non-admin email again can add another organization membership without creating a duplicate Auth user. Administrator accounts are explicitly protected from conversion to the dealer role.
 
@@ -44,7 +44,7 @@ Inviting the same non-admin email again can add another organization membership 
 
 `SUPABASE_SERVICE_ROLE_KEY` bypasses Row Level Security. It is used only by server-only import and user-administration code. Never prefix it with `NEXT_PUBLIC_`, include it in screenshots/logs, or send it to a browser bundle. Rotate it immediately if exposed.
 
-The canonical portal origin is `https://dealers.upswinggolf.com`. Preview hosts should not be added as canonical URLs. Add preview redirect URLs only when a deliberate preview invitation workflow is required.
+The canonical portal origin is `https://dealers.upswinggolf.com`. Preview hosts should not be added as canonical URLs. Add preview redirect URLs only when a deliberate preview password-recovery workflow is required.
 
 ## Initial brand resources
 

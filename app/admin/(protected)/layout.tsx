@@ -12,6 +12,7 @@ export default async function ProtectedAdminLayout({ children }: Readonly<{ chil
         <nav aria-label="Admin navigation">
           <Link href="/admin/dealers">Dealers</Link>
           <Link href="/admin/users">Users</Link>
+          <Link href="/" target="_blank" rel="noreferrer">View locator <span aria-hidden="true">↗</span></Link>
         </nav>
         <details className="admin-account-menu">
           <summary aria-label={`Open account menu for ${admin.email}`}>
