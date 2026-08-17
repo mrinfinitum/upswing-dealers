@@ -84,6 +84,10 @@ assert.match(adminGalleryPage, /Coming soon/, "the Image Gallery route has a res
 assert.doesNotMatch(adminDashboard, /admin\/requests/, "update requests are removed from the admin hub");
 assert.doesNotMatch(adminDashboard, /href: "\/admin\/locations"/, "raw locations are grouped behind Dealers in the admin hub");
 assert.match(adminDealerDirectory, /groupDealers\(dealers\)/, "the dealer directory groups current location records by retailer");
+assert.match(adminDealerDirectory, /name="category"/, "the dealer directory supports category filtering");
+assert.match(adminDealerDirectory, /name="country"/, "the dealer directory supports country filtering");
+assert.match(adminDealerDirectory, /Most locations/, "the dealer directory supports useful sort orders");
+assert.match(adminDealerDirectory, /view === "list"/, "the dealer directory supports card and list views");
 assert.match(adminDealerLocations, /location\.name\.localeCompare\(dealerName/, "dealer location pages enforce an exact retailer match");
 assert.match(adminBatchImport, /await requireAdmin\(\)/, "batch imports recheck administrator authorization");
 assert.match(adminBatchImport, /verificationStatus: "unverified"/, "batch imports cannot self-verify dealer records");
