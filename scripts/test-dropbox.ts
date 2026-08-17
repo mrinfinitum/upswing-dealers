@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import {
   collectDropboxPages,
   createGalleryImageId,
+  analyzeGalleryEntries,
   galleryImagesFromEntries,
   galleryContentType,
   isSupportedGalleryFile,
@@ -35,6 +36,14 @@ const images = galleryImagesFromEntries(entries, secret);
 assert.deepEqual(images.map((image) => image.name), ["newer.PNG", "older.jpg"]);
 assert.equal(images[0].width, 1200);
 assert.equal(images[0].height, 800);
+const analysis = analyzeGalleryEntries(entries, secret);
+assert.deepEqual(analysis.diagnostics, {
+  dropboxEntries: 5,
+  files: 4,
+  supportedImageExtension: 3,
+  nonHiddenSupportedImages: 2,
+  finalGalleryImages: 2,
+});
 
 const opaqueId = createGalleryImageId("id:newer", secret);
 assert.equal(resolveGalleryImageId(opaqueId, secret), "id:newer");
@@ -67,6 +76,8 @@ const callbackRoute = readFileSync("app/api/dropbox/callback/route.ts", "utf8");
 const thumbnailRoute = readFileSync("app/api/dropbox/images/[id]/thumbnail/route.ts", "utf8");
 const originalRoute = readFileSync("app/api/dropbox/images/[id]/original/route.ts", "utf8");
 const galleryAuth = readFileSync("lib/gallery/auth.ts", "utf8");
+const galleryPage = readFileSync("app/image-gallery/page.tsx", "utf8");
+const galleryClient = readFileSync("components/image-gallery/image-gallery.tsx", "utf8");
 
 assert.match(config, /required\("DROPBOX_REFRESH_TOKEN"\)/, "normal operation requires a refresh token");
 assert.match(config, /DROPBOX_GALLERY_PATH/, "the Dropbox gallery root is configurable");
@@ -74,6 +85,7 @@ assert.match(server, /import "server-only"/, "Dropbox API access is server-only"
 assert.doesNotMatch(server, /NEXT_PUBLIC_/, "Dropbox credentials are never public variables");
 assert.match(repository, /files\/list_folder\/continue/, "Dropbox pagination is implemented");
 assert.match(repository, /files\/get_thumbnail_v2/, "the thumbnail repository uses Dropbox thumbnails");
+assert.match(repository, /metadataCache = images\.length \?/, "empty Dropbox results are not retained as stale metadata cache entries");
 assert.doesNotMatch(server, /files\/(?:upload|delete|move|copy)|sharing\//, "the Dropbox server client exposes no write or sharing operations");
 assert.match(connectRoute, /randomBytes\(32\)/, "OAuth state is cryptographically random");
 assert.match(connectRoute, /searchParams\.set\("state", state\)/, "OAuth state is sent to Dropbox for callback validation");
@@ -87,5 +99,8 @@ assert.match(originalRoute, /getGalleryIdentity/, "original and download request
 assert.match(originalRoute, /Content-Disposition/, "downloads preserve an attachment filename");
 assert.match(galleryAuth, /getAdminIdentity/, "administrators are accepted by the gallery guard");
 assert.match(galleryAuth, /getDealerPortalIdentity/, "active dealer users are accepted by the gallery guard");
+assert.match(galleryPage, /<ImageGallery images=\{images\}/, "the Server Component passes its Dropbox result directly to the gallery client");
+assert.match(galleryPage, /<GalleryHydrationDiagnostic images=\{images\.length\}/, "the client receives the server image count during hydration");
+assert.doesNotMatch(galleryClient, /setImages|fetch\(|router\.refresh/, "hydration cannot replace server-provided images with an empty client response");
 
 testPagination().then(() => console.log("Dropbox gallery filtering, pagination, safe IDs, OAuth, and route gating checks passed."));

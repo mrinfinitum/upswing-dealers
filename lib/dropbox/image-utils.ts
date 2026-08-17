@@ -20,6 +20,14 @@ export type DropboxListPage = {
 const supportedExtensions = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif"]);
 const ignoredNames = new Set([".ds_store", "thumbs.db"]);
 
+export type GalleryFilterDiagnostics = {
+  dropboxEntries: number;
+  files: number;
+  supportedImageExtension: number;
+  nonHiddenSupportedImages: number;
+  finalGalleryImages: number;
+};
+
 export class GalleryImageIdError extends Error {
   constructor() {
     super("Invalid gallery image ID.");
@@ -31,6 +39,11 @@ export function isSupportedGalleryFile(name: string, path = name) {
   const lowerName = name.toLowerCase();
   if (ignoredNames.has(lowerName) || name.startsWith(".")) return false;
   if (path.split("/").filter(Boolean).some((segment) => segment.startsWith("."))) return false;
+  return hasSupportedGalleryExtension(name);
+}
+
+function hasSupportedGalleryExtension(name: string) {
+  const lowerName = name.toLowerCase();
   const dot = lowerName.lastIndexOf(".");
   return dot >= 0 && supportedExtensions.has(lowerName.slice(dot));
 }
@@ -93,11 +106,18 @@ export function resolveGalleryImageId(imageId: string, secret: string) {
   return dropboxId;
 }
 
-export function galleryImagesFromEntries(entries: unknown[], signingSecret: string): GalleryImage[] {
-  return entries.flatMap((value) => {
+export function analyzeGalleryEntries(entries: unknown[], signingSecret: string): { images: GalleryImage[]; diagnostics: GalleryFilterDiagnostics } {
+  let files = 0;
+  let supportedImageExtension = 0;
+  let nonHiddenSupportedImages = 0;
+  const images = entries.flatMap((value) => {
+    if (value && typeof value === "object" && (value as Record<string, unknown>)[".tag"] === "file") files += 1;
     const entry = fileEntry(value);
     const path = entry?.path_display || entry?.name || "";
-    if (!entry || !isSupportedGalleryFile(entry.name, path)) return [];
+    if (!entry || !hasSupportedGalleryExtension(entry.name)) return [];
+    supportedImageExtension += 1;
+    if (!isSupportedGalleryFile(entry.name, path)) return [];
+    nonHiddenSupportedImages += 1;
     const dimensions = entry.media_info?.metadata?.dimensions;
     return [{
       id: createGalleryImageId(entry.id, signingSecret),
@@ -110,4 +130,19 @@ export function galleryImagesFromEntries(entries: unknown[], signingSecret: stri
     const dateOrder = (Date.parse(right.modifiedAt || "") || 0) - (Date.parse(left.modifiedAt || "") || 0);
     return dateOrder || left.name.localeCompare(right.name);
   });
+
+  return {
+    images,
+    diagnostics: {
+      dropboxEntries: entries.length,
+      files,
+      supportedImageExtension,
+      nonHiddenSupportedImages,
+      finalGalleryImages: images.length,
+    },
+  };
+}
+
+export function galleryImagesFromEntries(entries: unknown[], signingSecret: string): GalleryImage[] {
+  return analyzeGalleryEntries(entries, signingSecret).images;
 }

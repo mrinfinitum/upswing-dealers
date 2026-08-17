@@ -19,6 +19,10 @@ export function ImageGallery({ images }: { images: GalleryImage[] }) {
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const selected = selectedIndex === null ? null : images[selectedIndex];
 
+  useEffect(() => {
+    console.info("Image gallery client props", { images: images.length, metadataFetch: false });
+  }, [images.length]);
+
   const close = useCallback(() => {
     setSelectedIndex(null);
     requestAnimationFrame(() => previousFocusRef.current?.focus());
@@ -74,4 +78,11 @@ export function ImageGallery({ images }: { images: GalleryImage[] }) {
       </div>
     </div> : null}
   </>;
+}
+
+export function GalleryHydrationDiagnostic({ images }: { images: number }) {
+  useEffect(() => {
+    console.info("Image gallery hydration", { initialImages: images, metadataFetch: false });
+  }, [images]);
+  return null;
 }
