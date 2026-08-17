@@ -62,7 +62,9 @@ assert.match(adminUserAction, /userId === currentAdmin\.id/, "admins cannot dele
 assert.match(adminUserDirectory, /import "server-only"/, "master Auth directory is server-only");
 assert.match(adminLayout, /href="\/admin\/account"/, "account menu links to the administrator profile");
 assert.match(adminLayout, /href="\/admin"/, "account menu links to the central admin hub");
-assert.doesNotMatch(adminLayout, /<nav aria-label="Admin navigation"/, "management functions are removed from the header navigation");
+assert.match(adminLayout, /<nav aria-label="Admin navigation"/, "the protected admin layout includes primary navigation");
+assert.match(adminLayout, /href="\/admin\/dealers"/, "Dealers is available in primary admin navigation");
+assert.match(adminLayout, /href="\/admin\/users"/, "Users is available in primary admin navigation");
 for (const href of ["/admin/dealers", "/admin/users"]) assert.match(adminDashboard, new RegExp(`href: "${href}"`), `${href} is available from the admin hub`);
 assert.doesNotMatch(adminDashboard, /admin\/requests/, "update requests are removed from the admin hub");
 assert.doesNotMatch(adminDashboard, /href: "\/admin\/locations"/, "raw locations are grouped behind Dealers in the admin hub");

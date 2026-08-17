@@ -9,6 +9,10 @@ export default async function ProtectedAdminLayout({ children }: Readonly<{ chil
     <>
       <header className="admin-header">
         <Link href="/admin"><Image src="/brand/upswing-logo-white.png" alt="UpSwing Golf administration" width={230} height={65} priority /></Link>
+        <nav aria-label="Admin navigation">
+          <Link href="/admin/dealers">Dealers</Link>
+          <Link href="/admin/users">Users</Link>
+        </nav>
         <details className="admin-account-menu">
           <summary aria-label={`Open account menu for ${admin.email}`}>
             <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 21a8 8 0 0 0-16 0M12 13a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" /></svg>
