@@ -6,6 +6,7 @@ export type DropboxFileEntry = {
   id: string;
   name: string;
   path_display?: string;
+  content_hash?: string;
   server_modified?: string;
   client_modified?: string;
   media_info?: { ".tag"?: string; metadata?: { dimensions?: { width?: number; height?: number } } };
@@ -19,6 +20,10 @@ export type DropboxListPage = {
 
 const supportedExtensions = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif"]);
 const ignoredNames = new Set([".ds_store", "thumbs.db"]);
+const ignoredContentHashes = new Set([
+  // Dropbox folder-placeholder artwork; exclude identical renamed or copied instances.
+  "a8b359e414c586864de4d3378f38d636a586cceb0a146e32d78b9eb5604e2213",
+]);
 
 export type GalleryFilterDiagnostics = {
   dropboxEntries: number;
@@ -118,6 +123,7 @@ export function analyzeGalleryEntries(entries: unknown[], signingSecret: string)
     supportedImageExtension += 1;
     if (!isSupportedGalleryFile(entry.name, path)) return [];
     nonHiddenSupportedImages += 1;
+    if (entry.content_hash && ignoredContentHashes.has(entry.content_hash.toLowerCase())) return [];
     const dimensions = entry.media_info?.metadata?.dimensions;
     return [{
       id: createGalleryImageId(entry.id, signingSecret),

@@ -33,6 +33,7 @@ const entries = [
   { ".tag": "file", id: "id:newer", name: "newer.PNG", path_display: "/newer.PNG", server_modified: "2026-02-01T00:00:00Z", media_info: { metadata: { dimensions: { width: 1200, height: 800 } } } },
   { ".tag": "file", id: "id:thumbs", name: "Thumbs.db", path_display: "/Thumbs.db" },
   { ".tag": "file", id: "id:hidden", name: "hidden.jpg", path_display: "/.hidden/hidden.jpg" },
+  { ".tag": "file", id: "id:folder-placeholder", name: "renamed-folder-art.png", path_display: "/renamed-folder-art.png", content_hash: "a8b359e414c586864de4d3378f38d636a586cceb0a146e32d78b9eb5604e2213" },
   { ".tag": "folder", id: "id:folder", name: "Folder", path_display: "/Folder" },
 ];
 const images = galleryImagesFromEntries(entries, secret);
@@ -41,12 +42,13 @@ assert.equal(images[0].width, 1200);
 assert.equal(images[0].height, 800);
 const analysis = analyzeGalleryEntries(entries, secret);
 assert.deepEqual(analysis.diagnostics, {
-  dropboxEntries: 5,
-  files: 4,
-  supportedImageExtension: 3,
-  nonHiddenSupportedImages: 2,
+  dropboxEntries: 6,
+  files: 5,
+  supportedImageExtension: 4,
+  nonHiddenSupportedImages: 3,
   finalGalleryImages: 2,
 });
+assert.equal(images.some((image) => image.name === "renamed-folder-art.png"), false, "known folder-placeholder artwork is excluded by content hash");
 
 const opaqueId = createGalleryImageId("id:newer", secret);
 assert.equal(resolveGalleryImageId(opaqueId, secret), "id:newer");
