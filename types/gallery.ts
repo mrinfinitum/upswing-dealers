@@ -1,5 +1,13 @@
-export const galleryCategories = ["upswing", "galaxy", "accessories"] as const;
-export type GalleryCategory = typeof galleryCategories[number];
+export type GalleryCategory = {
+  slug: string;
+  label: string;
+};
+
+export const defaultGalleryCategories: GalleryCategory[] = [
+  { slug: "upswing", label: "UpSwing" },
+  { slug: "galaxy", label: "Galaxy" },
+  { slug: "accessories", label: "Accessories" },
+];
 
 export type GalleryImage = {
   id: string;
@@ -7,5 +15,5 @@ export type GalleryImage = {
   width?: number;
   height?: number;
   modifiedAt?: string;
-  categories: GalleryCategory[];
+  categories: string[];
 };

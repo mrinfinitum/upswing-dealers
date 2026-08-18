@@ -1,14 +1,25 @@
 import "server-only";
 
 import { createClient } from "@/lib/supabase/server";
-import { galleryCategories, type GalleryCategory, type GalleryImage } from "@/types/gallery";
+import { defaultGalleryCategories, type GalleryCategory, type GalleryImage } from "@/types/gallery";
 import { getDropboxServerConfig } from "@/lib/dropbox/config";
 import { resolveGalleryImageId } from "@/lib/dropbox/image-utils";
 
 type CategoryRow = { dropbox_file_id: string; category: string };
+type CategoryDefinitionRow = { slug: string; label: string; sort_order: number };
 
-function isGalleryCategory(value: string): value is GalleryCategory {
-  return galleryCategories.includes(value as GalleryCategory);
+export async function listGalleryCategories(): Promise<GalleryCategory[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("gallery_categories")
+    .select("slug, label, sort_order")
+    .order("sort_order", { ascending: true })
+    .order("label", { ascending: true });
+  if (error) {
+    console.warn("Gallery category catalog unavailable", { code: error.code });
+    return defaultGalleryCategories;
+  }
+  return (data as CategoryDefinitionRow[]).map(({ slug, label }) => ({ slug, label }));
 }
 
 export function rawDropboxImageId(imageId: string) {
@@ -33,9 +44,9 @@ export async function applyGalleryCategories(images: GalleryImage[]): Promise<Ga
     rows.push(...(data as CategoryRow[]));
   }
 
-  const categories = new Map<string, GalleryCategory[]>();
+  const categories = new Map<string, string[]>();
   for (const row of rows) {
-    if (!isGalleryCategory(row.category)) continue;
+    if (!row.category) continue;
     const assigned = categories.get(row.dropbox_file_id) ?? [];
     if (!assigned.includes(row.category)) assigned.push(row.category);
     categories.set(row.dropbox_file_id, assigned);

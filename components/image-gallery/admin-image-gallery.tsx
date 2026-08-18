@@ -2,21 +2,20 @@
 
 import Image from "next/image";
 import { useActionState, useEffect, useMemo, useRef, useState } from "react";
-import { updateGalleryCategoryAction } from "@/app/image-gallery/actions";
+import { createGalleryCategoryAction, updateGalleryCategoryAction } from "@/app/image-gallery/actions";
 import { GalleryViewToggle, type GalleryView } from "@/components/image-gallery/gallery-view-toggle";
 import { initialGalleryCategoryActionState } from "@/lib/gallery/category-form-state";
-import { galleryCategories, type GalleryCategory, type GalleryImage } from "@/types/gallery";
+import type { GalleryCategory, GalleryImage } from "@/types/gallery";
 
-const categoryLabels: Record<GalleryCategory, string> = { upswing: "UpSwing", galaxy: "Galaxy", accessories: "Accessories" };
 const pageSizes = [20, 50, 100] as const;
 type PageSize = typeof pageSizes[number];
-type CategoryFilter = "all" | "uncategorized" | GalleryCategory;
+type CategoryFilter = "all" | "uncategorized" | string;
 
 function thumbnailUrl(image: GalleryImage) {
   return `/api/dropbox/images/${encodeURIComponent(image.id)}/thumbnail`;
 }
 
-export function AdminImageGallery({ images }: { images: GalleryImage[] }) {
+export function AdminImageGallery({ images, categories }: { images: GalleryImage[]; categories: GalleryCategory[] }) {
   const [filter, setFilter] = useState<CategoryFilter>("all");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<"newest" | "oldest">("newest");
@@ -25,12 +24,13 @@ export function AdminImageGallery({ images }: { images: GalleryImage[] }) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [view, setView] = useState<GalleryView>("grid");
   const [state, action, pending] = useActionState(updateGalleryCategoryAction, initialGalleryCategoryActionState);
+  const [createState, createAction, creating] = useActionState(createGalleryCategoryAction, initialGalleryCategoryActionState);
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
-  const counts = useMemo<Record<CategoryFilter, number>>(() => {
-    const categoryCounts = Object.fromEntries(galleryCategories.map((category) => [category, images.filter((image) => image.categories.includes(category)).length])) as Record<GalleryCategory, number>;
+  const counts = useMemo<Record<string, number>>(() => {
+    const categoryCounts = Object.fromEntries(categories.map((category) => [category.slug, images.filter((image) => image.categories.includes(category.slug)).length]));
     return { all: images.length, uncategorized: images.filter((image) => !image.categories.length).length, ...categoryCounts };
-  }, [images]);
+  }, [categories, images]);
 
   const filteredImages = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase();
@@ -99,15 +99,21 @@ export function AdminImageGallery({ images }: { images: GalleryImage[] }) {
     <nav className="gallery-admin-filters" aria-label="Filter gallery by category">
       <button type="button" className={filter === "all" ? "is-active" : ""} onClick={() => changeFilter("all")}>All <span>{counts.all}</span></button>
       <button type="button" className={filter === "uncategorized" ? "is-active" : ""} onClick={() => changeFilter("uncategorized")}>Uncategorized <span>{counts.uncategorized}</span></button>
-      {galleryCategories.map((category) => <button type="button" className={filter === category ? "is-active" : ""} onClick={() => changeFilter(category)} key={category}>{categoryLabels[category]} <span>{counts[category]}</span></button>)}
+      {categories.map((category) => <button type="button" className={filter === category.slug ? "is-active" : ""} onClick={() => changeFilter(category.slug)} key={category.slug}>{category.label} <span>{counts[category.slug] ?? 0}</span></button>)}
     </nav>
+
+    <section className="gallery-admin-category-create" aria-label="Create gallery category">
+      <div><span>Category library</span><strong>Add a category</strong><p>New categories become available in the admin workspace and dealer gallery filters.</p></div>
+      <form action={createAction}><label><span>Category name</span><input key={createState.revision} name="label" type="text" minLength={2} maxLength={40} placeholder="For example: Lifestyle" required /></label><button type="submit" disabled={creating}>{creating ? "Adding…" : "Add category"}</button></form>
+      {createState.message ? <p className={createState.success ? "gallery-admin-message is-success" : "gallery-admin-message"} role="status">{createState.message}</p> : null}
+    </section>
 
     {selectedIds.length ? <form action={action} className="gallery-admin-bulk" aria-label="Automatic bulk category assignment">
       <div><span>Auto-save categories</span><strong>{selectedIds.length} {selectedIds.length === 1 ? "image" : "images"} selected</strong><p>Categories save immediately. Active categories can be removed without affecting the others.</p></div>
-      <div>{selectedIds.map((id) => <input type="hidden" name="imageId" value={id} key={id} />)}{galleryCategories.map((category) => {
-        const assignedToAll = selectedImages.every((image) => image.categories.includes(category));
-        const assignedToSome = !assignedToAll && selectedImages.some((image) => image.categories.includes(category));
-        return <button type="submit" name="categoryAction" value={`${assignedToAll ? "remove" : "add"}:${category}`} className={assignedToAll ? "is-active" : assignedToSome ? "is-mixed" : ""} aria-pressed={assignedToAll} disabled={pending} key={category}>{pending ? "Saving…" : `${assignedToAll ? "✓" : assignedToSome ? "±" : "+"} ${categoryLabels[category]}`}</button>;
+      <div>{selectedIds.map((id) => <input type="hidden" name="imageId" value={id} key={id} />)}{categories.map((category) => {
+        const assignedToAll = selectedImages.every((image) => image.categories.includes(category.slug));
+        const assignedToSome = !assignedToAll && selectedImages.some((image) => image.categories.includes(category.slug));
+        return <button type="submit" name="categoryAction" value={`${assignedToAll ? "remove" : "add"}:${category.slug}`} className={assignedToAll ? "is-active" : assignedToSome ? "is-mixed" : ""} aria-pressed={assignedToAll} disabled={pending} key={category.slug}>{pending ? "Saving…" : `${assignedToAll ? "✓" : assignedToSome ? "±" : "+"} ${category.label}`}</button>;
       })}</div>
     </form> : null}
 
@@ -124,9 +130,9 @@ export function AdminImageGallery({ images }: { images: GalleryImage[] }) {
           <div className="gallery-admin-card__details">
             <form action={action} className="gallery-admin-card__categories" aria-label={`Categories for ${image.name}`}>
               <input type="hidden" name="imageId" value={image.id} />
-              {galleryCategories.map((category) => {
-                const active = image.categories.includes(category);
-                return <button type="submit" name="categoryAction" value={`${active ? "remove" : "add"}:${category}`} className={active ? "is-active" : ""} aria-pressed={active} disabled={pending} key={category}>{active ? "✓ " : "+ "}{categoryLabels[category]}</button>;
+              {categories.map((category) => {
+                const active = image.categories.includes(category.slug);
+                return <button type="submit" name="categoryAction" value={`${active ? "remove" : "add"}:${category.slug}`} className={active ? "is-active" : ""} aria-pressed={active} disabled={pending} key={category.slug}>{active ? "✓ " : "+ "}{category.label}</button>;
               })}
             </form>
             {image.modifiedAt ? <small>{new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(new Date(image.modifiedAt))}</small> : null}

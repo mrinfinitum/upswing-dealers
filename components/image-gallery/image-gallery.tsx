@@ -3,9 +3,8 @@
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { GalleryViewToggle, type GalleryView } from "@/components/image-gallery/gallery-view-toggle";
-import { galleryCategories, type GalleryCategory, type GalleryImage } from "@/types/gallery";
+import type { GalleryCategory, GalleryImage } from "@/types/gallery";
 
-const categoryLabels: Record<GalleryCategory, string> = { upswing: "UpSwing", galaxy: "Galaxy", accessories: "Accessories" };
 const galleryPageSizes = [20, 50, 100] as const;
 type GalleryPageSize = typeof galleryPageSizes[number];
 
@@ -17,13 +16,13 @@ function imageUrl(image: GalleryImage, kind: "thumbnail" | "original") {
   return `/api/dropbox/images/${encodeURIComponent(image.id)}/${kind}`;
 }
 
-function categoryDisplay(image: GalleryImage) {
-  return image.categories.length ? image.categories.map((category) => categoryLabels[category]).join(" · ") : "Uncategorized";
+function categoryDisplay(image: GalleryImage, labels: Map<string, string>) {
+  return image.categories.length ? image.categories.map((category) => labels.get(category) ?? category).join(" · ") : "Uncategorized";
 }
 
-export function ImageGallery({ images }: { images: GalleryImage[] }) {
+export function ImageGallery({ images, categories }: { images: GalleryImage[]; categories: GalleryCategory[] }) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const [activeCategory, setActiveCategory] = useState<"all" | GalleryCategory>("all");
+  const [activeCategory, setActiveCategory] = useState("all");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<"newest" | "oldest">("newest");
   const [pageSize, setPageSize] = useState<GalleryPageSize>(20);
@@ -33,6 +32,7 @@ export function ImageGallery({ images }: { images: GalleryImage[] }) {
   const closeRef = useRef<HTMLButtonElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
+  const categoryLabels = useMemo(() => new Map(categories.map((category) => [category.slug, category.label])), [categories]);
   const visibleImages = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase();
     return images
@@ -99,7 +99,7 @@ export function ImageGallery({ images }: { images: GalleryImage[] }) {
     setSelectedIndex(index);
   }
 
-  function filterBy(category: "all" | GalleryCategory) {
+  function filterBy(category: string) {
     setSelectedIndex(null);
     setActiveCategory(category);
     setVisibleLimit(pageSize);
@@ -122,7 +122,7 @@ export function ImageGallery({ images }: { images: GalleryImage[] }) {
       <div className="image-gallery-categories">
         <div className="image-gallery-categories__pills" aria-label="Filter gallery by category">
           <button type="button" className={activeCategory === "all" ? "is-active" : ""} onClick={() => filterBy("all")}>All <span>{images.length}</span></button>
-          {galleryCategories.map((category) => <button type="button" className={activeCategory === category ? "is-active" : ""} onClick={() => filterBy(category)} key={category}>{categoryLabels[category]} <span>{images.filter((image) => image.categories.includes(category)).length}</span></button>)}
+          {categories.map((category) => <button type="button" className={activeCategory === category.slug ? "is-active" : ""} onClick={() => filterBy(category.slug)} key={category.slug}>{category.label} <span>{images.filter((image) => image.categories.includes(category.slug)).length}</span></button>)}
         </div>
       </div>
 
@@ -131,7 +131,7 @@ export function ImageGallery({ images }: { images: GalleryImage[] }) {
       {displayedImages.map((image, index) => <article className="image-gallery-card" key={image.id}>
         <button type="button" onClick={(event) => open(index, event.currentTarget)} aria-label={`View ${image.name}`}>
           <span className="image-gallery-card__image"><Image src={imageUrl(image, "thumbnail")} alt="" width={640} height={480} sizes="(max-width: 520px) 100vw, (max-width: 760px) 50vw, (max-width: 1100px) 33vw, 25vw" loading="lazy" decoding="async" unoptimized /></span>
-          <span className="image-gallery-card__content"><em>{categoryDisplay(image)}</em>{image.modifiedAt ? <small>{new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(new Date(image.modifiedAt))}</small> : null}</span>
+          <span className="image-gallery-card__content"><em>{categoryDisplay(image, categoryLabels)}</em>{image.modifiedAt ? <small>{new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(new Date(image.modifiedAt))}</small> : null}</span>
           <span className="gallery-list-action">View <b aria-hidden="true">→</b></span>
         </button>
       </article>)}

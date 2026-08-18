@@ -10,9 +10,13 @@ import {
   parseDropboxListPage,
   resolveGalleryImageId,
 } from "../lib/dropbox/image-utils";
-import { galleryCategories } from "../types/gallery";
+import { defaultGalleryCategories } from "../types/gallery";
 
-assert.deepEqual(galleryCategories, ["upswing", "galaxy", "accessories"]);
+assert.deepEqual(defaultGalleryCategories, [
+  { slug: "upswing", label: "UpSwing" },
+  { slug: "galaxy", label: "Galaxy" },
+  { slug: "accessories", label: "Accessories" },
+]);
 
 assert.equal(isSupportedGalleryFile("hero.jpg"), true);
 assert.equal(isSupportedGalleryFile("hero.JPEG"), true);
@@ -110,10 +114,10 @@ assert.match(originalRoute, /Content-Disposition/, "downloads preserve an attach
 assert.match(galleryAuth, /getAdminIdentity/, "administrators are accepted by the gallery guard");
 assert.match(galleryAuth, /getDealerPortalIdentity/, "active dealer users are accepted by the gallery guard");
 assert.match(galleryPage, /ImageGalleryPageContent role=\{identity\.role\}/, "the authenticated gallery route delegates to the shared server-rendered gallery content");
-assert.match(galleryPageContent, /<ImageGallery images=\{images\}/, "the shared Server Component passes its Dropbox result directly to the gallery client");
+assert.match(galleryPageContent, /<ImageGallery images=\{images\} categories=\{categories\}/, "the shared Server Component passes Dropbox images and categories directly to the gallery client");
 assert.match(galleryPageContent, /<GalleryHydrationDiagnostic images=\{images\.length\}/, "the client receives the server image count during hydration");
 assert.doesNotMatch(galleryClient, /setImages|fetch\(|router\.refresh/, "hydration cannot replace server-provided images with an empty client response");
-assert.match(galleryClient, /galleryCategories\.map/, "all approved category pills are rendered from the typed category list");
+assert.match(galleryClient, /categories\.map/, "all approved category pills are rendered from the server category catalog");
 assert.doesNotMatch(galleryClient, /Assign categories|canManageCategories|managingCategories/, "the shared gallery does not expose category assignment controls");
 assert.match(galleryClient, /const galleryPageSizes = \[20, 50, 100\]/, "gallery batch controls support 20, 50, and 100 images");
 assert.match(galleryClient, /new IntersectionObserver/, "gallery cards progressively load as the user scrolls");

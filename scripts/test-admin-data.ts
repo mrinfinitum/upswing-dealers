@@ -45,6 +45,7 @@ const adminBrandPage = readFileSync("app/admin/(protected)/brand/page.tsx", "utf
 const adminGalleryPage = readFileSync("app/admin/(protected)/gallery/page.tsx", "utf8");
 const adminGalleryClient = readFileSync("components/image-gallery/admin-image-gallery.tsx", "utf8");
 const galleryMultiCategoryMigration = readFileSync("supabase/migrations/202608170004_gallery_multiple_categories.sql", "utf8");
+const galleryCategoryCatalogMigration = readFileSync("supabase/migrations/202608170005_gallery_category_catalog.sql", "utf8");
 const adminDealerDirectory = readFileSync("app/admin/(protected)/dealers/page.tsx", "utf8");
 const adminDealerLocations = readFileSync("app/admin/(protected)/dealers/locations/page.tsx", "utf8");
 const adminBatchImport = readFileSync("app/admin/(protected)/locations/new/actions.ts", "utf8");
@@ -97,6 +98,9 @@ assert.match(adminGalleryClient, /gallery-list-header/, "Gallery Admin list view
 assert.match(adminGalleryClient, /categoryAction/, "Gallery Admin category toggles submit immediately without a separate save control");
 assert.match(adminGalleryClient, /assignedToAll/, "Gallery Admin can independently add or remove each category");
 assert.match(galleryMultiCategoryMigration, /primary key \(dropbox_file_id, category\)/, "gallery metadata supports multiple categories per image");
+assert.match(adminGalleryClient, /createGalleryCategoryAction/, "Gallery Admin can create reusable categories");
+assert.match(galleryCategoryCatalogMigration, /create table if not exists public\.gallery_categories/, "gallery categories are stored in an administrator-managed catalog");
+assert.match(galleryCategoryCatalogMigration, /references public\.gallery_categories\(slug\)/, "image assignments reference the category catalog");
 assert.doesNotMatch(adminDashboard, /admin\/requests/, "update requests are removed from the admin hub");
 assert.doesNotMatch(adminDashboard, /href: "\/admin\/locations"/, "raw locations are grouped behind Dealers in the admin hub");
 assert.match(adminDealerDirectory, /groupDealers\(dealers\)/, "the dealer directory groups current location records by retailer");
