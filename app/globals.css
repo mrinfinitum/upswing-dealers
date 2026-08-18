@@ -1162,9 +1162,9 @@ button { color: inherit; }
 .map-panel__topline i.is-live { background: #2878d1; }
 .map-panel__canvas { position: relative; flex: 1; min-height: 0; overflow: hidden; display: grid; place-items: center; isolation: isolate; border: 1px solid #d8dde3; border-radius: 20px; background: #e7eaee; box-shadow: 0 8px 26px rgb(20 32 49 / .08); }
 .map-panel__google-map { position: absolute; inset: 0; width: 100%; height: 100%; transition: filter .35s ease, opacity .35s ease, transform .35s ease; }
-.map-panel__canvas.is-awaiting-search .map-panel__google-map { filter: blur(4px) saturate(.48); opacity: .42; pointer-events: none; transform: scale(1.025); }
-.map-panel__canvas.is-awaiting-search::after { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(135deg, rgb(246 249 252 / .86), rgb(231 240 251 / .72)); pointer-events: none; }
-.map-panel__search-prompt { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; padding: clamp(34px, 6vw, 88px); border-radius: inherit; background: linear-gradient(135deg, rgb(255 255 255 / .84), rgb(231 240 251 / .76)); backdrop-filter: blur(12px); }
+.map-panel__canvas.is-awaiting-search .map-panel__google-map { filter: blur(3px) saturate(.68); opacity: .78; pointer-events: none; transform: scale(1.018); }
+.map-panel__canvas.is-awaiting-search::after { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(135deg, rgb(236 243 250 / .2), rgb(255 255 255 / .12)); pointer-events: none; }
+.map-panel__search-prompt { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; padding: clamp(34px, 6vw, 88px); border-radius: inherit; background: radial-gradient(circle at center, rgb(255 255 255 / .94) 0%, rgb(249 252 255 / .86) 34%, rgb(236 244 252 / .54) 68%, rgb(224 235 246 / .3) 100%); backdrop-filter: blur(1px); }
 .map-panel__search-content { width: min(100%, 1200px); padding: 0; }
 .map-panel__search-icon { width: 46px; height: 46px; display: grid; place-items: center; margin-bottom: 22px; border: 1px solid #c9ddf8; border-radius: 50%; background: #edf5ff; color: var(--blue); font-size: 24px; box-shadow: 0 8px 24px rgb(52 126 228 / .12); }
 .map-panel__search-prompt .eyebrow { margin-bottom: 12px; color: var(--blue); }

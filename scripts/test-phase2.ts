@@ -38,8 +38,9 @@ assert.match(dealerLocator, /locator-shell\$\{hasSearchContext \? "" : " is-awai
 assert.match(dealerLocator, /awaitingSearch=\{!hasSearchContext\}/, "the initial map receives an explicit search-prompt state");
 assert.match(mapPanel, /Start with your location\./, "the initial map asks for a ZIP code or city and state");
 assert.match(mapPanel, /Choose a state/, "the initial map offers a state selector");
-assert.match(mapPanel, /onSubmit=\{onSubmitSearch\}/, "the initial map contains the primary location search form");
-assert.match(dealerLocator, /runSearch\(state, false\)/, "state selection shows every lexical state match instead of applying a radius around the state centroid");
+assert.match(mapPanel, /onSubmitInitialSearch\(value, !typedLocation && Boolean\(selectedState\)\)/, "the initial map waits for an explicit form submission before searching");
+assert.doesNotMatch(mapPanel, /onChange=\{\(event\) => event\.target\.value && onSelectState/, "choosing a state does not automatically open the results map");
+assert.match(dealerLocator, /runSearch\(value, !stateOnly\)/, "submitted state selection shows every lexical state match instead of applying a radius around the state centroid");
 assert.match(mapPanel, /onUseMyLocation/, "the initial map prompt preserves optional browser geolocation");
 
 const { dealers } = normalizeDealerRows(rawDealerRows);

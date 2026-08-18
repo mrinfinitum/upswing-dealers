@@ -14,6 +14,7 @@ type RadiusMiles = 25 | 50 | 100;
 export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapConfig: MapConfiguration }) {
   const searchId = useId();
   const [query, setQuery] = useState("");
+  const [stateQuery, setStateQuery] = useState("");
   const [activeQuery, setActiveQuery] = useState("");
   const [selectedDealerId, setSelectedDealerId] = useState<string>();
   const [userLocation, setUserLocation] = useState<DealerCoordinates>();
@@ -81,6 +82,7 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
 
   function resetSearch() {
     setQuery("");
+    setStateQuery("");
     setActiveQuery("");
     setSelectedDealerId(undefined);
     setLocationStatus("idle");
@@ -100,6 +102,7 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
     setLocationStatus("loading");
     setLocationMessage("Finding your location…");
     setQuery("");
+    setStateQuery("");
     setActiveQuery("");
     setSelectedDealerId(undefined);
     setUserLocation(undefined);
@@ -190,13 +193,14 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
         useUnitedStatesOverview={!hasSearchContext}
         awaitingSearch={!hasSearchContext}
         searchValue={query}
+        selectedState={stateQuery}
         availableStates={availableStates}
         locationLoading={locationStatus === "loading"}
         locationStatus={locationStatus}
         locationMessage={locationMessage}
         onSearchValueChange={setQuery}
-        onSubmitSearch={submitSearch}
-        onSelectState={(state) => void runSearch(state, false)}
+        onSelectedStateChange={setStateQuery}
+        onSubmitInitialSearch={(value, stateOnly) => void runSearch(value, !stateOnly)}
         onUseMyLocation={requestLocation}
         onSelectDealer={selectDealer}
       />
