@@ -17,6 +17,8 @@ const homePage = readFileSync("app/page.tsx", "utf8");
 const mapsPreloader = readFileSync("components/dealer-locator/google-maps-preloader.tsx", "utf8");
 const googleLoader = readFileSync("lib/maps/google-loader.ts", "utf8");
 const googleMap = readFileSync("components/dealer-locator/google-map.tsx", "utf8");
+const dealerLocator = readFileSync("components/dealer-locator/dealer-locator.tsx", "utf8");
+const mapPanel = readFileSync("components/dealer-locator/map-panel.tsx", "utf8");
 assert.match(homePage, /GoogleMapsPreloader config=\{mapConfig\}/, "the home page starts warming Google Maps before the locator renders");
 assert.match(mapsPreloader, /preconnect\("https:\/\/maps\.googleapis\.com"\)/, "Google Maps API connection is warmed early");
 assert.match(mapsPreloader, /preconnect\("https:\/\/maps\.gstatic\.com"/, "Google Maps static asset connection is warmed early");
@@ -31,6 +33,10 @@ assert.match(googleMap, /infoWindow\.setContent\(createDealerInfoCard\(openDeale
 assert.match(googleMap, /DEALER_LOGOS\[dealer\.name\]/, "the dealer marker information card uses an approved retailer logo when available");
 assert.match(googleMap, /heading\.textContent = dealer\.name/, "dealer marker cards preserve a text fallback when no retailer logo is configured");
 assert.doesNotMatch(googleMap, /map\.addListener\("click"/, "the map canvas does not immediately close a marker card through click bubbling");
+assert.match(dealerLocator, /if \(!hasSearchContext\) return \[\]/, "the locator renders no dealer results before a user searches");
+assert.match(dealerLocator, /awaitingSearch=\{!hasSearchContext\}/, "the initial map receives an explicit search-prompt state");
+assert.match(mapPanel, /Start with your location\./, "the initial map asks for a ZIP code or city and state");
+assert.match(mapPanel, /onUseMyLocation/, "the initial map prompt preserves optional browser geolocation");
 
 const { dealers } = normalizeDealerRows(rawDealerRows);
 assert.equal(rawDealerRows.length, 71, "The source dataset must retain 71 rows");

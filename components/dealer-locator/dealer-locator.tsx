@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useId, useMemo, useState, useTransition } from "react";
-import { getInitialDealerResults, queryLooksPostal, queryMatchesCountry, queryMatchesDealerName, searchDealers, sortDealersAlphabetically } from "@/lib/dealers/search";
+import { useCallback, useId, useMemo, useRef, useState, useTransition } from "react";
+import { queryLooksPostal, queryMatchesCountry, queryMatchesDealerName, searchDealers, sortDealersAlphabetically } from "@/lib/dealers/search";
 import { dealersWithinRadius, sortDealersByDistance } from "@/lib/geo/distance";
 import { geocodeWithGoogle } from "@/lib/maps/google-loader";
 import type { MapConfiguration } from "@/lib/maps/provider";
@@ -13,6 +13,7 @@ type RadiusMiles = 25 | 50 | 100;
 
 export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapConfig: MapConfiguration }) {
   const searchId = useId();
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
   const [activeQuery, setActiveQuery] = useState("");
   const [selectedDealerId, setSelectedDealerId] = useState<string>();
@@ -26,12 +27,13 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
 
   const hasCoordinateDealers = dealers.some((dealer) => dealer.coordinates);
   const origin = userLocation ?? searchOrigin;
+  const hasSearchContext = Boolean(activeQuery || origin);
   const filteredDealers = useMemo(() => searchDealers(dealers, activeQuery), [activeQuery, dealers]);
   const results = useMemo<DealerWithDistance[]>(() => {
+    if (!hasSearchContext) return [];
     if (origin && hasCoordinateDealers) return dealersWithinRadius(dealers, origin, radiusMiles);
-    if (!activeQuery) return getInitialDealerResults(dealers);
     return sortDealersAlphabetically(sortDealersByDistance(filteredDealers, origin));
-  }, [activeQuery, dealers, filteredDealers, hasCoordinateDealers, origin, radiusMiles]);
+  }, [dealers, filteredDealers, hasCoordinateDealers, hasSearchContext, origin, radiusMiles]);
   const selectedDealer = results.find((dealer) => dealer.id === selectedDealerId) ?? results[0];
 
   async function submitSearch(event: React.FormEvent<HTMLFormElement>) {
@@ -117,6 +119,11 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
     requestAnimationFrame(() => document.getElementById(`dealer-${dealerId}`)?.scrollIntoView({ block: "nearest" }));
   }, []);
 
+  const focusSearch = useCallback(() => {
+    searchInputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    window.setTimeout(() => searchInputRef.current?.focus({ preventScroll: true }), 350);
+  }, []);
+
   return (
     <section id="locator" className="locator-shell" aria-labelledby="locator-heading">
       <div className="locator-panel">
@@ -126,9 +133,9 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
           <p>Search current retail partners by address, postal code, city, state, province, country, or dealer name.</p>
         </div>
         <form className="locator-search" role="search" onSubmit={submitSearch}>
-          <label htmlFor={searchId}>Search by location</label>
+          <label htmlFor={searchId}>ZIP code or City, State</label>
           <div className="locator-search__row">
-            <input id={searchId} type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Address, city, state, or postal code" autoComplete="postal-code" />
+            <input ref={searchInputRef} id={searchId} type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="e.g. 74133 or Tulsa, OK" autoComplete="postal-code" />
             <button type="submit" disabled={isPending || locationStatus === "loading"}>{isPending || locationStatus === "loading" ? "Searching" : "Search"}</button>
           </div>
           <div className="locator-search__utilities">
@@ -150,11 +157,23 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
             </fieldset>
           )}
         </form>
-        <p className="locator-results-status" aria-live="polite">
-          {results.length} {results.length === 1 ? "location" : "locations"}{origin && hasCoordinateDealers ? ` within ${radiusMiles} miles` : activeQuery ? ` for “${activeQuery}”` : ""}
-        </p>
-        <ResultsList dealers={results} selectedDealerId={selectedDealer?.id} query={activeQuery} postalQuery={queryLooksPostal(activeQuery)} showAll={showAll} onSelectDealer={selectDealer} />
-        {results.length > 12 && (
+        {hasSearchContext ? (
+          <>
+            <p className="locator-results-status" aria-live="polite">
+              {results.length} {results.length === 1 ? "location" : "locations"}{origin && hasCoordinateDealers ? ` within ${radiusMiles} miles` : ` for “${activeQuery}”`}
+            </p>
+            <ResultsList dealers={results} selectedDealerId={selectedDealer?.id} query={activeQuery} postalQuery={queryLooksPostal(activeQuery)} showAll={showAll} onSelectDealer={selectDealer} />
+          </>
+        ) : (
+          <div className="locator-awaiting-results" role="status">
+            <span aria-hidden="true">◎</span>
+            <div>
+              <strong>Your nearest dealer is a search away.</strong>
+              <p>Enter a ZIP code or city and state to see matching locations.</p>
+            </div>
+          </div>
+        )}
+        {hasSearchContext && results.length > 12 && (
           <button className="locator-show-all" type="button" onClick={() => setShowAll((value) => !value)}>
             {showAll ? "Show fewer locations" : `Show all ${results.length} locations`}
           </button>
@@ -166,7 +185,11 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
         selectedDealer={selectedDealer}
         origin={origin}
         originIsUserLocation={Boolean(userLocation)}
-        useUnitedStatesOverview={!activeQuery && !origin}
+        useUnitedStatesOverview={!hasSearchContext}
+        awaitingSearch={!hasSearchContext}
+        locationLoading={locationStatus === "loading"}
+        onStartSearch={focusSearch}
+        onUseMyLocation={requestLocation}
         onSelectDealer={selectDealer}
       />
     </section>

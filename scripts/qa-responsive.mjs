@@ -75,6 +75,8 @@ for (const width of viewports) {
       cardWidth: card?.getBoundingClientRect().width ?? 0,
       mapHeight: map?.getBoundingClientRect().height ?? 0,
       inputWidth: input?.getBoundingClientRect().width ?? 0,
+      initialMarkerCount: document.querySelector('.map-panel__google-map')?.dataset.dealerMarkerCount ?? null,
+      initialPromptVisible: Boolean(document.querySelector('.map-panel__search-prompt')),
       mobileMenu: getComputedStyle(document.querySelector('.site-header__mobile-menu')).display,
     };
   })()`);
@@ -125,6 +127,9 @@ const interaction = await evaluate(`(async () => {
   await waitForSearch();
   const addressCount = document.querySelector('.locator-results-status').textContent;
   const enrichedAddressVisible = document.querySelector('.dealer-card__address')?.textContent.includes('1005 Holcomb Woods Parkway') ?? false;
+  const directionsWorks = Boolean(document.querySelector('.dealer-card__actions a[href*="google.com/maps/dir/"]'));
+  const phoneWorks = Boolean(document.querySelector('.dealer-card__actions a[href^="tel:"]'));
+  const dealerWebsiteWorks = Boolean(document.querySelector('.dealer-card__actions a[href*="pgatoursuperstore.com/stores/detail"]'));
 
   setValue('99999');
   document.querySelector('.locator-search').requestSubmit();
@@ -133,13 +138,12 @@ const interaction = await evaluate(`(async () => {
 
   document.querySelector('.locator-search__utilities button:last-child')?.click();
   await pause();
-  const resetCount = document.querySelector('.locator-results-status').textContent;
+  const resetCount = document.querySelector('.locator-results-status')?.textContent ?? null;
+  const resetPromptVisible = Boolean(document.querySelector('.map-panel__search-prompt'));
+  const resetMarkerCount = document.querySelector('.map-panel__google-map')?.dataset.dealerMarkerCount ?? null;
   const externalLinksCanonical = [...document.querySelectorAll('a[href^="http"][href*="upswinggolf.com"]')]
     .every((link) => link.href.startsWith('https://www.upswinggolf.com/'));
-  const directionsWorks = Boolean(document.querySelector('.dealer-card__actions a[href*="google.com/maps/dir/"]'));
-  const phoneWorks = Boolean(document.querySelector('.dealer-card__actions a[href^="tel:"]'));
-  const dealerWebsiteWorks = Boolean(document.querySelector('.dealer-card__actions a[href*="pgatoursuperstore.com/stores/detail"]'));
-  return { geolocationCopy, countryCount, retailerCount, addressCount, enrichedAddressVisible, emptyCopy, resetCount, externalLinksCanonical, directionsWorks, phoneWorks, dealerWebsiteWorks };
+  return { geolocationCopy, countryCount, retailerCount, addressCount, enrichedAddressVisible, emptyCopy, resetCount, resetPromptVisible, resetMarkerCount, externalLinksCanonical, directionsWorks, phoneWorks, dealerWebsiteWorks };
 })()`);
 
 socket.close();
@@ -148,11 +152,12 @@ for (const report of reports) {
   if (report.scrollWidth > report.clientWidth || report.bodyScrollWidth > report.clientWidth) failures.push(`${report.width}px has horizontal overflow`);
   if (report.cardWidth > report.clientWidth) failures.push(`${report.width}px dealer card exceeds viewport`);
   if (report.mapHeight < 300) failures.push(`${report.width}px map is too short`);
+  if (!report.initialPromptVisible || ![null, '0'].includes(report.initialMarkerCount)) failures.push(`${report.width}px initial locator state exposes dealer results`);
 }
 if (interaction.countryCount !== '63 locations for “United States”') failures.push('Country search failed');
 if (interaction.retailerCount !== '50 locations for “Club Champion”') failures.push('Retailer search failed');
 if (!interaction.addressCount?.includes('within 50 miles') || !interaction.enrichedAddressVisible) failures.push('Address search failed');
-if (!interaction.emptyCopy || interaction.resetCount !== '70 locations') failures.push('Empty or reset state failed');
+if (!interaction.emptyCopy || interaction.resetCount !== null || !interaction.resetPromptVisible || ![null, '0'].includes(interaction.resetMarkerCount)) failures.push('Empty or reset state failed');
 if (!interaction.externalLinksCanonical || !interaction.directionsWorks || !interaction.phoneWorks || !interaction.dealerWebsiteWorks) failures.push('Dealer or Shopify action validation failed');
 console.log(JSON.stringify({ viewports: reports, interaction, failures }, null, 2));
 if (failures.length) process.exitCode = 1;

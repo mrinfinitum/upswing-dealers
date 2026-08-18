@@ -1115,6 +1115,10 @@ button { color: inherit; }
 .locator-radius input:checked + span { border-color: #000; background: #000; color: #fff; box-shadow: 0 4px 10px rgb(0 0 0 / .12); }
 .locator-radius input:focus-visible + span { outline: 2px solid var(--blue); outline-offset: 2px; }
 .locator-results-status { position: absolute; width: 1px; height: 1px; overflow: hidden; margin: -1px; padding: 0; border: 0; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+.locator-awaiting-results { flex: 1; min-height: 0; display: flex; align-items: flex-start; gap: 13px; padding: 26px 32px; border-top: 1px solid #edf0f3; background: linear-gradient(180deg, #fff, #f8fafc); color: #1e2b3a; }
+.locator-awaiting-results > span { width: 34px; height: 34px; flex: none; display: grid; place-items: center; border: 1px solid #cfe0f7; border-radius: 50%; background: #edf5ff; color: var(--blue); font-size: 19px; }
+.locator-awaiting-results strong { display: block; margin: 2px 0 5px; font-size: 13px; font-weight: 600; }
+.locator-awaiting-results p { max-width: 300px; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
 .results-list { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 12px; background: #f3f5f7; scrollbar-color: #aeb5be transparent; }
 .dealer-card { position: relative; margin-bottom: 9px; padding: 0 20px; overflow: hidden; border: 1px solid #e0e4e9; border-radius: 14px; background: #fff; box-shadow: 0 3px 12px rgb(28 43 62 / .04); transition: border-color .18s ease, background-color .18s ease, box-shadow .18s ease, transform .18s ease; }
 .dealer-card:last-child { margin-bottom: 0; }
@@ -1152,7 +1156,25 @@ button { color: inherit; }
 .map-panel__topline i { width: 7px; height: 7px; border-radius: 50%; background: #8e8e8b; }
 .map-panel__topline i.is-live { background: #2878d1; }
 .map-panel__canvas { position: relative; flex: 1; min-height: 0; overflow: hidden; display: grid; place-items: center; isolation: isolate; border: 1px solid #d8dde3; border-radius: 20px; background: #e7eaee; box-shadow: 0 8px 26px rgb(20 32 49 / .08); }
-.map-panel__google-map { position: absolute; inset: 0; width: 100%; height: 100%; }
+.map-panel__google-map { position: absolute; inset: 0; width: 100%; height: 100%; transition: filter .35s ease, opacity .35s ease, transform .35s ease; }
+.map-panel__canvas.is-awaiting-search .map-panel__google-map { filter: blur(2.5px) saturate(.58); opacity: .72; pointer-events: none; transform: scale(1.018); }
+.map-panel__canvas.is-awaiting-search::after { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(135deg, rgb(237 243 250 / .5), rgb(255 255 255 / .2)); pointer-events: none; }
+.map-panel__search-prompt { position: relative; z-index: 2; width: min(calc(100% - 56px), 520px); padding: 40px; border: 1px solid rgb(255 255 255 / .92); border-radius: 24px; background: rgb(255 255 255 / .93); box-shadow: 0 28px 80px rgb(23 40 63 / .2), 0 2px 10px rgb(23 40 63 / .08); backdrop-filter: blur(18px); }
+.map-panel__search-icon { width: 48px; height: 48px; display: grid; place-items: center; margin-bottom: 26px; border: 1px solid #c9ddf8; border-radius: 50%; background: #edf5ff; color: var(--blue); font-size: 25px; box-shadow: 0 8px 24px rgb(52 126 228 / .12); }
+.map-panel__search-prompt .eyebrow { margin-bottom: 12px; color: var(--blue); }
+.map-panel__search-prompt h2 { max-width: 390px; margin: 0 0 13px; font-size: clamp(36px, 4vw, 54px); font-weight: 500; letter-spacing: -.05em; line-height: .98; }
+.map-panel__search-prompt > p:not(.eyebrow) { max-width: 410px; margin: 0; color: #5e6875; font-size: 15px; line-height: 1.55; }
+.map-panel__search-examples { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 22px; }
+.map-panel__search-examples span { padding: 7px 10px; border: 1px solid #dfe4ea; border-radius: 999px; background: #f7f9fb; color: #68727f; font-size: 9.5px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; }
+.map-panel__search-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; margin-top: 30px; }
+.map-panel__search-actions button { border: 0; font: inherit; cursor: pointer; }
+.map-panel__search-actions button:first-child { min-height: 52px; display: inline-flex; align-items: center; gap: 28px; padding: 7px 7px 7px 22px; border-radius: 999px; background: #000; color: #fff; font-size: 10px; font-weight: 600; letter-spacing: .085em; text-transform: uppercase; box-shadow: 0 12px 28px rgb(0 0 0 / .2); transition: background-color .2s ease, transform .2s ease; }
+.map-panel__search-actions button:first-child > span { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; background: #fff; color: #000; font-size: 15px; }
+.map-panel__search-actions button:first-child:hover { background: var(--blue); transform: translateY(-1px); }
+.map-panel__search-actions button:last-child { min-height: 44px; display: inline-flex; align-items: center; gap: 7px; padding: 0 5px; background: transparent; color: #344150; font-size: 11px; font-weight: 600; }
+.map-panel__search-actions button:last-child > span { color: var(--blue); font-size: 19px; }
+.map-panel__search-actions button:last-child:hover { color: var(--blue); }
+.map-panel__search-actions button:disabled { cursor: wait; opacity: .6; }
 .gm-style .gm-style-iw-c { max-width: 360px !important; overflow: hidden; padding: 0 !important; border: 1px solid rgb(24 38 58 / .1); border-radius: 22px; background: #fff; box-shadow: 0 22px 60px rgb(20 32 49 / .24), 0 3px 10px rgb(20 32 49 / .1); }
 .gm-style .gm-style-iw-chr { position: absolute; inset: 0 0 auto; z-index: 2; height: 0; }
 .gm-style .gm-style-iw-d { overflow: auto !important; }
@@ -1249,11 +1271,14 @@ button { color: inherit; }
   .locator-panel__intro h1 { font-size: 30px; }
   .locator-search { padding: 0 24px 22px; }
   .results-list { overflow: visible; padding: 10px; }
+  .locator-awaiting-results { min-height: 120px; padding: 22px 24px; }
   .results-list:not(.show-all) .dealer-card:nth-child(n + 13) { display: none; }
   .locator-show-all { min-height: 54px; display: block; margin: 0 24px 24px; border: 1px solid #000; border-radius: 0; background: #fff; font-size: 11px; font-weight: 500; letter-spacing: .09em; text-transform: uppercase; cursor: pointer; }
   .dealer-card { padding-inline: 24px; }
   .map-panel { min-height: 560px; padding: 0 10px 10px; border-top: 1px solid #dce1e7; }
   .map-panel__canvas { min-height: 477px; }
+  .map-panel__search-prompt { width: min(calc(100% - 36px), 520px); padding: 32px; }
+  .map-panel__search-icon { margin-bottom: 20px; }
   .locator-cta .shell { align-items: flex-start; flex-direction: column; }
   .locator-cta .shell::after { display: none; }
   .site-footer__main { grid-template-columns: 1fr 1fr; gap: 42px; }
@@ -1276,6 +1301,12 @@ button { color: inherit; }
   .dealer-card__actions { padding-left: 42px; }
   .map-panel { min-height: 500px; }
   .map-panel__canvas { min-height: 417px; }
+  .map-panel__search-prompt { width: calc(100% - 24px); padding: 25px 22px; border-radius: 18px; }
+  .map-panel__search-icon { width: 40px; height: 40px; margin-bottom: 17px; font-size: 21px; }
+  .map-panel__search-prompt h2 { font-size: 32px; }
+  .map-panel__search-prompt > p:not(.eyebrow) { font-size: 13px; }
+  .map-panel__search-examples { margin-top: 16px; }
+  .map-panel__search-actions { align-items: flex-start; flex-direction: column; gap: 5px; margin-top: 20px; }
   .map-panel__message { width: calc(100% - 28px); padding: 26px 22px; }
   .map-panel__legend { right: 14px; bottom: 14px; }
   .locator-cta { padding-block: 64px; }
