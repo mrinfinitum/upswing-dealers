@@ -10,6 +10,9 @@ import {
   parseDropboxListPage,
   resolveGalleryImageId,
 } from "../lib/dropbox/image-utils";
+import { galleryCategories } from "../types/gallery";
+
+assert.deepEqual(galleryCategories, ["upswing", "galaxy", "accessories"]);
 
 assert.equal(isSupportedGalleryFile("hero.jpg"), true);
 assert.equal(isSupportedGalleryFile("hero.JPEG"), true);
@@ -78,6 +81,9 @@ const originalRoute = readFileSync("app/api/dropbox/images/[id]/original/route.t
 const galleryAuth = readFileSync("lib/gallery/auth.ts", "utf8");
 const galleryPage = readFileSync("app/image-gallery/page.tsx", "utf8");
 const galleryClient = readFileSync("components/image-gallery/image-gallery.tsx", "utf8");
+const categoryRepository = readFileSync("lib/gallery/categories.ts", "utf8");
+const categoryAction = readFileSync("app/image-gallery/actions.ts", "utf8");
+const categoryMigration = readFileSync("supabase/migrations/202608170003_create_gallery_categories.sql", "utf8");
 
 assert.match(config, /required\("DROPBOX_REFRESH_TOKEN"\)/, "normal operation requires a refresh token");
 assert.match(config, /DROPBOX_GALLERY_PATH/, "the Dropbox gallery root is configurable");
@@ -102,5 +108,15 @@ assert.match(galleryAuth, /getDealerPortalIdentity/, "active dealer users are ac
 assert.match(galleryPage, /<ImageGallery images=\{images\}/, "the Server Component passes its Dropbox result directly to the gallery client");
 assert.match(galleryPage, /<GalleryHydrationDiagnostic images=\{images\.length\}/, "the client receives the server image count during hydration");
 assert.doesNotMatch(galleryClient, /setImages|fetch\(|router\.refresh/, "hydration cannot replace server-provided images with an empty client response");
+assert.match(galleryClient, /galleryCategories\.map/, "all approved category pills are rendered from the typed category list");
+assert.match(galleryClient, /canManageCategories/, "bulk category controls are gated by the server-provided admin capability");
+assert.match(categoryAction, /await requireAdmin\(\)/, "bulk category assignment independently requires administrator authorization");
+assert.match(categoryAction, /rawDropboxImageId/, "bulk assignment validates signed gallery image IDs server-side");
+assert.match(categoryAction, /\.slice\(0, 500\)/, "bulk assignment has a bounded input size");
+assert.match(categoryRepository, /\.in\("dropbox_file_id"/, "gallery metadata is loaded only for Dropbox files in the current result");
+assert.match(categoryMigration, /check \(category in \('upswing', 'galaxy', 'accessories'\)\)/, "the database constrains gallery categories");
+assert.match(categoryMigration, /Admins manage gallery categories/, "only administrators can mutate gallery category metadata");
+assert.match(categoryMigration, /Active dealers view gallery categories/, "active dealer users can read category metadata");
+assert.doesNotMatch(categoryMigration, /storage|bytea|blob/i, "Supabase stores metadata only, never Dropbox image binaries");
 
 testPagination().then(() => console.log("Dropbox gallery filtering, pagination, safe IDs, OAuth, and route gating checks passed."));

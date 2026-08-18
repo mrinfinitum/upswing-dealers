@@ -3,6 +3,7 @@ import "server-only";
 import { getDropboxServerConfig } from "./config";
 import { analyzeGalleryEntries, collectDropboxPages, resolveGalleryImageId, type GalleryFilterDiagnostics } from "./image-utils";
 import { dropboxContent, dropboxRpc } from "./server";
+import { applyGalleryCategories } from "@/lib/gallery/categories";
 import type { GalleryImage } from "@/types/gallery";
 
 const metadataTtl = 10 * 60 * 1000;
@@ -15,7 +16,7 @@ function logListing(diagnostics: GalleryFilterDiagnostics, cacheStatus: "hit" | 
 export async function listGalleryImages(): Promise<GalleryImage[]> {
   if (metadataCache && metadataCache.expiresAt > Date.now()) {
     logListing(metadataCache.diagnostics, "hit");
-    return metadataCache.images;
+    return applyGalleryCategories(metadataCache.images);
   }
   const config = getDropboxServerConfig();
   const first = await dropboxRpc("files/list_folder", {
@@ -30,7 +31,7 @@ export async function listGalleryImages(): Promise<GalleryImage[]> {
   const { images, diagnostics } = analyzeGalleryEntries(entries, config.appSecret);
   logListing(diagnostics, images.length ? "miss" : "empty-not-cached");
   metadataCache = images.length ? { expiresAt: Date.now() + metadataTtl, images, diagnostics } : undefined;
-  return images;
+  return applyGalleryCategories(images);
 }
 
 function dropboxId(imageId: string) {
