@@ -1154,10 +1154,11 @@ button { color: inherit; }
 .map-panel__canvas { position: relative; flex: 1; min-height: 0; overflow: hidden; display: grid; place-items: center; isolation: isolate; border: 1px solid #d8dde3; border-radius: 20px; background: #e7eaee; box-shadow: 0 8px 26px rgb(20 32 49 / .08); }
 .map-panel__google-map { position: absolute; inset: 0; width: 100%; height: 100%; }
 .gm-style .gm-style-iw-c { max-width: 360px !important; overflow: hidden; padding: 0 !important; border: 1px solid rgb(24 38 58 / .1); border-radius: 22px; background: #fff; box-shadow: 0 22px 60px rgb(20 32 49 / .24), 0 3px 10px rgb(20 32 49 / .1); }
+.gm-style .gm-style-iw-chr { position: absolute; inset: 0 0 auto; z-index: 2; height: 0; }
 .gm-style .gm-style-iw-d { overflow: auto !important; }
 .gm-style .gm-style-iw-c button.gm-ui-hover-effect { top: 9px !important; right: 9px !important; width: 32px !important; height: 32px !important; border: 1px solid #e1e5ea !important; border-radius: 50%; background: #f7f8fa !important; opacity: 1; }
 .gm-style .gm-style-iw-c button.gm-ui-hover-effect span { width: 14px !important; height: 14px !important; margin: 8px !important; }
-.map-dealer-card { width: min(310px, calc(100vw - 72px)); padding: 24px 22px 20px; color: #090b0d; font-family: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif; }
+.map-dealer-card { width: min(310px, calc(100vw - 72px)); padding: 16px 22px 20px; color: #090b0d; font-family: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif; }
 .map-dealer-card__eyebrow { width: max-content; margin: 0 36px 12px 0; padding: 6px 9px; border: 1px solid #d7e6fa; border-radius: 999px; background: #edf5ff; color: #2465b8; font-size: 8px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
 .map-dealer-card h3 { margin: 0 36px 14px 0; font-size: 21px; font-weight: 700; letter-spacing: -.03em; line-height: 1.08; }
 .map-dealer-card h3.has-logo { min-height: 42px; display: flex; align-items: center; }
