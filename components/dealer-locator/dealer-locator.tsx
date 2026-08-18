@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useId, useMemo, useState, useTransition } from "react";
-import { queryLooksPostal, queryMatchesCountry, queryMatchesDealerName, searchDealers, sortDealersAlphabetically } from "@/lib/dealers/search";
+import { getStateCodeForQuery, queryLooksPostal, queryMatchesCountry, queryMatchesDealerName, searchDealers, searchDealersByExactState, sortDealersAlphabetically } from "@/lib/dealers/search";
 import { dealersWithinRadius, sortDealersByDistance } from "@/lib/geo/distance";
 import { geocodeWithGoogle } from "@/lib/maps/google-loader";
 import type { MapConfiguration } from "@/lib/maps/provider";
@@ -16,6 +16,7 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
   const [query, setQuery] = useState("");
   const [stateQuery, setStateQuery] = useState("");
   const [activeQuery, setActiveQuery] = useState("");
+  const [activeState, setActiveState] = useState("");
   const [selectedDealerId, setSelectedDealerId] = useState<string>();
   const [userLocation, setUserLocation] = useState<DealerCoordinates>();
   const [searchOrigin, setSearchOrigin] = useState<DealerCoordinates>();
@@ -30,8 +31,11 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
     .filter((dealer) => dealer.country === "United States" && dealer.stateProvince)
     .map((dealer) => dealer.stateProvince!))].sort(), [dealers]);
   const origin = userLocation ?? searchOrigin;
-  const hasSearchContext = Boolean(activeQuery || origin);
-  const filteredDealers = useMemo(() => searchDealers(dealers, activeQuery), [activeQuery, dealers]);
+  const hasSearchContext = Boolean(activeQuery || activeState || origin);
+  const filteredDealers = useMemo(
+    () => activeState ? searchDealersByExactState(dealers, activeState) : searchDealers(dealers, activeQuery),
+    [activeQuery, activeState, dealers],
+  );
   const results = useMemo<DealerWithDistance[]>(() => {
     if (!hasSearchContext) return [];
     if (origin && hasCoordinateDealers) return dealersWithinRadius(dealers, origin, radiusMiles);
@@ -41,9 +45,11 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
 
   async function runSearch(value: string, geocode = true) {
     const nextQuery = value.trim();
+    const exactState = getStateCodeForQuery(nextQuery);
     setQuery(nextQuery);
     startTransition(() => {
       setActiveQuery(nextQuery);
+      setActiveState(exactState ?? "");
       setSelectedDealerId(undefined);
       setShowAll(false);
     });
@@ -51,7 +57,7 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
     setSearchOrigin(undefined);
     setLocationStatus("idle");
     setLocationMessage("");
-    if (!nextQuery || !geocode || mapConfig.provider !== "google" || queryMatchesDealerName(dealers, nextQuery) || queryMatchesCountry(dealers, nextQuery)) return;
+    if (!nextQuery || exactState || !geocode || mapConfig.provider !== "google" || queryMatchesDealerName(dealers, nextQuery) || queryMatchesCountry(dealers, nextQuery)) return;
 
     setLocationStatus("loading");
     setLocationMessage("Locating your search…");
@@ -84,6 +90,7 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
     setQuery("");
     setStateQuery("");
     setActiveQuery("");
+    setActiveState("");
     setSelectedDealerId(undefined);
     setLocationStatus("idle");
     setLocationMessage("");
@@ -104,6 +111,7 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
     setQuery("");
     setStateQuery("");
     setActiveQuery("");
+    setActiveState("");
     setSelectedDealerId(undefined);
     setUserLocation(undefined);
     setSearchOrigin(undefined);

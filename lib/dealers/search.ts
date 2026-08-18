@@ -19,6 +19,12 @@ const countryAliases: Record<string, string> = {
 const clean = (value: string) => value.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, " ").trim();
 const dealerCollator = new Intl.Collator("en", { numeric: true, sensitivity: "base" });
 
+export function getStateCodeForQuery(query: string): string | undefined {
+  const normalizedQuery = clean(query);
+  if (!normalizedQuery) return undefined;
+  return Object.entries(stateNames).find(([code, name]) => clean(code) === normalizedQuery || name === normalizedQuery)?.[0];
+}
+
 export function sortDealersAlphabetically(dealers: Dealer[]): Dealer[] {
   return [...dealers].sort((left, right) => {
     for (const comparison of [
@@ -49,6 +55,11 @@ export function searchDealers(dealers: Dealer[], query: string): Dealer[] {
     ].filter(Boolean).join(" "));
     return terms.every((term) => haystack.includes(term));
   });
+}
+
+export function searchDealersByExactState(dealers: Dealer[], stateCode: string): Dealer[] {
+  const normalizedState = clean(stateCode);
+  return dealers.filter((dealer) => dealer.country === "United States" && clean(dealer.stateProvince ?? "") === normalizedState);
 }
 
 export function queryLooksPostal(query: string) {

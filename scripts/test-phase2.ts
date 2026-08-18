@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { applyVerifiedEnrichments, validateEnrichmentProposals } from "../lib/dealers/enrichment";
 import { dealerEnrichmentProposals } from "../lib/dealers/enrichment-proposals";
 import { normalizeDealerRows } from "../lib/dealers/normalize";
-import { getInitialDealerResults, searchDealers } from "../lib/dealers/search";
+import { getInitialDealerResults, getStateCodeForQuery, searchDealers, searchDealersByExactState } from "../lib/dealers/search";
 import { rawDealerRows } from "../lib/dealers/source";
 import { getMappableDealers } from "../lib/maps/markers";
 import { dealersWithinRadius, distanceMiles } from "../lib/geo/distance";
@@ -96,6 +96,10 @@ assert.equal(searchDealers(publicDealers, "Mississauga Canada").length, 1);
 assert.equal(searchDealers(publicDealers, "Alexandria Australia").length, 1);
 assert.equal(searchDealers(publicDealers, "Basingstoke United Kingdom").length, 1);
 assert.equal(searchDealers(publicDealers, "Basingstoke UK").length, 1);
+assert.equal(getStateCodeForQuery("Texas"), "TX", "full state names resolve to their exact state code");
+assert.equal(getStateCodeForQuery("tx"), "TX", "state abbreviations resolve without case sensitivity");
+assert.equal(searchDealersByExactState(publicDealers, "CA").every((dealer) => dealer.stateProvince === "CA" && dealer.country === "United States"), true, "state selection cannot leak substring matches from other regions or countries");
+assert.equal(searchDealersByExactState(publicDealers, "TX").length, publicDealers.filter((dealer) => dealer.stateProvince === "TX" && dealer.country === "United States").length, "state selection returns every exact dealer in the chosen state");
 
 const source = { workbook: "test", sheet: "test", row: 1, rawCity: "Origin" };
 const coordinateDealers: Dealer[] = [
