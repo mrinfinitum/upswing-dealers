@@ -16,15 +16,6 @@ export default async function Home() {
       {mapConfig.provider === "google" ? <GoogleMapsPreloader config={mapConfig} /> : null}
       <SiteHeader />
       <main>
-        <section className="locator-hero">
-          <div className="locator-hero__texture" aria-hidden="true" />
-          <div className="shell locator-hero__content">
-            <p className="eyebrow">UpSwing retail partners</p>
-            <h1>Clubs that grow.<br />Support that’s local.</h1>
-            <p>Find an authorized UpSwing dealer and get your golfer into equipment built for every stage of their game.</p>
-            <a href="#locator">Find a dealer <span aria-hidden="true">↓</span></a>
-          </div>
-        </section>
         <div className="shell locator-section-wrap">
           <DealerLocator dealers={dealers} mapConfig={mapConfig} />
         </div>

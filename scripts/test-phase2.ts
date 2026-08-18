@@ -16,11 +16,15 @@ import type { Dealer } from "../types/dealer";
 const homePage = readFileSync("app/page.tsx", "utf8");
 const mapsPreloader = readFileSync("components/dealer-locator/google-maps-preloader.tsx", "utf8");
 const googleLoader = readFileSync("lib/maps/google-loader.ts", "utf8");
+const googleMap = readFileSync("components/dealer-locator/google-map.tsx", "utf8");
 assert.match(homePage, /GoogleMapsPreloader config=\{mapConfig\}/, "the home page starts warming Google Maps before the locator renders");
 assert.match(mapsPreloader, /preconnect\("https:\/\/maps\.googleapis\.com"\)/, "Google Maps API connection is warmed early");
 assert.match(mapsPreloader, /preconnect\("https:\/\/maps\.gstatic\.com"/, "Google Maps static asset connection is warmed early");
 assert.match(mapsPreloader, /loadGoogleMaps\(config\)/, "the Maps and marker libraries preload during the hero view");
 assert.match(googleLoader, /mapsPromise \?\?=/, "the visible map reuses the in-flight preload promise");
+assert.match(googleMap, /UNITED_STATES_CENTER/, "the default map uses an explicit continental U.S. center");
+assert.match(googleMap, /map\.moveCamera\(\{ center: UNITED_STATES_CENTER, zoom: UNITED_STATES_ZOOM \}\)/, "the default map camera is restored after the panel has dimensions");
+assert.match(googleMap, /google\.maps\.event\.trigger\(map, "resize"\)/, "the first map render is resized after layout before setting its camera");
 
 const { dealers } = normalizeDealerRows(rawDealerRows);
 assert.equal(rawDealerRows.length, 71, "The source dataset must retain 71 rows");

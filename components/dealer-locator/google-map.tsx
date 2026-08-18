@@ -18,6 +18,9 @@ type GoogleMapProps = {
   onFailure: () => void;
 };
 
+const UNITED_STATES_CENTER = { lat: 39.5, lng: -98.35 };
+const UNITED_STATES_ZOOM = 4;
+
 function getDirectionsUrl(dealer: Dealer) {
   const destination = [dealer.name, dealer.addressLine1, dealer.addressLine2, dealer.city, dealer.stateProvince, dealer.postalCode, dealer.country]
     .filter(Boolean)
@@ -102,8 +105,8 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
         if (!active || !containerRef.current) return;
         mapRef.current = new maps.Map(containerRef.current, {
           mapId: config.mapId,
-          center: { lat: 39.5, lng: -98.35 },
-          zoom: 4,
+          center: UNITED_STATES_CENTER,
+          zoom: UNITED_STATES_ZOOM,
           clickableIcons: false,
           fullscreenControl: false,
           mapTypeControl: false,
@@ -169,19 +172,17 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
     const markers = [...dealerMarkers, ...auxiliaryMarkers];
     markersRef.current = markers;
     clustererRef.current = new MarkerClusterer({ map, markers: dealerMarkers });
-    if (useUnitedStatesOverview) {
-      map.fitBounds({
-        north: 49.384358,
-        south: 24.396308,
-        east: -66.885444,
-        west: -124.848974,
-      }, 54);
-    } else if (!bounds.isEmpty()) {
-      map.fitBounds(bounds, 54);
-      if (getMappableDealers(dealers).length === 1 && !origin) {
-        google.maps.event.addListenerOnce(map, "idle", () => { if ((map.getZoom() ?? 0) > 13) map.setZoom(13); });
+    const cameraFrame = requestAnimationFrame(() => {
+      google.maps.event.trigger(map, "resize");
+      if (useUnitedStatesOverview) {
+        map.moveCamera({ center: UNITED_STATES_CENTER, zoom: UNITED_STATES_ZOOM });
+      } else if (!bounds.isEmpty()) {
+        map.fitBounds(bounds, 54);
+        if (getMappableDealers(dealers).length === 1 && !origin) {
+          google.maps.event.addListenerOnce(map, "idle", () => { if ((map.getZoom() ?? 0) > 13) map.setZoom(13); });
+        }
       }
-    }
+    });
     if (previousSelectedDealerId.current && previousSelectedDealerId.current !== selectedDealerId) {
       const selected = dealers.find((dealer) => dealer.id === selectedDealerId)?.coordinates;
       if (selected) map.panTo({ lat: selected.latitude, lng: selected.longitude });
@@ -191,6 +192,7 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
       closeListener.remove();
       mapClickListener.remove();
       infoWindow.close();
+      cancelAnimationFrame(cameraFrame);
       clustererRef.current?.clearMarkers();
       markers.forEach((marker) => { marker.map = null; });
     };
