@@ -121,6 +121,7 @@ assert.match(galleryClient, /loading="lazy" decoding="async"/, "gallery thumbnai
 assert.match(galleryClient, /displayedImages\.map/, "only the current image batch is mounted in the grid");
 assert.match(galleryClient, /GalleryViewToggle view=\{view\}/, "the shared gallery supports grid and list views");
 assert.match(galleryViewToggle, /aria-pressed=\{view === "list"\}/, "the gallery view toggle exposes its selected layout accessibly");
+assert.match(galleryClient, /gallery-list-header/, "shared gallery list view includes aligned column headers");
 assert.match(categoryAction, /await requireAdmin\(\)/, "bulk category assignment independently requires administrator authorization");
 assert.match(categoryAction, /rawDropboxImageId/, "bulk assignment validates signed gallery image IDs server-side");
 assert.match(categoryAction, /\.slice\(0, 500\)/, "bulk assignment has a bounded input size");

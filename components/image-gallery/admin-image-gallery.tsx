@@ -102,6 +102,7 @@ export function AdminImageGallery({ images }: { images: GalleryImage[] }) {
     {state.message ? <p className={state.success ? "gallery-admin-message is-success" : "gallery-admin-message"} role="status">{state.message}</p> : null}
 
     {displayedImages.length ? <section className={`gallery-admin-grid${view === "list" ? " is-list" : ""}`} aria-label={`Manage approved gallery images, ${view} view`}>
+      {view === "list" ? <div className="gallery-list-header" aria-hidden="true"><span>Preview</span><span>Category</span><span>Modified</span><span>Select</span></div> : null}
       {displayedImages.map((image) => {
         const selected = selectedIds.includes(image.id);
         return <article className={selected ? "is-selected" : ""} key={image.id}>

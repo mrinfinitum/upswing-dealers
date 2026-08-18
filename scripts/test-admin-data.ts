@@ -92,6 +92,7 @@ assert.match(adminGalleryClient, /Select visible/, "Gallery Admin supports bulk 
 assert.match(adminGalleryClient, /assignGalleryCategoryAction/, "Gallery Admin uses the protected bulk category action");
 assert.match(adminGalleryClient, /uncategorized/, "Gallery Admin highlights images that still need categorization");
 assert.match(adminGalleryClient, /GalleryViewToggle view=\{view\}/, "Gallery Admin supports grid and list views");
+assert.match(adminGalleryClient, /gallery-list-header/, "Gallery Admin list view renders as an aligned asset directory");
 assert.doesNotMatch(adminDashboard, /admin\/requests/, "update requests are removed from the admin hub");
 assert.doesNotMatch(adminDashboard, /href: "\/admin\/locations"/, "raw locations are grouped behind Dealers in the admin hub");
 assert.match(adminDealerDirectory, /groupDealers\(dealers\)/, "the dealer directory groups current location records by retailer");

@@ -108,10 +108,12 @@ export function ImageGallery({ images }: { images: GalleryImage[] }) {
       </div>
 
       {visibleImages.length ? <section className={`image-gallery-grid${view === "list" ? " is-list" : ""}`} aria-label={`Approved image gallery, ${view} view`}>
+      {view === "list" ? <div className="gallery-list-header" aria-hidden="true"><span>Preview</span><span>Category</span><span>Modified</span><span>Action</span></div> : null}
       {displayedImages.map((image, index) => <article className="image-gallery-card" key={image.id}>
         <button type="button" onClick={(event) => open(index, event.currentTarget)} aria-label={`View ${image.name}`}>
           <span className="image-gallery-card__image"><Image src={imageUrl(image, "thumbnail")} alt="" width={640} height={480} sizes="(max-width: 520px) 100vw, (max-width: 760px) 50vw, (max-width: 1100px) 33vw, 25vw" loading="lazy" decoding="async" unoptimized /></span>
           <span className="image-gallery-card__content"><em>{image.category ? categoryLabels[image.category] : "Uncategorized"}</em>{image.modifiedAt ? <small>{new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(new Date(image.modifiedAt))}</small> : null}</span>
+          <span className="gallery-list-action">View <b aria-hidden="true">→</b></span>
         </button>
       </article>)}
       </section> : <div className="image-gallery-filter-empty"><strong>No images in this category.</strong><button type="button" onClick={() => filterBy("all")}>View all images</button></div>}
