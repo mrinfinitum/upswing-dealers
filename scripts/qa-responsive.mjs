@@ -113,17 +113,17 @@ const interaction = await evaluate(`(async () => {
   setValue('United States');
   document.querySelector('.locator-search').requestSubmit();
   await waitForSearch();
-  const countryCount = document.querySelector('.locator-results-heading p').textContent;
+  const countryCount = document.querySelector('.locator-results-status').textContent;
 
   setValue('Club Champion');
   document.querySelector('.locator-search').requestSubmit();
   await waitForSearch();
-  const retailerCount = document.querySelector('.locator-results-heading p').textContent;
+  const retailerCount = document.querySelector('.locator-results-status').textContent;
 
   setValue('1005 Holcomb Woods Parkway');
   document.querySelector('.locator-search').requestSubmit();
   await waitForSearch();
-  const addressCount = document.querySelector('.locator-results-heading p').textContent;
+  const addressCount = document.querySelector('.locator-results-status').textContent;
   const enrichedAddressVisible = document.querySelector('.dealer-card__address')?.textContent.includes('1005 Holcomb Woods Parkway') ?? false;
 
   setValue('99999');
@@ -133,7 +133,7 @@ const interaction = await evaluate(`(async () => {
 
   document.querySelector('.locator-search__utilities button:last-child')?.click();
   await pause();
-  const resetCount = document.querySelector('.locator-results-heading p').textContent;
+  const resetCount = document.querySelector('.locator-results-status').textContent;
   const externalLinksCanonical = [...document.querySelectorAll('a[href^="http"][href*="upswinggolf.com"]')]
     .every((link) => link.href.startsWith('https://www.upswinggolf.com/'));
   const directionsWorks = Boolean(document.querySelector('.dealer-card__actions a[href*="google.com/maps/dir/"]'));

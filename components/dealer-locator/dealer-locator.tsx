@@ -150,10 +150,9 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
             </fieldset>
           )}
         </form>
-        <div className="locator-results-heading" aria-live="polite">
-          <p>{results.length} {results.length === 1 ? "location" : "locations"}{origin && hasCoordinateDealers ? ` within ${radiusMiles} miles` : activeQuery ? ` for “${activeQuery}”` : ""}</p>
-          <span>{origin && results.some((dealer) => dealer.distanceMiles !== undefined) ? "Nearest first" : activeQuery ? "Current partners" : "U.S. partners"}</span>
-        </div>
+        <p className="locator-results-status" aria-live="polite">
+          {results.length} {results.length === 1 ? "location" : "locations"}{origin && hasCoordinateDealers ? ` within ${radiusMiles} miles` : activeQuery ? ` for “${activeQuery}”` : ""}
+        </p>
         <ResultsList dealers={results} selectedDealerId={selectedDealer?.id} query={activeQuery} postalQuery={queryLooksPostal(activeQuery)} showAll={showAll} onSelectDealer={selectDealer} />
         {results.length > 12 && (
           <button className="locator-show-all" type="button" onClick={() => setShowAll((value) => !value)}>
