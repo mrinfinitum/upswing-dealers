@@ -151,7 +151,13 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
         scale: selected ? 1.2 : 1,
       });
       const position = { lat: coordinates.latitude, lng: coordinates.longitude };
-      const marker = new markerLibrary.AdvancedMarkerElement({ map, position, title: `${dealer.name}, ${dealer.city}`, content: pin });
+      const marker = new markerLibrary.AdvancedMarkerElement({
+        map,
+        position,
+        title: `${dealer.name}, ${dealer.city}`,
+        content: pin,
+        gmpClickable: true,
+      });
       marker.addEventListener("gmp-click", (event) => {
         event.stopPropagation();
         setOpenDealerId(dealer.id);

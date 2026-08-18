@@ -26,6 +26,7 @@ assert.match(googleMap, /UNITED_STATES_CENTER/, "the default map uses an explici
 assert.match(googleMap, /map\.moveCamera\(\{ center: UNITED_STATES_CENTER, zoom: UNITED_STATES_ZOOM \}\)/, "the default map camera is restored after the panel has dimensions");
 assert.match(googleMap, /google\.maps\.event\.trigger\(map, "resize"\)/, "the first map render is resized after layout before setting its camera");
 assert.match(googleMap, /marker\.addEventListener\("gmp-click"/, "dealer markers use the current Advanced Marker click event");
+assert.match(googleMap, /gmpClickable: true/, "dealer markers explicitly enable current Google Maps click and keyboard interaction");
 assert.match(googleMap, /infoWindow\.setContent\(createDealerInfoCard\(openDealer\)\)/, "dealer marker selection opens a location information card");
 assert.doesNotMatch(googleMap, /map\.addListener\("click"/, "the map canvas does not immediately close a marker card through click bubbling");
 
