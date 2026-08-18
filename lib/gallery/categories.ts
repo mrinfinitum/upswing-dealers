@@ -33,6 +33,12 @@ export async function applyGalleryCategories(images: GalleryImage[]): Promise<Ga
     rows.push(...(data as CategoryRow[]));
   }
 
-  const categories = new Map(rows.filter((row) => isGalleryCategory(row.category)).map((row) => [row.dropbox_file_id, row.category as GalleryCategory]));
-  return images.map((image, index) => ({ ...image, category: categories.get(rawIds[index]) }));
+  const categories = new Map<string, GalleryCategory[]>();
+  for (const row of rows) {
+    if (!isGalleryCategory(row.category)) continue;
+    const assigned = categories.get(row.dropbox_file_id) ?? [];
+    if (!assigned.includes(row.category)) assigned.push(row.category);
+    categories.set(row.dropbox_file_id, assigned);
+  }
+  return images.map((image, index) => ({ ...image, categories: categories.get(rawIds[index]) ?? [] }));
 }

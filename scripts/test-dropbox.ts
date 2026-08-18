@@ -122,9 +122,11 @@ assert.match(galleryClient, /displayedImages\.map/, "only the current image batc
 assert.match(galleryClient, /GalleryViewToggle view=\{view\}/, "the shared gallery supports grid and list views");
 assert.match(galleryViewToggle, /aria-pressed=\{view === "list"\}/, "the gallery view toggle exposes its selected layout accessibly");
 assert.match(galleryClient, /gallery-list-header/, "shared gallery list view includes aligned column headers");
-assert.match(categoryAction, /await requireAdmin\(\)/, "bulk category assignment independently requires administrator authorization");
+assert.match(categoryAction, /await requireAdmin\(\)/, "auto-save category assignment independently requires administrator authorization");
 assert.match(categoryAction, /rawDropboxImageId/, "bulk assignment validates signed gallery image IDs server-side");
 assert.match(categoryAction, /\.slice\(0, 500\)/, "bulk assignment has a bounded input size");
+assert.match(categoryAction, /onConflict: "dropbox_file_id,category"/, "adding a category preserves other image categories");
+assert.match(categoryAction, /\.delete\(\)\.in\("dropbox_file_id"/, "individual categories can be removed without replacing the others");
 assert.match(categoryAction, /revalidatePath\("\/admin\/gallery"\)/, "bulk assignment refreshes the Gallery Admin workspace");
 assert.match(categoryRepository, /\.in\("dropbox_file_id"/, "gallery metadata is loaded only for Dropbox files in the current result");
 assert.match(categoryMigration, /check \(category in \('upswing', 'galaxy', 'accessories'\)\)/, "the database constrains gallery categories");

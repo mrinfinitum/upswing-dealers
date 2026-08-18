@@ -7,5 +7,5 @@ export type GalleryImage = {
   width?: number;
   height?: number;
   modifiedAt?: string;
-  category?: GalleryCategory;
+  categories: GalleryCategory[];
 };

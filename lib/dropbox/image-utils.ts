@@ -131,6 +131,7 @@ export function analyzeGalleryEntries(entries: unknown[], signingSecret: string)
       width: typeof dimensions?.width === "number" ? dimensions.width : undefined,
       height: typeof dimensions?.height === "number" ? dimensions.height : undefined,
       modifiedAt: entry.server_modified || entry.client_modified,
+      categories: [],
     }];
   }).sort((left, right) => {
     const dateOrder = (Date.parse(right.modifiedAt || "") || 0) - (Date.parse(left.modifiedAt || "") || 0);
