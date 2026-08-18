@@ -100,7 +100,7 @@ export function ImageGallery({ images, canManageCategories = false }: { images: 
         <button type="button" onClick={(event) => open(index, event.currentTarget)} aria-label={managingCategories ? `${selectedIds.includes(image.id) ? "Deselect" : "Select"} ${image.name}` : `View ${image.name}`} aria-pressed={managingCategories ? selectedIds.includes(image.id) : undefined}>
           {managingCategories ? <span className="image-gallery-card__select" aria-hidden="true">{selectedIds.includes(image.id) ? "✓" : ""}</span> : null}
           <span className="image-gallery-card__image"><Image src={imageUrl(image, "thumbnail")} alt="" width={640} height={480} sizes="(max-width: 520px) 100vw, (max-width: 760px) 50vw, (max-width: 1100px) 33vw, 25vw" unoptimized /></span>
-          <span className="image-gallery-card__content"><em>{image.category ? categoryLabels[image.category] : "Uncategorized"}</em>{image.modifiedAt ? <small>{new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(new Date(image.modifiedAt))}</small> : null}<i>{managingCategories ? "Select image" : "View image"} <span aria-hidden="true">{managingCategories ? "+" : "↗"}</span></i></span>
+          <span className="image-gallery-card__content"><em>{image.category ? categoryLabels[image.category] : "Uncategorized"}</em>{image.modifiedAt ? <small>{new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(new Date(image.modifiedAt))}</small> : null}</span>
         </button>
       </article>)}
       </section> : <div className="image-gallery-filter-empty"><strong>No images in this category.</strong><button type="button" onClick={() => filterBy("all")}>View all images</button></div>}
