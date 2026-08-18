@@ -182,6 +182,9 @@ button { color: inherit; }
 .image-gallery-categories__pills button.is-active { border-color: #050505; background: #050505; color: #fff; }
 .image-gallery-categories__pills button span { min-width: 24px; display: inline-grid; place-items: center; margin-left: 8px; padding: 4px 7px; border-radius: 999px; background: rgb(255 255 255 / .14); font-size: 9px; }
 .image-gallery-categories__pills button:not(.is-active) span { background: #e6ebf1; color: #65707d; }
+.image-gallery-categories__actions { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; }
+.image-gallery-categories__actions label { min-height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 8px 0 15px; border: 1px solid #d8dfe7; border-radius: 999px; background: #f7f9fc; color: #697380; font-size: 9px; font-weight: 750; letter-spacing: .07em; text-transform: uppercase; white-space: nowrap; }
+.image-gallery-categories__actions select { min-width: 62px; min-height: 32px; padding: 0 22px 0 10px; border: 0; border-radius: 999px; background-color: #fff; color: #15191f; font: inherit; cursor: pointer; }
 .image-gallery-categories .image-gallery-manage { flex: 0 0 auto; border-color: #c9dcf5; background: #eaf3ff; color: #2367bd; }
 .image-gallery-categories .image-gallery-manage.is-active { border-color: #347ee4; background: #347ee4; color: #fff; }
 .image-gallery-bulk { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 20px 22px; border-radius: 22px; background: #0a0b0d; color: #fff; box-shadow: 0 18px 44px rgb(4 10 21 / .18); }
@@ -214,6 +217,9 @@ button { color: inherit; }
 .image-gallery-state .admin-button { width: max-content; margin-top: 26px; }
 .image-gallery-filter-empty { min-height: 240px; display: grid; place-items: center; align-content: center; gap: 18px; border: 1px dashed #cfd7e1; border-radius: 24px; background: rgb(255 255 255 / .55); color: #596472; }
 .image-gallery-filter-empty strong { font-size: 20px; font-weight: 550; }
+.image-gallery-pagination { min-height: 72px; display: flex; align-items: center; justify-content: center; gap: 18px; padding: 12px; color: #7a8490; font-size: 10px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+.image-gallery-pagination button { min-height: 44px; padding: 0 20px; border: 1px solid #111; border-radius: 999px; background: #050505; color: #fff; font: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer; }
+.image-gallery-pagination strong { color: #53606e; font-weight: 700; }
 .image-gallery-skeleton { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
 .image-gallery-skeleton > div { overflow: hidden; padding-bottom: 20px; border: 1px solid #e0e4e9; border-radius: 22px; background: #fff; }
 .image-gallery-skeleton span { aspect-ratio: 4 / 3; display: block; background: linear-gradient(100deg, #edf0f3 20%, #f7f8f9 40%, #edf0f3 60%); background-size: 200% 100%; animation: gallery-shimmer 1.4s linear infinite; }
@@ -243,7 +249,8 @@ button { color: inherit; }
   .image-gallery-grid, .image-gallery-skeleton { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .image-gallery-heading { align-items: flex-start; flex-direction: column; }
   .image-gallery-categories { align-items: stretch; flex-direction: column; }
-  .image-gallery-categories .image-gallery-manage { width: 100%; }
+  .image-gallery-categories__actions { width: 100%; }
+  .image-gallery-categories__actions label, .image-gallery-categories .image-gallery-manage { flex: 1; }
   .image-gallery-bulk { align-items: stretch; flex-direction: column; }
   .image-gallery-bulk > div:last-child { overflow-x: auto; }
 }
@@ -254,6 +261,8 @@ button { color: inherit; }
   .image-gallery-heading h1 { font-size: clamp(46px, 16vw, 66px); }
   .image-gallery-categories { padding: 9px; border-radius: 20px; }
   .image-gallery-categories button, .image-gallery-bulk button { padding: 0 14px; }
+  .image-gallery-categories__actions { align-items: stretch; flex-direction: column; }
+  .image-gallery-categories__actions label { justify-content: space-between; }
   .image-gallery-bulk { padding: 18px; border-radius: 18px; }
   .image-gallery-grid, .image-gallery-skeleton { grid-template-columns: 1fr; }
   .image-gallery-state { min-height: 390px; padding: 34px 22px; border-radius: 22px; }

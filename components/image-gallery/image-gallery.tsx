@@ -7,6 +7,8 @@ import { initialGalleryCategoryActionState } from "@/lib/gallery/category-form-s
 import { galleryCategories, type GalleryCategory, type GalleryImage } from "@/types/gallery";
 
 const categoryLabels: Record<GalleryCategory, string> = { upswing: "UpSwing", galaxy: "Galaxy", accessories: "Accessories" };
+const galleryPageSizes = [20, 50, 100] as const;
+type GalleryPageSize = typeof galleryPageSizes[number];
 
 function cleanDisplayName(name: string) {
   return name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
@@ -21,16 +23,33 @@ export function ImageGallery({ images, canManageCategories = false }: { images: 
   const [activeCategory, setActiveCategory] = useState<"all" | GalleryCategory>("all");
   const [managingCategories, setManagingCategories] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [pageSize, setPageSize] = useState<GalleryPageSize>(20);
+  const [visibleLimit, setVisibleLimit] = useState(20);
   const [categoryState, categoryAction, categoryPending] = useActionState(assignGalleryCategoryAction, initialGalleryCategoryActionState);
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
   const visibleImages = useMemo(() => activeCategory === "all" ? images : images.filter((image) => image.category === activeCategory), [activeCategory, images]);
+  const displayedImages = visibleImages.slice(0, visibleLimit);
+  const hasMore = displayedImages.length < visibleImages.length;
   const selected = selectedIndex === null ? null : visibleImages[selectedIndex];
 
   useEffect(() => {
     console.info("Image gallery client props", { images: images.length, metadataFetch: false });
   }, [images.length]);
+
+  useEffect(() => {
+    const target = loadMoreRef.current;
+    if (!target || !hasMore) return;
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        setVisibleLimit((current) => Math.min(current + pageSize, visibleImages.length));
+      }
+    }, { rootMargin: "500px 0px" });
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [hasMore, pageSize, visibleImages.length]);
 
   const close = useCallback(() => {
     setSelectedIndex(null);
@@ -66,7 +85,7 @@ export function ImageGallery({ images, canManageCategories = false }: { images: 
 
   function open(index: number, trigger: HTMLElement) {
     if (managingCategories) {
-      const id = visibleImages[index].id;
+      const id = displayedImages[index].id;
       setSelectedIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
       return;
     }
@@ -77,6 +96,13 @@ export function ImageGallery({ images, canManageCategories = false }: { images: 
   function filterBy(category: "all" | GalleryCategory) {
     setSelectedIndex(null);
     setActiveCategory(category);
+    setVisibleLimit(pageSize);
+  }
+
+  function changePageSize(value: number) {
+    if (!galleryPageSizes.includes(value as GalleryPageSize)) return;
+    setPageSize(value as GalleryPageSize);
+    setVisibleLimit(value);
   }
 
   return <>
@@ -86,7 +112,7 @@ export function ImageGallery({ images, canManageCategories = false }: { images: 
           <button type="button" className={activeCategory === "all" ? "is-active" : ""} onClick={() => filterBy("all")}>All <span>{images.length}</span></button>
           {galleryCategories.map((category) => <button type="button" className={activeCategory === category ? "is-active" : ""} onClick={() => filterBy(category)} key={category}>{categoryLabels[category]} <span>{images.filter((image) => image.category === category).length}</span></button>)}
         </div>
-        {canManageCategories ? <button className={`image-gallery-manage${managingCategories ? " is-active" : ""}`} type="button" onClick={() => { setManagingCategories((current) => !current); setSelectedIds([]); }}>{managingCategories ? "Done assigning" : "Assign categories"}</button> : null}
+        <div className="image-gallery-categories__actions"><label>View <select value={pageSize} onChange={(event) => changePageSize(Number(event.target.value))} aria-label="Images loaded per batch">{galleryPageSizes.map((size) => <option value={size} key={size}>{size}</option>)}</select></label>{canManageCategories ? <button className={`image-gallery-manage${managingCategories ? " is-active" : ""}`} type="button" onClick={() => { setManagingCategories((current) => !current); setSelectedIds([]); }}>{managingCategories ? "Done assigning" : "Assign categories"}</button> : null}</div>
       </div>
 
       {canManageCategories && managingCategories ? <div className="image-gallery-bulk" aria-label="Bulk category assignment">
@@ -96,14 +122,15 @@ export function ImageGallery({ images, canManageCategories = false }: { images: 
       {categoryState.message ? <p className={categoryState.success ? "image-gallery-message is-success" : "image-gallery-message"} role="status">{categoryState.message}</p> : null}
 
       {visibleImages.length ? <section className="image-gallery-grid" aria-label="Approved image gallery">
-      {visibleImages.map((image, index) => <article className={`image-gallery-card${selectedIds.includes(image.id) ? " is-selected" : ""}`} key={image.id}>
+      {displayedImages.map((image, index) => <article className={`image-gallery-card${selectedIds.includes(image.id) ? " is-selected" : ""}`} key={image.id}>
         <button type="button" onClick={(event) => open(index, event.currentTarget)} aria-label={managingCategories ? `${selectedIds.includes(image.id) ? "Deselect" : "Select"} ${image.name}` : `View ${image.name}`} aria-pressed={managingCategories ? selectedIds.includes(image.id) : undefined}>
           {managingCategories ? <span className="image-gallery-card__select" aria-hidden="true">{selectedIds.includes(image.id) ? "✓" : ""}</span> : null}
-          <span className="image-gallery-card__image"><Image src={imageUrl(image, "thumbnail")} alt="" width={640} height={480} sizes="(max-width: 520px) 100vw, (max-width: 760px) 50vw, (max-width: 1100px) 33vw, 25vw" unoptimized /></span>
+          <span className="image-gallery-card__image"><Image src={imageUrl(image, "thumbnail")} alt="" width={640} height={480} sizes="(max-width: 520px) 100vw, (max-width: 760px) 50vw, (max-width: 1100px) 33vw, 25vw" loading="lazy" decoding="async" unoptimized /></span>
           <span className="image-gallery-card__content"><em>{image.category ? categoryLabels[image.category] : "Uncategorized"}</em>{image.modifiedAt ? <small>{new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(new Date(image.modifiedAt))}</small> : null}</span>
         </button>
       </article>)}
       </section> : <div className="image-gallery-filter-empty"><strong>No images in this category.</strong><button type="button" onClick={() => filterBy("all")}>View all images</button></div>}
+      {visibleImages.length ? <div className="image-gallery-pagination" ref={loadMoreRef} aria-live="polite"><span>Showing {displayedImages.length} of {visibleImages.length}</span>{hasMore ? <button type="button" onClick={() => setVisibleLimit((current) => Math.min(current + pageSize, visibleImages.length))}>Load more</button> : <strong>All images loaded</strong>}</div> : null}
     </form>
 
     {selected ? <div className="image-lightbox" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>

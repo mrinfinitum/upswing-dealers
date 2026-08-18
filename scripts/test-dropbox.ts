@@ -110,6 +110,10 @@ assert.match(galleryPage, /<GalleryHydrationDiagnostic images=\{images\.length\}
 assert.doesNotMatch(galleryClient, /setImages|fetch\(|router\.refresh/, "hydration cannot replace server-provided images with an empty client response");
 assert.match(galleryClient, /galleryCategories\.map/, "all approved category pills are rendered from the typed category list");
 assert.match(galleryClient, /canManageCategories/, "bulk category controls are gated by the server-provided admin capability");
+assert.match(galleryClient, /const galleryPageSizes = \[20, 50, 100\]/, "gallery batch controls support 20, 50, and 100 images");
+assert.match(galleryClient, /new IntersectionObserver/, "gallery cards progressively load as the user scrolls");
+assert.match(galleryClient, /loading="lazy" decoding="async"/, "gallery thumbnails use native lazy loading and asynchronous decoding");
+assert.match(galleryClient, /displayedImages\.map/, "only the current image batch is mounted in the grid");
 assert.match(categoryAction, /await requireAdmin\(\)/, "bulk category assignment independently requires administrator authorization");
 assert.match(categoryAction, /rawDropboxImageId/, "bulk assignment validates signed gallery image IDs server-side");
 assert.match(categoryAction, /\.slice\(0, 500\)/, "bulk assignment has a bounded input size");
