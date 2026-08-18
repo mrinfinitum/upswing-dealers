@@ -205,7 +205,6 @@ button { color: inherit; }
 .image-gallery-card:hover .image-gallery-card__image img { transform: scale(1.03); }
 .image-gallery-card__content { display: block; padding: 20px; }
 .image-gallery-card__content em { width: max-content; display: block; margin-bottom: 11px; padding: 5px 8px; border-radius: 999px; background: #eaf3ff; color: #347ee4; font-size: 8px; font-style: normal; font-weight: 750; letter-spacing: .09em; text-transform: uppercase; }
-.image-gallery-card__content strong { min-height: 2.5em; display: -webkit-box; overflow: hidden; font-size: 17px; font-weight: 550; letter-spacing: -.025em; line-height: 1.25; overflow-wrap: anywhere; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 .image-gallery-card__content small { display: block; margin-top: 8px; color: #78808a; font-size: 11px; }
 .image-gallery-card__content i { display: flex; align-items: center; justify-content: space-between; margin-top: 22px; padding-top: 14px; border-top: 1px solid #e5e8ec; color: #222; font-size: 9px; font-style: normal; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .image-gallery-state { position: relative; isolation: isolate; min-height: 430px; display: flex; flex-direction: column; justify-content: center; overflow: hidden; padding: 52px; border: 1px solid #d9e2ef; border-radius: 28px; background: linear-gradient(135deg, #fff 0%, #f7faff 48%, #e8f2ff 100%); box-shadow: 0 22px 60px rgb(31 68 120 / .1); }
