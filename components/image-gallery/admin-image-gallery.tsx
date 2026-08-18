@@ -102,13 +102,12 @@ export function AdminImageGallery({ images }: { images: GalleryImage[] }) {
     {state.message ? <p className={state.success ? "gallery-admin-message is-success" : "gallery-admin-message"} role="status">{state.message}</p> : null}
 
     {displayedImages.length ? <section className={`gallery-admin-grid${view === "list" ? " is-list" : ""}`} aria-label={`Manage approved gallery images, ${view} view`}>
-      {view === "list" ? <div className="gallery-list-header" aria-hidden="true"><span>Preview</span><span>Category</span><span>Modified</span><span>Select</span></div> : null}
+      {view === "list" ? <div className="gallery-list-header gallery-list-header--admin" aria-hidden="true"><span>Preview</span><span>Category</span><span>Modified</span></div> : null}
       {displayedImages.map((image) => {
         const selected = selectedIds.includes(image.id);
         return <article className={selected ? "is-selected" : ""} key={image.id}>
           <button type="button" onClick={() => toggleSelection(image.id)} aria-pressed={selected} aria-label={`${selected ? "Deselect" : "Select"} ${image.name}`}>
-            <span className="gallery-admin-card__check" aria-hidden="true">{selected ? "✓" : ""}</span>
-            <span className="gallery-admin-card__image"><Image src={thumbnailUrl(image)} alt="" width={640} height={480} sizes="(max-width: 620px) 100vw, (max-width: 900px) 50vw, (max-width: 1250px) 33vw, 25vw" loading="lazy" decoding="async" unoptimized /></span>
+            <span className="gallery-admin-card__image"><Image src={thumbnailUrl(image)} alt="" width={640} height={480} sizes="(max-width: 620px) 100vw, (max-width: 900px) 50vw, (max-width: 1250px) 33vw, 25vw" loading="lazy" decoding="async" unoptimized /><span className="gallery-admin-card__check" aria-hidden="true">{selected ? "✓" : ""}</span></span>
             <span className="gallery-admin-card__meta"><em>{image.category ? categoryLabels[image.category] : "Uncategorized"}</em>{image.modifiedAt ? <small>{new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(new Date(image.modifiedAt))}</small> : null}</span>
           </button>
         </article>;
