@@ -36,6 +36,9 @@ assert.doesNotMatch(googleMap, /map\.addListener\("click"/, "the map canvas does
 assert.match(dealerLocator, /if \(!hasSearchContext\) return \[\]/, "the locator renders no dealer results before a user searches");
 assert.match(dealerLocator, /awaitingSearch=\{!hasSearchContext\}/, "the initial map receives an explicit search-prompt state");
 assert.match(mapPanel, /Start with your location\./, "the initial map asks for a ZIP code or city and state");
+assert.match(mapPanel, /Choose a state/, "the initial map offers a state selector");
+assert.match(mapPanel, /onSubmit=\{onSubmitSearch\}/, "the initial map contains the primary location search form");
+assert.match(dealerLocator, /runSearch\(state, false\)/, "state selection shows every lexical state match instead of applying a radius around the state centroid");
 assert.match(mapPanel, /onUseMyLocation/, "the initial map prompt preserves optional browser geolocation");
 
 const { dealers } = normalizeDealerRows(rawDealerRows);

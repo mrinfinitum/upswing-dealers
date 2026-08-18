@@ -102,28 +102,26 @@ const interaction = await evaluate(`(async () => {
     }
     await new Promise((resolve) => setTimeout(resolve, 250));
   };
-  document.querySelector('.locator-search__utilities button')?.click();
+  document.querySelector('.map-panel__location-option button')?.click();
   await new Promise((resolve) => setTimeout(resolve, 180));
   const geolocationCopy = document.querySelector('.locator-search__status')?.textContent;
   document.querySelector('.locator-search__utilities button:last-child')?.click();
   await pause();
-  const input = document.querySelector('input[type="search"]');
-  const setValue = (value) => {
+  const submitValue = (value) => {
+    const input = document.querySelector('input[type="search"]');
     Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, value);
     input.dispatchEvent(new Event('input', { bubbles: true }));
+    document.querySelector('form[role="search"]').requestSubmit();
   };
-  setValue('United States');
-  document.querySelector('.locator-search').requestSubmit();
+  submitValue('United States');
   await waitForSearch();
   const countryCount = document.querySelector('.locator-results-status').textContent;
 
-  setValue('Club Champion');
-  document.querySelector('.locator-search').requestSubmit();
+  submitValue('Club Champion');
   await waitForSearch();
   const retailerCount = document.querySelector('.locator-results-status').textContent;
 
-  setValue('1005 Holcomb Woods Parkway');
-  document.querySelector('.locator-search').requestSubmit();
+  submitValue('1005 Holcomb Woods Parkway');
   await waitForSearch();
   const addressCount = document.querySelector('.locator-results-status').textContent;
   const enrichedAddressVisible = document.querySelector('.dealer-card__address')?.textContent.includes('1005 Holcomb Woods Parkway') ?? false;
@@ -131,8 +129,7 @@ const interaction = await evaluate(`(async () => {
   const phoneWorks = Boolean(document.querySelector('.dealer-card__actions a[href^="tel:"]'));
   const dealerWebsiteWorks = Boolean(document.querySelector('.dealer-card__actions a[href*="pgatoursuperstore.com/stores/detail"]'));
 
-  setValue('99999');
-  document.querySelector('.locator-search').requestSubmit();
+  submitValue('99999');
   await waitForSearch();
   const emptyCopy = document.querySelector('.locator-empty p')?.textContent;
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useId, useState, type FormEvent } from "react";
 import { fallbackMapProvider } from "@/lib/maps/provider";
 import type { MapConfiguration } from "@/lib/maps/provider";
 import type { Dealer, DealerCoordinates } from "@/types/dealer";
@@ -14,13 +14,21 @@ type MapPanelProps = {
   originIsUserLocation: boolean;
   useUnitedStatesOverview: boolean;
   awaitingSearch: boolean;
+  searchValue: string;
+  availableStates: string[];
   locationLoading: boolean;
-  onStartSearch: () => void;
+  locationStatus: "idle" | "loading" | "success" | "error";
+  locationMessage: string;
+  onSearchValueChange: (value: string) => void;
+  onSubmitSearch: (event: FormEvent<HTMLFormElement>) => void;
+  onSelectState: (state: string) => void;
   onUseMyLocation: () => void;
   onSelectDealer: (dealerId: string) => void;
 };
 
-export function MapPanel({ config, dealers, selectedDealer, origin, originIsUserLocation, useUnitedStatesOverview, awaitingSearch, locationLoading, onStartSearch, onUseMyLocation, onSelectDealer }: MapPanelProps) {
+export function MapPanel({ config, dealers, selectedDealer, origin, originIsUserLocation, useUnitedStatesOverview, awaitingSearch, searchValue, availableStates, locationLoading, locationStatus, locationMessage, onSearchValueChange, onSubmitSearch, onSelectState, onUseMyLocation, onSelectDealer }: MapPanelProps) {
+  const promptSearchId = useId();
+  const promptStateId = useId();
   const [mapFailed, setMapFailed] = useState(false);
   const handleFailure = useCallback(() => setMapFailed(true), []);
   const useGoogleMap = config.provider === "google" && !mapFailed;
@@ -55,19 +63,37 @@ export function MapPanel({ config, dealers, selectedDealer, origin, originIsUser
         )}
         {awaitingSearch && (
           <div className="map-panel__search-prompt" role="region" aria-label="Start a dealer search">
-            <span className="map-panel__search-icon" aria-hidden="true">◎</span>
-            <p className="eyebrow">Find your closest dealer</p>
-            <h2>Start with your location.</h2>
-            <p>Enter a ZIP code or a city and state to find authorized UpSwing dealers near you.</p>
-            <div className="map-panel__search-examples" aria-hidden="true">
-              <span>ZIP code</span>
-              <span>City, State</span>
-            </div>
-            <div className="map-panel__search-actions">
-              <button type="button" onClick={onStartSearch}>Enter a location <span aria-hidden="true">→</span></button>
-              <button type="button" onClick={onUseMyLocation} disabled={locationLoading}>
-                <span aria-hidden="true">◎</span>{locationLoading ? "Locating…" : "Use my location"}
-              </button>
+            <div className="map-panel__search-content">
+              <span className="map-panel__search-icon" aria-hidden="true">◎</span>
+              <p className="eyebrow">Find your closest dealer</p>
+              <h2>Start with your location.</h2>
+              <p>Choose a state or enter a ZIP code, city, or address. We’ll open the map with the closest authorized UpSwing dealers.</p>
+              <form className="map-panel__search-form" role="search" onSubmit={onSubmitSearch}>
+                <div className="map-panel__search-fields">
+                  <label htmlFor={promptStateId}>
+                    <span>Browse by state</span>
+                    <select id={promptStateId} defaultValue="" onChange={(event) => event.target.value && onSelectState(event.target.value)}>
+                      <option value="" disabled>Choose a state</option>
+                      {availableStates.map((state) => <option key={state} value={state}>{state}</option>)}
+                    </select>
+                  </label>
+                  <b aria-hidden="true">or</b>
+                  <label htmlFor={promptSearchId}>
+                    <span>Search by location</span>
+                    <div className="map-panel__search-input">
+                      <input id={promptSearchId} type="search" value={searchValue} onChange={(event) => onSearchValueChange(event.target.value)} placeholder="ZIP code or City, State" autoComplete="postal-code" />
+                      <button type="submit" disabled={locationLoading}>Search <i aria-hidden="true">→</i></button>
+                    </div>
+                  </label>
+                </div>
+              </form>
+              <div className="map-panel__location-option">
+                <span>Or find the closest dealer automatically.</span>
+                <button type="button" onClick={onUseMyLocation} disabled={locationLoading}>
+                  <i aria-hidden="true">◎</i>{locationLoading ? "Locating…" : "Use my location"}
+                </button>
+              </div>
+              {locationMessage && <p className={`map-panel__search-status is-${locationStatus}`} role="status">{locationMessage}</p>}
             </div>
           </div>
         )}

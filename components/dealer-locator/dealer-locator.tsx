@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useId, useMemo, useRef, useState, useTransition } from "react";
+import { useCallback, useId, useMemo, useState, useTransition } from "react";
 import { queryLooksPostal, queryMatchesCountry, queryMatchesDealerName, searchDealers, sortDealersAlphabetically } from "@/lib/dealers/search";
 import { dealersWithinRadius, sortDealersByDistance } from "@/lib/geo/distance";
 import { geocodeWithGoogle } from "@/lib/maps/google-loader";
@@ -13,7 +13,6 @@ type RadiusMiles = 25 | 50 | 100;
 
 export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapConfig: MapConfiguration }) {
   const searchId = useId();
-  const searchInputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
   const [activeQuery, setActiveQuery] = useState("");
   const [selectedDealerId, setSelectedDealerId] = useState<string>();
@@ -26,6 +25,9 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
   const [isPending, startTransition] = useTransition();
 
   const hasCoordinateDealers = dealers.some((dealer) => dealer.coordinates);
+  const availableStates = useMemo(() => [...new Set(dealers
+    .filter((dealer) => dealer.country === "United States" && dealer.stateProvince)
+    .map((dealer) => dealer.stateProvince!))].sort(), [dealers]);
   const origin = userLocation ?? searchOrigin;
   const hasSearchContext = Boolean(activeQuery || origin);
   const filteredDealers = useMemo(() => searchDealers(dealers, activeQuery), [activeQuery, dealers]);
@@ -36,9 +38,9 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
   }, [dealers, filteredDealers, hasCoordinateDealers, hasSearchContext, origin, radiusMiles]);
   const selectedDealer = results.find((dealer) => dealer.id === selectedDealerId) ?? results[0];
 
-  async function submitSearch(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const nextQuery = query.trim();
+  async function runSearch(value: string, geocode = true) {
+    const nextQuery = value.trim();
+    setQuery(nextQuery);
     startTransition(() => {
       setActiveQuery(nextQuery);
       setSelectedDealerId(undefined);
@@ -48,7 +50,7 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
     setSearchOrigin(undefined);
     setLocationStatus("idle");
     setLocationMessage("");
-    if (!nextQuery || mapConfig.provider !== "google" || queryMatchesDealerName(dealers, nextQuery) || queryMatchesCountry(dealers, nextQuery)) return;
+    if (!nextQuery || !geocode || mapConfig.provider !== "google" || queryMatchesDealerName(dealers, nextQuery) || queryMatchesCountry(dealers, nextQuery)) return;
 
     setLocationStatus("loading");
     setLocationMessage("Locating your search…");
@@ -70,6 +72,11 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
       setLocationStatus("error");
       setLocationMessage("Map search is temporarily unavailable. Showing retailer, city, state, and country text matches instead.");
     }
+  }
+
+  function submitSearch(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    void runSearch(query);
   }
 
   function resetSearch() {
@@ -119,11 +126,6 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
     requestAnimationFrame(() => document.getElementById(`dealer-${dealerId}`)?.scrollIntoView({ block: "nearest" }));
   }, []);
 
-  const focusSearch = useCallback(() => {
-    searchInputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-    window.setTimeout(() => searchInputRef.current?.focus({ preventScroll: true }), 350);
-  }, []);
-
   return (
     <section id="locator" className="locator-shell" aria-labelledby="locator-heading">
       <div className="locator-panel">
@@ -132,10 +134,10 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
           <h1 id="locator-heading">Find an UpSwing Dealer</h1>
           <p>Search current retail partners by address, postal code, city, state, province, country, or dealer name.</p>
         </div>
-        <form className="locator-search" role="search" onSubmit={submitSearch}>
+        {hasSearchContext && <form className="locator-search" role="search" onSubmit={submitSearch}>
           <label htmlFor={searchId}>ZIP code or City, State</label>
           <div className="locator-search__row">
-            <input ref={searchInputRef} id={searchId} type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="e.g. 74133 or Tulsa, OK" autoComplete="postal-code" />
+            <input id={searchId} type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="e.g. 74133 or Tulsa, OK" autoComplete="postal-code" />
             <button type="submit" disabled={isPending || locationStatus === "loading"}>{isPending || locationStatus === "loading" ? "Searching" : "Search"}</button>
           </div>
           <div className="locator-search__utilities">
@@ -156,7 +158,7 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
               ))}
             </fieldset>
           )}
-        </form>
+        </form>}
         {hasSearchContext ? (
           <>
             <p className="locator-results-status" aria-live="polite">
@@ -187,8 +189,14 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
         originIsUserLocation={Boolean(userLocation)}
         useUnitedStatesOverview={!hasSearchContext}
         awaitingSearch={!hasSearchContext}
+        searchValue={query}
+        availableStates={availableStates}
         locationLoading={locationStatus === "loading"}
-        onStartSearch={focusSearch}
+        locationStatus={locationStatus}
+        locationMessage={locationMessage}
+        onSearchValueChange={setQuery}
+        onSubmitSearch={submitSearch}
+        onSelectState={(state) => void runSearch(state, false)}
         onUseMyLocation={requestLocation}
         onSelectDealer={selectDealer}
       />
