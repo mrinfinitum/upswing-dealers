@@ -80,6 +80,7 @@ const thumbnailRoute = readFileSync("app/api/dropbox/images/[id]/thumbnail/route
 const originalRoute = readFileSync("app/api/dropbox/images/[id]/original/route.ts", "utf8");
 const galleryAuth = readFileSync("lib/gallery/auth.ts", "utf8");
 const galleryPage = readFileSync("app/image-gallery/page.tsx", "utf8");
+const galleryPageContent = readFileSync("components/image-gallery/image-gallery-page-content.tsx", "utf8");
 const galleryClient = readFileSync("components/image-gallery/image-gallery.tsx", "utf8");
 const categoryRepository = readFileSync("lib/gallery/categories.ts", "utf8");
 const categoryAction = readFileSync("app/image-gallery/actions.ts", "utf8");
@@ -105,8 +106,9 @@ assert.match(originalRoute, /getGalleryIdentity/, "original and download request
 assert.match(originalRoute, /Content-Disposition/, "downloads preserve an attachment filename");
 assert.match(galleryAuth, /getAdminIdentity/, "administrators are accepted by the gallery guard");
 assert.match(galleryAuth, /getDealerPortalIdentity/, "active dealer users are accepted by the gallery guard");
-assert.match(galleryPage, /<ImageGallery images=\{images\}/, "the Server Component passes its Dropbox result directly to the gallery client");
-assert.match(galleryPage, /<GalleryHydrationDiagnostic images=\{images\.length\}/, "the client receives the server image count during hydration");
+assert.match(galleryPage, /ImageGalleryPageContent role=\{identity\.role\}/, "the authenticated gallery route delegates to the shared server-rendered gallery content");
+assert.match(galleryPageContent, /<ImageGallery images=\{images\}/, "the shared Server Component passes its Dropbox result directly to the gallery client");
+assert.match(galleryPageContent, /<GalleryHydrationDiagnostic images=\{images\.length\}/, "the client receives the server image count during hydration");
 assert.doesNotMatch(galleryClient, /setImages|fetch\(|router\.refresh/, "hydration cannot replace server-provided images with an empty client response");
 assert.match(galleryClient, /galleryCategories\.map/, "all approved category pills are rendered from the typed category list");
 assert.doesNotMatch(galleryClient, /Assign categories|canManageCategories|managingCategories/, "the shared gallery does not expose category assignment controls");

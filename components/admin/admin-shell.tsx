@@ -12,8 +12,8 @@ export async function AdminShell({ children }: Readonly<{ children: React.ReactN
         <Link href="/admin/dealers">Dealers</Link>
         <Link href="/admin/users">Users</Link>
         <Link href="/admin/brand">Brand portal</Link>
-        <Link href="/image-gallery">Image gallery</Link>
         <Link href="/" target="_blank" rel="noreferrer">View locator <span aria-hidden="true">↗</span></Link>
+        <Link href="/image-gallery" target="_blank" rel="noreferrer">View gallery <span aria-hidden="true">↗</span></Link>
       </nav>
       <details className="admin-account-menu">
         <summary aria-label={`Open account menu for ${admin.email}`}>
