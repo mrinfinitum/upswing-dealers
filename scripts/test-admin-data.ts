@@ -91,6 +91,7 @@ assert.match(adminGalleryPage, /manageCategories/, "Gallery Admin enables its de
 assert.match(adminGalleryClient, /Select visible/, "Gallery Admin supports bulk visible-image selection");
 assert.match(adminGalleryClient, /assignGalleryCategoryAction/, "Gallery Admin uses the protected bulk category action");
 assert.match(adminGalleryClient, /uncategorized/, "Gallery Admin highlights images that still need categorization");
+assert.match(adminGalleryClient, /GalleryViewToggle view=\{view\}/, "Gallery Admin supports grid and list views");
 assert.doesNotMatch(adminDashboard, /admin\/requests/, "update requests are removed from the admin hub");
 assert.doesNotMatch(adminDashboard, /href: "\/admin\/locations"/, "raw locations are grouped behind Dealers in the admin hub");
 assert.match(adminDealerDirectory, /groupDealers\(dealers\)/, "the dealer directory groups current location records by retailer");

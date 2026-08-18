@@ -84,6 +84,7 @@ const galleryAuth = readFileSync("lib/gallery/auth.ts", "utf8");
 const galleryPage = readFileSync("app/image-gallery/page.tsx", "utf8");
 const galleryPageContent = readFileSync("components/image-gallery/image-gallery-page-content.tsx", "utf8");
 const galleryClient = readFileSync("components/image-gallery/image-gallery.tsx", "utf8");
+const galleryViewToggle = readFileSync("components/image-gallery/gallery-view-toggle.tsx", "utf8");
 const categoryRepository = readFileSync("lib/gallery/categories.ts", "utf8");
 const categoryAction = readFileSync("app/image-gallery/actions.ts", "utf8");
 const categoryMigration = readFileSync("supabase/migrations/202608170003_create_gallery_categories.sql", "utf8");
@@ -118,6 +119,8 @@ assert.match(galleryClient, /const galleryPageSizes = \[20, 50, 100\]/, "gallery
 assert.match(galleryClient, /new IntersectionObserver/, "gallery cards progressively load as the user scrolls");
 assert.match(galleryClient, /loading="lazy" decoding="async"/, "gallery thumbnails use native lazy loading and asynchronous decoding");
 assert.match(galleryClient, /displayedImages\.map/, "only the current image batch is mounted in the grid");
+assert.match(galleryClient, /GalleryViewToggle view=\{view\}/, "the shared gallery supports grid and list views");
+assert.match(galleryViewToggle, /aria-pressed=\{view === "list"\}/, "the gallery view toggle exposes its selected layout accessibly");
 assert.match(categoryAction, /await requireAdmin\(\)/, "bulk category assignment independently requires administrator authorization");
 assert.match(categoryAction, /rawDropboxImageId/, "bulk assignment validates signed gallery image IDs server-side");
 assert.match(categoryAction, /\.slice\(0, 500\)/, "bulk assignment has a bounded input size");

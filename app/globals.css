@@ -183,6 +183,10 @@ button { color: inherit; }
 .image-gallery-categories__pills button span { min-width: 24px; display: inline-grid; place-items: center; margin-left: 8px; padding: 4px 7px; border-radius: 999px; background: rgb(255 255 255 / .14); font-size: 9px; }
 .image-gallery-categories__pills button:not(.is-active) span { background: #e6ebf1; color: #65707d; }
 .image-gallery-categories__actions { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; }
+.gallery-view-toggle { width: max-content; display: inline-flex; gap: 3px; padding: 3px; border: 1px solid #d8dfe7; border-radius: 999px; background: #f7f9fc; }
+.gallery-view-toggle button { min-height: 36px; display: inline-flex; align-items: center; gap: 6px; padding: 0 13px; border: 0; border-radius: 999px; background: transparent; color: #687381; font-size: 9px; font-weight: 750; letter-spacing: .07em; text-transform: uppercase; cursor: pointer; }
+.gallery-view-toggle button[aria-pressed="true"] { background: #050505; color: #fff; }
+.gallery-view-toggle button span { font-size: 13px; line-height: 1; }
 .image-gallery-categories__actions label { min-height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 8px 0 15px; border: 1px solid #d8dfe7; border-radius: 999px; background: #f7f9fc; color: #697380; font-size: 9px; font-weight: 750; letter-spacing: .07em; text-transform: uppercase; white-space: nowrap; }
 .image-gallery-categories__actions select { min-width: 62px; min-height: 32px; padding: 0 22px 0 10px; border: 0; border-radius: 999px; background-color: #fff; color: #15191f; font: inherit; cursor: pointer; }
 .image-gallery-categories .image-gallery-manage { flex: 0 0 auto; border-color: #c9dcf5; background: #eaf3ff; color: #2367bd; }
@@ -209,6 +213,13 @@ button { color: inherit; }
 .image-gallery-card__content { position: absolute; inset: auto 0 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 42px 16px 15px; background: linear-gradient(transparent, rgb(0 0 0 / .72)); }
 .image-gallery-card__content em { width: max-content; display: block; padding: 6px 9px; border-radius: 999px; background: rgb(255 255 255 / .92); color: #2367bd; font-size: 8px; font-style: normal; font-weight: 750; letter-spacing: .09em; text-transform: uppercase; }
 .image-gallery-card__content small { display: block; color: rgb(255 255 255 / .78); font-size: 10px; text-shadow: 0 1px 5px rgb(0 0 0 / .45); }
+.image-gallery-grid.is-list { grid-template-columns: 1fr; gap: 10px; }
+.image-gallery-grid.is-list .image-gallery-card { border-radius: 18px; }
+.image-gallery-grid.is-list .image-gallery-card > button { min-height: 108px; aspect-ratio: auto; display: grid; grid-template-columns: 150px minmax(0, 1fr); align-items: stretch; background: #fff; }
+.image-gallery-grid.is-list .image-gallery-card__image { position: relative; inset: auto; min-height: 108px; }
+.image-gallery-grid.is-list .image-gallery-card__content { position: static; min-width: 0; align-items: center; padding: 20px 22px; background: #fff; }
+.image-gallery-grid.is-list .image-gallery-card__content em { border: 1px solid #d8e6f7; background: #edf5ff; }
+.image-gallery-grid.is-list .image-gallery-card__content small { color: #717c88; text-shadow: none; }
 .image-gallery-state { position: relative; isolation: isolate; min-height: 430px; display: flex; flex-direction: column; justify-content: center; overflow: hidden; padding: 52px; border: 1px solid #d9e2ef; border-radius: 28px; background: linear-gradient(135deg, #fff 0%, #f7faff 48%, #e8f2ff 100%); box-shadow: 0 22px 60px rgb(31 68 120 / .1); }
 .image-gallery-state::before { position: absolute; z-index: -1; top: -170px; right: -70px; width: 440px; height: 440px; border: 1px solid rgb(52 126 228 / .13); border-radius: 50%; box-shadow: 0 0 0 65px rgb(52 126 228 / .035), 0 0 0 130px rgb(52 126 228 / .025); content: ""; }
 .image-gallery-state > span { width: max-content; padding: 8px 12px; border-radius: 999px; background: #e8f2ff; color: var(--blue); font-size: 9px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
@@ -248,7 +259,7 @@ button { color: inherit; }
 .gallery-admin-summary span { color: #347ee4; font-size: 9px; font-weight: 750; letter-spacing: .09em; text-transform: uppercase; }
 .gallery-admin-summary strong { font-size: 38px; font-weight: 520; letter-spacing: -.05em; line-height: 1; }
 .gallery-admin-summary small { overflow: hidden; color: #7a8490; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
-.gallery-admin-controls { display: grid; grid-template-columns: minmax(260px, 1fr) 190px auto; align-items: end; gap: 12px; padding: 16px; border: 1px solid #dce3ec; border-radius: 22px; background: #fff; box-shadow: 0 12px 32px rgb(31 45 68 / .06); }
+.gallery-admin-controls { display: grid; grid-template-columns: minmax(260px, 1fr) 190px auto auto; align-items: end; gap: 12px; padding: 16px; border: 1px solid #dce3ec; border-radius: 22px; background: #fff; box-shadow: 0 12px 32px rgb(31 45 68 / .06); }
 .gallery-admin-controls label { min-width: 0; display: grid; gap: 7px; }
 .gallery-admin-controls label > span { color: #687381; font-size: 8px; font-weight: 750; letter-spacing: .09em; text-transform: uppercase; }
 .gallery-admin-controls input, .gallery-admin-controls select { width: 100%; min-height: 46px; padding: 0 14px; border: 1px solid #d4dce6; border-radius: 14px; background: #f8fafc; color: #12171d; font: inherit; outline: none; }
@@ -280,6 +291,14 @@ button { color: inherit; }
 .gallery-admin-card__meta { position: absolute; z-index: 1; inset: auto 0 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 38px 14px 13px; background: linear-gradient(transparent, rgb(0 0 0 / .72)); }
 .gallery-admin-card__meta em { padding: 6px 9px; border-radius: 999px; background: rgb(255 255 255 / .93); color: #2469c2; font-size: 8px; font-style: normal; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
 .gallery-admin-card__meta small { color: rgb(255 255 255 / .8); font-size: 9px; }
+.gallery-admin-grid.is-list { grid-template-columns: 1fr; gap: 10px; }
+.gallery-admin-grid.is-list article { border-radius: 18px; }
+.gallery-admin-grid.is-list article > button { min-height: 108px; aspect-ratio: auto; display: grid; grid-template-columns: 150px minmax(0, 1fr); align-items: stretch; background: #fff; }
+.gallery-admin-grid.is-list .gallery-admin-card__image { position: relative; inset: auto; min-height: 108px; }
+.gallery-admin-grid.is-list .gallery-admin-card__check { top: 50%; left: 126px; right: auto; transform: translate(-50%, -50%); }
+.gallery-admin-grid.is-list .gallery-admin-card__meta { position: static; min-width: 0; align-items: center; padding: 20px 22px; background: #fff; }
+.gallery-admin-grid.is-list .gallery-admin-card__meta em { border: 1px solid #d8e6f7; background: #edf5ff; }
+.gallery-admin-grid.is-list .gallery-admin-card__meta small { color: #717c88; }
 .gallery-admin-empty { min-height: 260px; display: grid; place-items: center; align-content: center; gap: 10px; border: 1px dashed #cdd7e3; border-radius: 24px; background: rgb(255 255 255 / .62); text-align: center; }
 .gallery-admin-empty strong { font-size: 24px; font-weight: 560; }
 .gallery-admin-empty p { margin: 0 0 8px; color: #737e8b; }
@@ -297,11 +316,11 @@ button { color: inherit; }
   .image-gallery-heading { align-items: flex-start; flex-direction: column; }
   .image-gallery-categories { align-items: stretch; flex-direction: column; }
   .image-gallery-categories__actions { width: 100%; }
-  .image-gallery-categories__actions label, .image-gallery-categories .image-gallery-manage { flex: 1; }
+  .image-gallery-categories__actions label { flex: 1; }
   .image-gallery-bulk { align-items: stretch; flex-direction: column; }
   .image-gallery-bulk > div:last-child { overflow-x: auto; }
   .gallery-admin-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .gallery-admin-controls { grid-template-columns: 1fr 160px; }
+  .gallery-admin-controls { grid-template-columns: 1fr 160px auto; }
   .gallery-admin-selection { grid-column: 1 / -1; justify-content: flex-start; }
   .gallery-admin-bulk { align-items: stretch; flex-direction: column; }
   .gallery-admin-bulk > div:last-child { overflow-x: auto; }
@@ -316,6 +335,8 @@ button { color: inherit; }
   .image-gallery-categories button, .image-gallery-bulk button { padding: 0 14px; }
   .image-gallery-categories__actions { align-items: stretch; flex-direction: column; }
   .image-gallery-categories__actions label { justify-content: space-between; }
+  .image-gallery-categories__actions .gallery-view-toggle { width: 100%; }
+  .image-gallery-categories__actions .gallery-view-toggle button { flex: 1; justify-content: center; }
   .image-gallery-bulk { padding: 18px; border-radius: 18px; }
   .image-gallery-grid, .image-gallery-skeleton { grid-template-columns: 1fr; }
   .image-gallery-state { min-height: 390px; padding: 34px 22px; border-radius: 22px; }
@@ -328,9 +349,13 @@ button { color: inherit; }
   .gallery-admin-summary { grid-template-columns: 1fr 1fr; }
   .gallery-admin-summary button { min-height: 120px; padding: 16px; border-radius: 18px; }
   .gallery-admin-controls { grid-template-columns: 1fr; }
+  .gallery-admin-controls .gallery-view-toggle { width: 100%; }
+  .gallery-admin-controls .gallery-view-toggle button { flex: 1; justify-content: center; }
   .gallery-admin-selection { grid-column: auto; overflow-x: auto; justify-content: flex-start; }
   .gallery-admin-bulk { padding: 18px; border-radius: 20px; }
   .gallery-admin-grid { grid-template-columns: 1fr; }
+  .image-gallery-grid.is-list .image-gallery-card > button, .gallery-admin-grid.is-list article > button { grid-template-columns: 112px minmax(0, 1fr); }
+  .gallery-admin-grid.is-list .gallery-admin-card__check { left: 90px; }
 }
 .admin-account-card { display: grid; grid-template-columns: 90px repeat(3, minmax(0, 1fr)); align-items: center; gap: 26px; padding: 30px; border: 1px solid #d4d4d0; background: #fff; }
 .admin-account-card__icon { width: 74px; height: 74px; display: grid; place-items: center; border-radius: 50%; background: #000; color: #fff; }

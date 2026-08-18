@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { GalleryViewToggle, type GalleryView } from "@/components/image-gallery/gallery-view-toggle";
 import { galleryCategories, type GalleryCategory, type GalleryImage } from "@/types/gallery";
 
 const categoryLabels: Record<GalleryCategory, string> = { upswing: "UpSwing", galaxy: "Galaxy", accessories: "Accessories" };
@@ -21,6 +22,7 @@ export function ImageGallery({ images }: { images: GalleryImage[] }) {
   const [activeCategory, setActiveCategory] = useState<"all" | GalleryCategory>("all");
   const [pageSize, setPageSize] = useState<GalleryPageSize>(20);
   const [visibleLimit, setVisibleLimit] = useState(20);
+  const [view, setView] = useState<GalleryView>("grid");
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
@@ -102,10 +104,10 @@ export function ImageGallery({ images }: { images: GalleryImage[] }) {
           <button type="button" className={activeCategory === "all" ? "is-active" : ""} onClick={() => filterBy("all")}>All <span>{images.length}</span></button>
           {galleryCategories.map((category) => <button type="button" className={activeCategory === category ? "is-active" : ""} onClick={() => filterBy(category)} key={category}>{categoryLabels[category]} <span>{images.filter((image) => image.category === category).length}</span></button>)}
         </div>
-        <div className="image-gallery-categories__actions"><label>View <select value={pageSize} onChange={(event) => changePageSize(Number(event.target.value))} aria-label="Images loaded per batch">{galleryPageSizes.map((size) => <option value={size} key={size}>{size}</option>)}</select></label></div>
+        <div className="image-gallery-categories__actions"><GalleryViewToggle view={view} onChange={setView} /><label>View <select value={pageSize} onChange={(event) => changePageSize(Number(event.target.value))} aria-label="Images loaded per batch">{galleryPageSizes.map((size) => <option value={size} key={size}>{size}</option>)}</select></label></div>
       </div>
 
-      {visibleImages.length ? <section className="image-gallery-grid" aria-label="Approved image gallery">
+      {visibleImages.length ? <section className={`image-gallery-grid${view === "list" ? " is-list" : ""}`} aria-label={`Approved image gallery, ${view} view`}>
       {displayedImages.map((image, index) => <article className="image-gallery-card" key={image.id}>
         <button type="button" onClick={(event) => open(index, event.currentTarget)} aria-label={`View ${image.name}`}>
           <span className="image-gallery-card__image"><Image src={imageUrl(image, "thumbnail")} alt="" width={640} height={480} sizes="(max-width: 520px) 100vw, (max-width: 760px) 50vw, (max-width: 1100px) 33vw, 25vw" loading="lazy" decoding="async" unoptimized /></span>

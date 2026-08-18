@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 import { assignGalleryCategoryAction } from "@/app/image-gallery/actions";
+import { GalleryViewToggle, type GalleryView } from "@/components/image-gallery/gallery-view-toggle";
 import { initialGalleryCategoryActionState } from "@/lib/gallery/category-form-state";
 import { galleryCategories, type GalleryCategory, type GalleryImage } from "@/types/gallery";
 
@@ -21,6 +22,7 @@ export function AdminImageGallery({ images }: { images: GalleryImage[] }) {
   const [pageSize, setPageSize] = useState<PageSize>(20);
   const [visibleLimit, setVisibleLimit] = useState(20);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [view, setView] = useState<GalleryView>("grid");
   const [state, action, pending] = useActionState(assignGalleryCategoryAction, initialGalleryCategoryActionState);
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
@@ -88,6 +90,7 @@ export function AdminImageGallery({ images }: { images: GalleryImage[] }) {
     <section className="gallery-admin-controls" aria-label="Gallery management controls">
       <label className="gallery-admin-search"><span>Search assets</span><input type="search" value={query} onChange={(event) => { setQuery(event.target.value); setVisibleLimit(pageSize); setSelectedIds([]); }} placeholder="Search by filename" /></label>
       <label className="gallery-admin-view"><span>View</span><select value={pageSize} onChange={(event) => changePageSize(Number(event.target.value))}>{pageSizes.map((size) => <option value={size} key={size}>{size} at a time</option>)}</select></label>
+      <GalleryViewToggle view={view} onChange={setView} />
       <div className="gallery-admin-selection"><span>{selectedIds.length} selected</span><button type="button" onClick={toggleDisplayedSelection}>{allDisplayedSelected ? "Deselect visible" : "Select visible"}</button>{selectedIds.length ? <button type="button" onClick={() => setSelectedIds([])}>Clear</button> : null}</div>
     </section>
 
@@ -98,7 +101,7 @@ export function AdminImageGallery({ images }: { images: GalleryImage[] }) {
 
     {state.message ? <p className={state.success ? "gallery-admin-message is-success" : "gallery-admin-message"} role="status">{state.message}</p> : null}
 
-    {displayedImages.length ? <section className="gallery-admin-grid" aria-label="Manage approved gallery images">
+    {displayedImages.length ? <section className={`gallery-admin-grid${view === "list" ? " is-list" : ""}`} aria-label={`Manage approved gallery images, ${view} view`}>
       {displayedImages.map((image) => {
         const selected = selectedIds.includes(image.id);
         return <article className={selected ? "is-selected" : ""} key={image.id}>
