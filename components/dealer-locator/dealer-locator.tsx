@@ -1,11 +1,11 @@
 "use client";
 
 import { useCallback, useId, useMemo, useState, useTransition } from "react";
-import { queryLooksPostal, queryMatchesCountry, queryMatchesDealerName, searchDealers } from "@/lib/dealers/search";
+import { getInitialDealerResults, queryLooksPostal, queryMatchesCountry, queryMatchesDealerName, searchDealers, sortDealersAlphabetically } from "@/lib/dealers/search";
 import { dealersWithinRadius, sortDealersByDistance } from "@/lib/geo/distance";
 import { geocodeWithGoogle } from "@/lib/maps/google-loader";
 import type { MapConfiguration } from "@/lib/maps/provider";
-import type { Dealer, DealerCoordinates } from "@/types/dealer";
+import type { Dealer, DealerCoordinates, DealerWithDistance } from "@/types/dealer";
 import { MapPanel } from "./map-panel";
 import { ResultsList } from "./results-list";
 
@@ -27,10 +27,11 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
   const hasCoordinateDealers = dealers.some((dealer) => dealer.coordinates);
   const origin = userLocation ?? searchOrigin;
   const filteredDealers = useMemo(() => searchDealers(dealers, activeQuery), [activeQuery, dealers]);
-  const results = useMemo(() => {
+  const results = useMemo<DealerWithDistance[]>(() => {
     if (origin && hasCoordinateDealers) return dealersWithinRadius(dealers, origin, radiusMiles);
-    return sortDealersByDistance(filteredDealers, origin);
-  }, [dealers, filteredDealers, hasCoordinateDealers, origin, radiusMiles]);
+    if (!activeQuery) return getInitialDealerResults(dealers);
+    return sortDealersAlphabetically(sortDealersByDistance(filteredDealers, origin));
+  }, [activeQuery, dealers, filteredDealers, hasCoordinateDealers, origin, radiusMiles]);
   const selectedDealer = results.find((dealer) => dealer.id === selectedDealerId) ?? results[0];
 
   async function submitSearch(event: React.FormEvent<HTMLFormElement>) {
@@ -151,7 +152,7 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
         </form>
         <div className="locator-results-heading" aria-live="polite">
           <p>{results.length} {results.length === 1 ? "location" : "locations"}{origin && hasCoordinateDealers ? ` within ${radiusMiles} miles` : activeQuery ? ` for “${activeQuery}”` : ""}</p>
-          <span>{origin && results.some((dealer) => dealer.distanceMiles !== undefined) ? "Nearest first" : "Current partners"}</span>
+          <span>{origin && results.some((dealer) => dealer.distanceMiles !== undefined) ? "Nearest first" : activeQuery ? "Current partners" : "U.S. partners"}</span>
         </div>
         <ResultsList dealers={results} selectedDealerId={selectedDealer?.id} query={activeQuery} postalQuery={queryLooksPostal(activeQuery)} showAll={showAll} onSelectDealer={selectDealer} />
         {results.length > 12 && (

@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { applyVerifiedEnrichments, validateEnrichmentProposals } from "../lib/dealers/enrichment";
 import { dealerEnrichmentProposals } from "../lib/dealers/enrichment-proposals";
 import { normalizeDealerRows } from "../lib/dealers/normalize";
-import { searchDealers } from "../lib/dealers/search";
+import { getInitialDealerResults, searchDealers } from "../lib/dealers/search";
 import { rawDealerRows } from "../lib/dealers/source";
 import { getMappableDealers } from "../lib/maps/markers";
 import { dealersWithinRadius, distanceMiles } from "../lib/geo/distance";
@@ -38,6 +38,14 @@ assert.equal(enriched.filter((dealer) => dealer.coordinates).length, 3);
 assert.equal(enriched.find((dealer) => dealer.id.includes("roswell"))?.postalCode, "30076-2738");
 const publicDealers = enriched.filter((dealer) => dealer.verificationStatus === "verified");
 assert.equal(publicDealers.length, 70);
+const initialDealerResults = getInitialDealerResults(publicDealers);
+assert.ok(initialDealerResults.length > 0 && initialDealerResults.length < publicDealers.length, "initial results include only the U.S. subset");
+assert.ok(initialDealerResults.every((dealer) => dealer.country === "United States"), "the initial locator list contains only U.S. dealers");
+assert.deepEqual(
+  initialDealerResults.map((dealer) => `${dealer.name}|${dealer.city}|${dealer.stateProvince}`),
+  [...initialDealerResults].sort((left, right) => new Intl.Collator("en", { numeric: true, sensitivity: "base" }).compare(`${left.name}|${left.city}|${left.stateProvince}`, `${right.name}|${right.city}|${right.stateProvince}`)).map((dealer) => `${dealer.name}|${dealer.city}|${dealer.stateProvince}`),
+  "the initial U.S. dealer list is alphabetized by retailer and location",
+);
 const reviewedCoordinates = reviewGoogleCoordinates(enriched, googleBrowserGeocodeBatch);
 assert.equal(reviewedCoordinates.length, 67);
 assert.equal(reviewedCoordinates.filter((record) => record.finalStatus === "verified").length, 51);
