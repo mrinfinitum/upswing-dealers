@@ -127,8 +127,8 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
   }, []);
 
   return (
-    <section id="locator" className="locator-shell" aria-labelledby="locator-heading">
-      <div className="locator-panel">
+    <section id="locator" className={`locator-shell${hasSearchContext ? "" : " is-awaiting-search"}`} aria-labelledby="locator-heading">
+      {hasSearchContext && <div className="locator-panel">
         <div className="locator-panel__intro">
           <p className="eyebrow">Find your fit. Find your dealer.</p>
           <h1 id="locator-heading">Find an UpSwing Dealer</h1>
@@ -180,7 +180,7 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
             {showAll ? "Show fewer locations" : `Show all ${results.length} locations`}
           </button>
         )}
-      </div>
+      </div>}
       <MapPanel
         config={mapConfig}
         dealers={results}

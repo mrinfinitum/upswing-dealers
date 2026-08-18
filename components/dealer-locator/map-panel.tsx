@@ -34,7 +34,7 @@ export function MapPanel({ config, dealers, selectedDealer, origin, originIsUser
   const useGoogleMap = config.provider === "google" && !mapFailed;
 
   return (
-    <section className="map-panel" aria-labelledby="map-heading">
+    <section className={`map-panel${awaitingSearch ? " is-awaiting-search" : ""}`} aria-labelledby="map-heading">
       <div className="map-panel__topline">
         <p id="map-heading">Dealer map</p>
         <span><i className={useGoogleMap ? "is-live" : ""} aria-hidden="true" />{useGoogleMap ? "Google Maps" : fallbackMapProvider.label}</span>
