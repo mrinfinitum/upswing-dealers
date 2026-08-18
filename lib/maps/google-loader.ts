@@ -2,6 +2,7 @@ import { importLibrary, setOptions } from "@googlemaps/js-api-loader";
 import type { GoogleMapConfiguration } from "./provider";
 
 let configured = false;
+let mapsPromise: Promise<[google.maps.MapsLibrary, google.maps.MarkerLibrary]> | undefined;
 
 function configure(config: GoogleMapConfiguration) {
   if (configured) return;
@@ -16,10 +17,11 @@ function configure(config: GoogleMapConfiguration) {
 
 export async function loadGoogleMaps(config: GoogleMapConfiguration) {
   configure(config);
-  return Promise.all([
+  mapsPromise ??= Promise.all([
     importLibrary("maps") as Promise<google.maps.MapsLibrary>,
     importLibrary("marker") as Promise<google.maps.MarkerLibrary>,
   ]);
+  return mapsPromise;
 }
 
 export async function geocodeWithGoogle(query: string, config: GoogleMapConfiguration) {

@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { applyVerifiedEnrichments, validateEnrichmentProposals } from "../lib/dealers/enrichment";
 import { dealerEnrichmentProposals } from "../lib/dealers/enrichment-proposals";
 import { normalizeDealerRows } from "../lib/dealers/normalize";
@@ -11,6 +12,15 @@ import { applyVerifiedGoogleCoordinates, reviewGoogleCoordinates, validateCoordi
 import { googleBrowserGeocodeBatch } from "../lib/dealers/google-geocodes";
 import { dealerCoordinateApprovals } from "../lib/dealers/coordinate-approvals";
 import type { Dealer } from "../types/dealer";
+
+const homePage = readFileSync("app/page.tsx", "utf8");
+const mapsPreloader = readFileSync("components/dealer-locator/google-maps-preloader.tsx", "utf8");
+const googleLoader = readFileSync("lib/maps/google-loader.ts", "utf8");
+assert.match(homePage, /GoogleMapsPreloader config=\{mapConfig\}/, "the home page starts warming Google Maps before the locator renders");
+assert.match(mapsPreloader, /preconnect\("https:\/\/maps\.googleapis\.com"\)/, "Google Maps API connection is warmed early");
+assert.match(mapsPreloader, /preconnect\("https:\/\/maps\.gstatic\.com"/, "Google Maps static asset connection is warmed early");
+assert.match(mapsPreloader, /loadGoogleMaps\(config\)/, "the Maps and marker libraries preload during the hero view");
+assert.match(googleLoader, /mapsPromise \?\?=/, "the visible map reuses the in-flight preload promise");
 
 const { dealers } = normalizeDealerRows(rawDealerRows);
 assert.equal(rawDealerRows.length, 71, "The source dataset must retain 71 rows");

@@ -1,4 +1,5 @@
 import { DealerLocator } from "@/components/dealer-locator/dealer-locator";
+import { GoogleMapsPreloader } from "@/components/dealer-locator/google-maps-preloader";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { dealerRepository } from "@/lib/dealers/repository";
@@ -12,6 +13,7 @@ export default async function Home() {
 
   return (
     <>
+      {mapConfig.provider === "google" ? <GoogleMapsPreloader config={mapConfig} /> : null}
       <SiteHeader />
       <main>
         <section className="locator-hero">
