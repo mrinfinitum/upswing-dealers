@@ -59,6 +59,14 @@ function createDealerInfoCard(dealer: Dealer) {
     card.append(address);
   }
 
+  if (dealer.phone) {
+    const phone = document.createElement("a");
+    phone.className = "map-dealer-card__phone";
+    phone.href = `tel:${dealer.phone}`;
+    phone.textContent = dealer.phone;
+    card.append(phone);
+  }
+
   const actions = document.createElement("div");
   actions.className = "map-dealer-card__actions";
   if (dealer.phone) {
@@ -144,7 +152,8 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
       });
       const position = { lat: coordinates.latitude, lng: coordinates.longitude };
       const marker = new markerLibrary.AdvancedMarkerElement({ map, position, title: `${dealer.name}, ${dealer.city}`, content: pin });
-      marker.addEventListener("gmp-click", () => {
+      marker.addEventListener("gmp-click", (event) => {
+        event.stopPropagation();
         setOpenDealerId(dealer.id);
         onSelectDealer(dealer.id);
       });
@@ -153,14 +162,13 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
       bounds.extend(position);
     }
 
-    const openDealer = openDealerId === selectedDealerId ? dealers.find((dealer) => dealer.id === openDealerId) : undefined;
+    const openDealer = dealers.find((dealer) => dealer.id === openDealerId);
     const openMarker = openDealerId ? dealerMarkersById.get(openDealerId) : undefined;
     if (openDealer && openMarker) {
       infoWindow.setContent(createDealerInfoCard(openDealer));
       infoWindow.open({ map, anchor: openMarker, shouldFocus: false });
     }
     const closeListener = infoWindow.addListener("closeclick", () => setOpenDealerId(undefined));
-    const mapClickListener = map.addListener("click", () => setOpenDealerId(undefined));
 
     if (origin) {
       const position = { lat: origin.latitude, lng: origin.longitude };
@@ -190,7 +198,6 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
     previousSelectedDealerId.current = selectedDealerId;
     return () => {
       closeListener.remove();
-      mapClickListener.remove();
       infoWindow.close();
       cancelAnimationFrame(cameraFrame);
       clustererRef.current?.clearMarkers();

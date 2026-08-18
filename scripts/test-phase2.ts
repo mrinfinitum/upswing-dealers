@@ -25,6 +25,9 @@ assert.match(googleLoader, /mapsPromise \?\?=/, "the visible map reuses the in-f
 assert.match(googleMap, /UNITED_STATES_CENTER/, "the default map uses an explicit continental U.S. center");
 assert.match(googleMap, /map\.moveCamera\(\{ center: UNITED_STATES_CENTER, zoom: UNITED_STATES_ZOOM \}\)/, "the default map camera is restored after the panel has dimensions");
 assert.match(googleMap, /google\.maps\.event\.trigger\(map, "resize"\)/, "the first map render is resized after layout before setting its camera");
+assert.match(googleMap, /marker\.addEventListener\("gmp-click"/, "dealer markers use the current Advanced Marker click event");
+assert.match(googleMap, /infoWindow\.setContent\(createDealerInfoCard\(openDealer\)\)/, "dealer marker selection opens a location information card");
+assert.doesNotMatch(googleMap, /map\.addListener\("click"/, "the map canvas does not immediately close a marker card through click bubbling");
 
 const { dealers } = normalizeDealerRows(rawDealerRows);
 assert.equal(rawDealerRows.length, 71, "The source dataset must retain 71 rows");
