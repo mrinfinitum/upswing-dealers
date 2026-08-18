@@ -109,7 +109,7 @@ assert.match(galleryPage, /<ImageGallery images=\{images\}/, "the Server Compone
 assert.match(galleryPage, /<GalleryHydrationDiagnostic images=\{images\.length\}/, "the client receives the server image count during hydration");
 assert.doesNotMatch(galleryClient, /setImages|fetch\(|router\.refresh/, "hydration cannot replace server-provided images with an empty client response");
 assert.match(galleryClient, /galleryCategories\.map/, "all approved category pills are rendered from the typed category list");
-assert.match(galleryClient, /canManageCategories/, "bulk category controls are gated by the server-provided admin capability");
+assert.doesNotMatch(galleryClient, /Assign categories|canManageCategories|managingCategories/, "the shared gallery does not expose category assignment controls");
 assert.match(galleryClient, /const galleryPageSizes = \[20, 50, 100\]/, "gallery batch controls support 20, 50, and 100 images");
 assert.match(galleryClient, /new IntersectionObserver/, "gallery cards progressively load as the user scrolls");
 assert.match(galleryClient, /loading="lazy" decoding="async"/, "gallery thumbnails use native lazy loading and asynchronous decoding");
