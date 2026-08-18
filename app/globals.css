@@ -239,8 +239,55 @@ button { color: inherit; }
 .image-lightbox__dialog > footer button { min-height: 40px; padding: 0 15px; border: 1px solid #383838; border-radius: 999px; background: #171717; color: #fff; font-size: 10px; font-weight: 650; letter-spacing: .05em; cursor: pointer; text-transform: uppercase; }
 .image-lightbox__dialog > footer > div > span { min-width: 54px; color: #8e8e8e; font-size: 10px; text-align: center; }
 
+/* Gallery administration */
+.gallery-admin-workspace { display: grid; gap: 22px; }
+.gallery-admin-summary { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.gallery-admin-summary button { min-width: 0; min-height: 142px; display: grid; align-content: space-between; gap: 6px; padding: 20px; border: 1px solid #dce3ec; border-radius: 22px; background: linear-gradient(145deg, #fff, #f6f9fd); color: #11161d; text-align: left; cursor: pointer; box-shadow: 0 12px 32px rgb(31 45 68 / .06); transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease; }
+.gallery-admin-summary button:hover, .gallery-admin-summary button.is-active { border-color: #8ab5ee; box-shadow: 0 18px 42px rgb(31 68 120 / .12); transform: translateY(-2px); }
+.gallery-admin-summary button.is-active { background: linear-gradient(145deg, #f7fbff, #e8f2ff); }
+.gallery-admin-summary span { color: #347ee4; font-size: 9px; font-weight: 750; letter-spacing: .09em; text-transform: uppercase; }
+.gallery-admin-summary strong { font-size: 38px; font-weight: 520; letter-spacing: -.05em; line-height: 1; }
+.gallery-admin-summary small { overflow: hidden; color: #7a8490; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.gallery-admin-controls { display: grid; grid-template-columns: minmax(260px, 1fr) 190px auto; align-items: end; gap: 12px; padding: 16px; border: 1px solid #dce3ec; border-radius: 22px; background: #fff; box-shadow: 0 12px 32px rgb(31 45 68 / .06); }
+.gallery-admin-controls label { min-width: 0; display: grid; gap: 7px; }
+.gallery-admin-controls label > span { color: #687381; font-size: 8px; font-weight: 750; letter-spacing: .09em; text-transform: uppercase; }
+.gallery-admin-controls input, .gallery-admin-controls select { width: 100%; min-height: 46px; padding: 0 14px; border: 1px solid #d4dce6; border-radius: 14px; background: #f8fafc; color: #12171d; font: inherit; outline: none; }
+.gallery-admin-controls input:focus, .gallery-admin-controls select:focus { border-color: #347ee4; box-shadow: 0 0 0 3px rgb(52 126 228 / .12); }
+.gallery-admin-selection { min-height: 46px; display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+.gallery-admin-selection span { margin-right: 4px; color: #687381; font-size: 10px; font-weight: 700; white-space: nowrap; }
+.gallery-admin-selection button, .gallery-admin-bulk button, .gallery-admin-empty button { min-height: 40px; padding: 0 15px; border: 1px solid #d4dce6; border-radius: 999px; background: #fff; color: #15191f; font-size: 9px; font-weight: 750; letter-spacing: .06em; text-transform: uppercase; cursor: pointer; }
+.gallery-admin-bulk { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 22px 24px; border-radius: 24px; background: linear-gradient(130deg, #0b0d11, #172235); color: #fff; box-shadow: 0 20px 50px rgb(4 10 21 / .2); }
+.gallery-admin-bulk > div:first-child { display: grid; gap: 4px; }
+.gallery-admin-bulk > div:first-child span { color: #75aafa; font-size: 8px; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; }
+.gallery-admin-bulk strong { font-size: 21px; font-weight: 570; }
+.gallery-admin-bulk p { margin: 0; color: #aeb8c6; font-size: 11px; }
+.gallery-admin-bulk > div:last-child { display: flex; gap: 8px; }
+.gallery-admin-bulk button { border-color: #3b4657; background: #222b39; color: #fff; }
+.gallery-admin-bulk button:hover:not(:disabled) { border-color: #75aafa; background: #2a3b55; }
+.gallery-admin-bulk button:disabled { opacity: .55; cursor: wait; }
+.gallery-admin-message { margin: 0; padding: 13px 16px; border-radius: 14px; background: #fff0f0; color: #8e3333; font-size: 12px; }
+.gallery-admin-message.is-success { background: #eaf8ef; color: #28633b; }
+.gallery-admin-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.gallery-admin-grid article { min-width: 0; overflow: hidden; border: 1px solid #dce3ec; border-radius: 20px; background: #fff; box-shadow: 0 12px 32px rgb(31 45 68 / .06); transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease; }
+.gallery-admin-grid article:hover { border-color: #9fc1ed; box-shadow: 0 18px 42px rgb(31 68 120 / .12); transform: translateY(-2px); }
+.gallery-admin-grid article.is-selected { border-color: #347ee4; box-shadow: 0 0 0 3px rgb(52 126 228 / .14), 0 18px 42px rgb(31 68 120 / .15); }
+.gallery-admin-grid article > button { position: relative; width: 100%; aspect-ratio: 4 / 3; display: block; overflow: hidden; padding: 0; border: 0; background: #edf2f7; cursor: pointer; }
+.gallery-admin-card__image { position: absolute; inset: 0; }
+.gallery-admin-card__image img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s ease; }
+.gallery-admin-grid article:hover .gallery-admin-card__image img { transform: scale(1.025); }
+.gallery-admin-card__check { position: absolute; z-index: 2; top: 12px; right: 12px; width: 30px; height: 30px; display: grid; place-items: center; border: 2px solid #fff; border-radius: 50%; background: rgb(8 12 18 / .72); color: #fff; box-shadow: 0 5px 16px rgb(0 0 0 / .22); }
+.gallery-admin-grid article.is-selected .gallery-admin-card__check { background: #347ee4; }
+.gallery-admin-card__meta { position: absolute; z-index: 1; inset: auto 0 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 38px 14px 13px; background: linear-gradient(transparent, rgb(0 0 0 / .72)); }
+.gallery-admin-card__meta em { padding: 6px 9px; border-radius: 999px; background: rgb(255 255 255 / .93); color: #2469c2; font-size: 8px; font-style: normal; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
+.gallery-admin-card__meta small { color: rgb(255 255 255 / .8); font-size: 9px; }
+.gallery-admin-empty { min-height: 260px; display: grid; place-items: center; align-content: center; gap: 10px; border: 1px dashed #cdd7e3; border-radius: 24px; background: rgb(255 255 255 / .62); text-align: center; }
+.gallery-admin-empty strong { font-size: 24px; font-weight: 560; }
+.gallery-admin-empty p { margin: 0 0 8px; color: #737e8b; }
+
 @media (max-width: 1200px) {
   .image-gallery-grid, .image-gallery-skeleton { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .gallery-admin-summary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .gallery-admin-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (max-width: 850px) {
@@ -253,6 +300,12 @@ button { color: inherit; }
   .image-gallery-categories__actions label, .image-gallery-categories .image-gallery-manage { flex: 1; }
   .image-gallery-bulk { align-items: stretch; flex-direction: column; }
   .image-gallery-bulk > div:last-child { overflow-x: auto; }
+  .gallery-admin-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gallery-admin-controls { grid-template-columns: 1fr 160px; }
+  .gallery-admin-selection { grid-column: 1 / -1; justify-content: flex-start; }
+  .gallery-admin-bulk { align-items: stretch; flex-direction: column; }
+  .gallery-admin-bulk > div:last-child { overflow-x: auto; }
+  .gallery-admin-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 520px) {
@@ -272,6 +325,12 @@ button { color: inherit; }
   .image-lightbox__dialog > footer { align-items: stretch; flex-direction: column; }
   .image-lightbox__dialog > footer > div { justify-content: space-between; }
   .image-lightbox__dialog > footer > .admin-button { width: 100%; }
+  .gallery-admin-summary { grid-template-columns: 1fr 1fr; }
+  .gallery-admin-summary button { min-height: 120px; padding: 16px; border-radius: 18px; }
+  .gallery-admin-controls { grid-template-columns: 1fr; }
+  .gallery-admin-selection { grid-column: auto; overflow-x: auto; justify-content: flex-start; }
+  .gallery-admin-bulk { padding: 18px; border-radius: 20px; }
+  .gallery-admin-grid { grid-template-columns: 1fr; }
 }
 .admin-account-card { display: grid; grid-template-columns: 90px repeat(3, minmax(0, 1fr)); align-items: center; gap: 26px; padding: 30px; border: 1px solid #d4d4d0; background: #fff; }
 .admin-account-card__icon { width: 74px; height: 74px; display: grid; place-items: center; border-radius: 50%; background: #000; color: #fff; }

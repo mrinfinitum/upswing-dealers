@@ -11,5 +11,5 @@ export const metadata: Metadata = {
 
 export default async function AdminImageGalleryPage() {
   await requireAdmin();
-  return <ImageGalleryPageContent role="admin" />;
+  return <ImageGalleryPageContent role="admin" manageCategories />;
 }

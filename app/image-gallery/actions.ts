@@ -37,5 +37,6 @@ export async function assignGalleryCategoryAction(_: GalleryCategoryActionState,
   }
 
   revalidatePath("/image-gallery");
+  revalidatePath("/admin/gallery");
   return { success: true, message: `${rawIds.length} ${rawIds.length === 1 ? "image" : "images"} assigned to ${category[0].toUpperCase()}${category.slice(1)}.`, revision: Date.now() };
 }

@@ -43,6 +43,7 @@ const adminDashboard = readFileSync("app/admin/(protected)/page.tsx", "utf8");
 const adminAuth = readFileSync("lib/admin/auth.ts", "utf8");
 const adminBrandPage = readFileSync("app/admin/(protected)/brand/page.tsx", "utf8");
 const adminGalleryPage = readFileSync("app/admin/(protected)/gallery/page.tsx", "utf8");
+const adminGalleryClient = readFileSync("components/image-gallery/admin-image-gallery.tsx", "utf8");
 const adminDealerDirectory = readFileSync("app/admin/(protected)/dealers/page.tsx", "utf8");
 const adminDealerLocations = readFileSync("app/admin/(protected)/dealers/locations/page.tsx", "utf8");
 const adminBatchImport = readFileSync("app/admin/(protected)/locations/new/actions.ts", "utf8");
@@ -86,6 +87,10 @@ assert.match(adminDashboard, /title: "User Admin"/, "the user workspace uses a c
 assert.match(adminDashboard, /title: "Brand Admin"/, "the brand workspace uses a clear administration label");
 assert.match(adminBrandPage, /Coming soon/, "the Brand Portal route has a reserved workspace state");
 assert.match(adminGalleryPage, /ImageGalleryPageContent role="admin"/, "Gallery Admin renders inside the protected admin workspace");
+assert.match(adminGalleryPage, /manageCategories/, "Gallery Admin enables its dedicated management workspace");
+assert.match(adminGalleryClient, /Select visible/, "Gallery Admin supports bulk visible-image selection");
+assert.match(adminGalleryClient, /assignGalleryCategoryAction/, "Gallery Admin uses the protected bulk category action");
+assert.match(adminGalleryClient, /uncategorized/, "Gallery Admin highlights images that still need categorization");
 assert.doesNotMatch(adminDashboard, /admin\/requests/, "update requests are removed from the admin hub");
 assert.doesNotMatch(adminDashboard, /href: "\/admin\/locations"/, "raw locations are grouped behind Dealers in the admin hub");
 assert.match(adminDealerDirectory, /groupDealers\(dealers\)/, "the dealer directory groups current location records by retailer");
