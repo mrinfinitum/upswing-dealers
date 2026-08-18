@@ -223,12 +223,11 @@ button { color: inherit; }
 .image-lightbox { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: 24px; background: rgb(0 0 0 / .86); backdrop-filter: blur(8px); }
 .image-lightbox__dialog { width: min(96vw, 1500px); height: min(94svh, 1050px); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; border: 1px solid #343434; border-radius: 26px; background: #0b0b0b; box-shadow: 0 35px 100px rgb(0 0 0 / .5); color: #fff; }
 .image-lightbox__dialog > header { min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 22px; border-bottom: 1px solid #292929; }
-.image-lightbox__dialog > header > div { min-width: 0; }
-.image-lightbox__dialog > header span { display: block; margin-bottom: 4px; color: #7ca9ff; font-size: 8px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
-.image-lightbox__dialog h2 { overflow: hidden; margin: 0; font-size: 17px; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+.image-lightbox__dialog > header span { display: block; color: #7ca9ff; font-size: 8px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
 .image-lightbox__dialog > header button { width: 42px; height: 42px; flex: 0 0 auto; border: 1px solid #3a3a3a; border-radius: 50%; background: #181818; color: #fff; font-size: 25px; line-height: 1; cursor: pointer; }
 .image-lightbox__stage { position: relative; min-height: 0; display: grid; place-items: center; overflow: hidden; padding: 22px; background: #050505; }
-.image-lightbox__stage img { width: auto; height: auto; max-width: 100%; max-height: 100%; object-fit: contain; }
+.image-lightbox__canvas { position: relative; width: 100%; height: 100%; min-width: 0; min-height: 0; }
+.image-lightbox__canvas img { object-fit: contain; }
 .image-lightbox__dialog > footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 22px; border-top: 1px solid #292929; }
 .image-lightbox__dialog > footer > div { display: flex; align-items: center; gap: 14px; }
 .image-lightbox__dialog > footer button { min-height: 40px; padding: 0 15px; border: 1px solid #383838; border-radius: 999px; background: #171717; color: #fff; font-size: 10px; font-weight: 650; letter-spacing: .05em; cursor: pointer; text-transform: uppercase; }

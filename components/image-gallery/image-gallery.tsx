@@ -107,9 +107,9 @@ export function ImageGallery({ images, canManageCategories = false }: { images: 
     </form>
 
     {selected ? <div className="image-lightbox" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>
-      <div className="image-lightbox__dialog" ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="image-lightbox-title">
-        <header><div><span>Approved image</span><h2 id="image-lightbox-title">{selected.name}</h2></div><button ref={closeRef} type="button" onClick={close} aria-label="Close image viewer">×</button></header>
-        <div className="image-lightbox__stage"><Image key={selected.id} src={imageUrl(selected, "original")} alt={cleanDisplayName(selected.name)} width={selected.width || 1600} height={selected.height || 1200} sizes="95vw" unoptimized priority /></div>
+      <div className="image-lightbox__dialog" ref={dialogRef} role="dialog" aria-modal="true" aria-label="Approved image viewer">
+        <header><span>Approved image</span><button ref={closeRef} type="button" onClick={close} aria-label="Close image viewer">×</button></header>
+        <div className="image-lightbox__stage"><div className="image-lightbox__canvas"><Image key={selected.id} src={imageUrl(selected, "original")} alt={cleanDisplayName(selected.name)} fill sizes="95vw" unoptimized priority /></div></div>
         <footer><div><button type="button" onClick={previous} aria-label="Previous image">← Previous</button><span>{selectedIndex! + 1} / {visibleImages.length}</span><button type="button" onClick={next} aria-label="Next image">Next →</button></div><a className="admin-button admin-button--primary" href={`${imageUrl(selected, "original")}?download=1`}>Download <span aria-hidden="true">↓</span></a></footer>
       </div>
     </div> : null}
