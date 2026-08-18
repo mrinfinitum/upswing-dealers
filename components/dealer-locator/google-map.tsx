@@ -20,6 +20,10 @@ type GoogleMapProps = {
 
 const UNITED_STATES_CENTER = { lat: 39.5, lng: -98.35 };
 const UNITED_STATES_ZOOM = 4;
+const DEALER_LOGOS: Record<string, { src: string; inverted?: boolean }> = {
+  "Club Champion": { src: "https://clubchampion.com/images/2022_mindk/cc-logo-header.svg", inverted: true },
+  "PGA TOUR Superstore": { src: "https://www.pgatoursuperstore.com/on/demandware.static/Sites-pgatss-sfra-Site/-/default/dwb27c47bd/images/logo.svg" },
+};
 
 function getDirectionsUrl(dealer: Dealer) {
   const destination = [dealer.name, dealer.addressLine1, dealer.addressLine2, dealer.city, dealer.stateProvince, dealer.postalCode, dealer.country]
@@ -38,7 +42,18 @@ function createDealerInfoCard(dealer: Dealer) {
   card.append(eyebrow);
 
   const heading = document.createElement("h3");
-  heading.textContent = dealer.name;
+  const dealerLogo = DEALER_LOGOS[dealer.name];
+  if (dealerLogo) {
+    heading.className = "has-logo";
+    const logo = document.createElement("img");
+    logo.className = `map-dealer-card__retailer-logo${dealerLogo.inverted ? " is-inverted" : ""}`;
+    logo.src = dealerLogo.src;
+    logo.alt = dealer.name;
+    logo.referrerPolicy = "no-referrer";
+    heading.append(logo);
+  } else {
+    heading.textContent = dealer.name;
+  }
   card.append(heading);
 
   const municipality = [dealer.city, dealer.stateProvince].filter(Boolean).join(", ");
