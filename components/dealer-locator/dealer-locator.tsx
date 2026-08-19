@@ -13,6 +13,7 @@ type RadiusMiles = 25 | 50 | 100;
 
 export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapConfig: MapConfiguration }) {
   const searchId = useId();
+  const stateId = useId();
   const [query, setQuery] = useState("");
   const [stateQuery, setStateQuery] = useState("");
   const [activeQuery, setActiveQuery] = useState("");
@@ -41,7 +42,8 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
     if (origin && hasCoordinateDealers) return dealersWithinRadius(dealers, origin, radiusMiles);
     return sortDealersAlphabetically(sortDealersByDistance(filteredDealers, origin));
   }, [dealers, filteredDealers, hasCoordinateDealers, hasSearchContext, origin, radiusMiles]);
-  const selectedDealer = results.find((dealer) => dealer.id === selectedDealerId) ?? results[0];
+  const mapDealers = hasSearchContext ? results : dealers;
+  const selectedDealer = mapDealers.find((dealer) => dealer.id === selectedDealerId) ?? (hasSearchContext ? results[0] : undefined);
 
   async function runSearch(value: string, geocode = true) {
     const nextQuery = value.trim();
@@ -167,13 +169,13 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
 
   return (
     <section id="locator" className={`locator-shell${hasSearchContext ? "" : " is-awaiting-search"}`} aria-labelledby="locator-heading">
-      {hasSearchContext && <div className="locator-panel">
+      <div className="locator-panel">
         <div className="locator-panel__intro">
           <p className="eyebrow">Find your fit. Find your dealer.</p>
           <h1 id="locator-heading">Find an UpSwing Dealer</h1>
           <p>Search current retail partners by address, postal code, city, state, province, country, or dealer name.</p>
         </div>
-        {hasSearchContext && <form className="locator-search" role="search" onSubmit={submitSearch}>
+        {hasSearchContext ? <form className="locator-search" role="search" onSubmit={submitSearch}>
           <label htmlFor={searchId}>ZIP code or City, State</label>
           <div className="locator-search__row">
             <input id={searchId} type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="e.g. 74133 or Tulsa, OK" autoComplete="postal-code" />
@@ -197,37 +199,71 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
               ))}
             </fieldset>
           )}
-        </form>}
-        {hasSearchContext ? (
+        </form> : (
+          <div className="locator-start-card">
+            <span className="locator-start-card__icon" aria-hidden="true">◎</span>
+            <p className="eyebrow">Find your closest dealer</p>
+            <h2>Start with your location.</h2>
+            <p>Choose a state or enter a ZIP code, city, or address to find authorized UpSwing dealers near you.</p>
+            <form className="locator-start-card__form" role="search" onSubmit={(event) => {
+              event.preventDefault();
+              const typedLocation = query.trim();
+              const value = typedLocation || stateQuery;
+              if (value) void runSearch(value, Boolean(typedLocation));
+            }}>
+              <label htmlFor={stateId}>
+                <span>Browse by state</span>
+                <select id={stateId} value={stateQuery} onChange={(event) => {
+                  setStateQuery(event.target.value);
+                  setQuery("");
+                }}>
+                  <option value="" disabled>Choose a state</option>
+                  {availableStates.map((state) => <option key={state} value={state}>{state}</option>)}
+                </select>
+              </label>
+              <span className="locator-start-card__divider">or</span>
+              <label htmlFor={searchId}>
+                <span>Search by location</span>
+                <input id={searchId} type="search" value={query} onChange={(event) => {
+                  setStateQuery("");
+                  setQuery(event.target.value);
+                }} placeholder="ZIP code or City, State" autoComplete="postal-code" />
+              </label>
+              <button className="locator-start-card__search" type="submit" disabled={isPending || locationStatus === "loading" || (!query.trim() && !stateQuery)}>
+                {isPending || locationStatus === "loading" ? "Searching" : "Search"}<span aria-hidden="true">→</span>
+              </button>
+            </form>
+            <div className="locator-start-card__location">
+              <span>Or find the closest dealer automatically.</span>
+              <button type="button" onClick={requestLocation} disabled={locationStatus === "loading"}>
+                <i aria-hidden="true">◎</i>{locationStatus === "loading" ? "Locating…" : "Use my location"}
+              </button>
+            </div>
+            {locationMessage && <p className={`locator-search__status is-${locationStatus}`} role="status">{locationMessage}</p>}
+          </div>
+        )}
+        {hasSearchContext && (
           <>
             <p className="locator-results-status" aria-live="polite">
               {results.length} {results.length === 1 ? "location" : "locations"}{origin && hasCoordinateDealers ? ` within ${radiusMiles} miles` : ` for “${activeQuery}”`}
             </p>
             <ResultsList dealers={results} selectedDealerId={selectedDealer?.id} query={activeQuery} postalQuery={queryLooksPostal(activeQuery)} showAll={showAll} onSelectDealer={selectDealer} />
           </>
-        ) : (
-          <div className="locator-awaiting-results" role="status">
-            <span aria-hidden="true">◎</span>
-            <div>
-              <strong>Your nearest dealer is a search away.</strong>
-              <p>Enter a ZIP code or city and state to see matching locations.</p>
-            </div>
-          </div>
         )}
         {hasSearchContext && results.length > 12 && (
           <button className="locator-show-all" type="button" onClick={() => setShowAll((value) => !value)}>
             {showAll ? "Show fewer locations" : `Show all ${results.length} locations`}
           </button>
         )}
-      </div>}
+      </div>
       <MapPanel
         config={mapConfig}
-        dealers={results}
+        dealers={mapDealers}
         selectedDealer={selectedDealer}
         origin={origin}
         originIsUserLocation={Boolean(userLocation)}
         useUnitedStatesOverview={!hasSearchContext}
-        awaitingSearch={!hasSearchContext}
+        awaitingSearch={false}
         searchValue={query}
         selectedState={stateQuery}
         availableStates={availableStates}

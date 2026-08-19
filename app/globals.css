@@ -1076,7 +1076,6 @@ button { color: inherit; }
 }
 
 .locator-section-wrap { padding-block: 32px 104px; }
-.locator-section-wrap:has(.locator-shell.is-awaiting-search) { width: 100%; max-width: none; padding: 0; }
 .locator-shell {
   min-height: 900px;
   display: grid;
@@ -1087,12 +1086,31 @@ button { color: inherit; }
   background: #eef1f5;
   box-shadow: 0 30px 80px rgb(20 32 49 / .14), 0 2px 8px rgb(20 32 49 / .06);
 }
-.locator-shell.is-awaiting-search { width: 100%; height: calc(100svh - 83px); min-height: 640px; grid-template-columns: 1fr; border: 0; border-radius: 0; box-shadow: none; }
+.locator-shell.is-awaiting-search { min-height: 760px; }
 .locator-panel { min-width: 0; height: 900px; display: flex; flex-direction: column; border-right: 1px solid #dce1e7; background: rgb(255 255 255 / .96); }
 .locator-panel__intro { padding: 34px 32px 26px; border-bottom: 1px solid #edf0f3; background: linear-gradient(135deg, #fff, #fafbfc); }
 .locator-panel__intro .eyebrow { margin-bottom: 12px; color: var(--blue); }
 .locator-panel__intro h1 { margin: 0 0 11px; font-size: 36px; font-weight: 500; letter-spacing: -.04em; line-height: 1.04; }
 .locator-panel__intro > p:last-child { max-width: 390px; margin: 0; color: var(--muted); font-size: 14px; }
+.locator-start-card { flex: 1; padding: 38px 32px; background: linear-gradient(155deg, #fff 0%, #f7faff 62%, #edf4fd 100%); }
+.locator-start-card__icon { width: 46px; height: 46px; display: grid; place-items: center; margin-bottom: 25px; border: 1px solid #c9ddf8; border-radius: 50%; background: #edf5ff; color: var(--blue); font-size: 24px; box-shadow: 0 8px 24px rgb(52 126 228 / .12); }
+.locator-start-card .eyebrow { margin-bottom: 10px; color: var(--blue); }
+.locator-start-card h2 { max-width: 350px; margin: 0 0 13px; font-size: 38px; font-weight: 500; letter-spacing: -.045em; line-height: 1; }
+.locator-start-card > p:not(.eyebrow, .locator-search__status) { max-width: 360px; margin: 0; color: #66717f; font-size: 13px; line-height: 1.55; }
+.locator-start-card__form { display: grid; gap: 13px; margin-top: 28px; }
+.locator-start-card__form label > span { display: block; margin: 0 0 7px 3px; color: #4f5a67; font-size: 10px; font-weight: 700; letter-spacing: .085em; text-transform: uppercase; }
+.locator-start-card__form select, .locator-start-card__form input { width: 100%; height: 54px; padding: 0 17px; border: 1px solid #d7dde4; border-radius: 14px; background: #fff; color: #14191f; font: inherit; font-size: 14px; outline: 0; box-shadow: 0 7px 22px rgb(23 40 63 / .06); }
+.locator-start-card__form select:focus, .locator-start-card__form input:focus { border-color: #9cbce9; box-shadow: 0 0 0 4px rgb(52 126 228 / .1), 0 7px 22px rgb(23 40 63 / .08); }
+.locator-start-card__divider { color: #929aa5; font-size: 10px; font-weight: 600; letter-spacing: .08em; text-align: center; text-transform: uppercase; }
+.locator-start-card__search { min-height: 52px; display: inline-flex; align-items: center; justify-content: space-between; gap: 24px; padding: 0 18px 0 22px; border: 0; border-radius: 999px; background: #000; color: #fff; font-size: 10px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; cursor: pointer; box-shadow: 0 8px 22px rgb(0 0 0 / .16); }
+.locator-start-card__search:hover { background: var(--blue); }
+.locator-start-card__search:disabled { cursor: wait; opacity: .55; }
+.locator-start-card__search span { font-size: 17px; }
+.locator-start-card__location { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 20px; padding-top: 18px; border-top: 1px solid #dfe5ec; }
+.locator-start-card__location > span { max-width: 150px; color: #77808b; font-size: 11px; line-height: 1.4; }
+.locator-start-card__location button { min-height: 42px; display: inline-flex; align-items: center; gap: 7px; padding: 0 14px; border: 1px solid #d6dce3; border-radius: 999px; background: #fff; color: #344150; font-size: 9.5px; font-weight: 600; letter-spacing: .055em; text-transform: uppercase; cursor: pointer; }
+.locator-start-card__location button i { color: var(--blue); font-size: 17px; font-style: normal; }
+.locator-start-card__location button:hover { border-color: #9cbce9; color: var(--blue); }
 .locator-search { padding: 22px 32px 24px; border-bottom: 1px solid #e2e6eb; background: #f7f8fa; }
 .locator-search > label { display: block; margin-bottom: 8px; font-size: 11px; font-weight: 500; letter-spacing: .09em; text-transform: uppercase; }
 .locator-search__row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 5px; padding: 5px; border: 1px solid #d7dce2; border-radius: 16px; background: #fff; box-shadow: 0 5px 18px rgb(23 39 60 / .06); transition: border-color .2s ease, box-shadow .2s ease; }
@@ -1296,7 +1314,8 @@ button { color: inherit; }
   .dealer-card { padding-inline: 24px; }
   .map-panel { min-height: 560px; padding: 0 10px 10px; border-top: 1px solid #dce1e7; }
   .map-panel__canvas { min-height: 477px; }
-  .locator-shell.is-awaiting-search { height: calc(100svh - 83px); min-height: 600px; }
+  .locator-shell.is-awaiting-search { min-height: 0; }
+  .locator-start-card { padding: 30px 24px; }
   .map-panel__search-prompt { padding: 28px; }
   .locator-cta .shell { align-items: flex-start; flex-direction: column; }
   .locator-cta .shell::after { display: none; }
@@ -1310,6 +1329,9 @@ button { color: inherit; }
   .site-header__inner { width: 100%; padding-inline: 15px; }
   .site-header__mobile-menu nav { padding-inline: 16px; }
   .locator-panel__intro, .locator-search { padding-inline: 18px; }
+  .locator-start-card { padding: 26px 18px; }
+  .locator-start-card h2 { font-size: 32px; }
+  .locator-start-card__location { align-items: flex-start; flex-direction: column; }
   .locator-search__row { grid-template-columns: 1fr; gap: 8px; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
   .locator-search__row:focus-within { border-color: transparent; box-shadow: none; }
   .locator-search input { border: 1px solid #d7dce2; border-radius: 12px; background: #fff; box-shadow: 0 4px 14px rgb(23 39 60 / .05); }
