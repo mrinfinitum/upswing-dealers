@@ -46,6 +46,9 @@ assert.match(dealerLocator, /error\.PERMISSION_DENIED/, "geolocation permission 
 assert.match(dealerLocator, /error\.POSITION_UNAVAILABLE/, "unavailable device positioning is distinct from permission denial");
 assert.match(dealerLocator, /error\.TIMEOUT/, "geolocation timeout receives a retryable error state");
 assert.match(dealerLocator, /timeout: 20000/, "slower devices receive sufficient time to resolve their location");
+assert.match(dealerLocator, /Trying a more precise location signal/, "unavailable or timed-out positioning triggers a precise retry");
+assert.match(dealerLocator, /enableHighAccuracy: false/, "the first positioning request may use a recent cached location");
+assert.match(dealerLocator, /enableHighAccuracy: true, timeout: 25000, maximumAge: 0/, "the retry requests a fresh high-accuracy position");
 
 const { dealers } = normalizeDealerRows(rawDealerRows);
 assert.equal(rawDealerRows.length, 71, "The source dataset must retain 71 rows");
