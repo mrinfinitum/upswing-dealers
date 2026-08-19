@@ -1,7 +1,7 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useId, useState } from "react";
-import { fallbackMapProvider } from "@/lib/maps/provider";
 import type { MapConfiguration } from "@/lib/maps/provider";
 import type { Dealer, DealerCoordinates } from "@/types/dealer";
 import { GoogleMap } from "./google-map";
@@ -38,7 +38,9 @@ export function MapPanel({ config, dealers, selectedDealer, origin, originIsUser
     <section className={`map-panel${awaitingSearch ? " is-awaiting-search" : ""}`} aria-labelledby="map-heading">
       <div className="map-panel__topline">
         <p id="map-heading">Dealer map</p>
-        <span><i className={useGoogleMap ? "is-live" : ""} aria-hidden="true" />{useGoogleMap ? "Google Maps" : fallbackMapProvider.label}</span>
+        <div className="map-panel__brand-mark">
+          <Image src="/brand/upswing-logo-white.png" alt="UpSwing Golf" width={345} height={159} />
+        </div>
       </div>
       <div className={`map-panel__canvas${awaitingSearch ? " is-awaiting-search" : ""}`}>
         {useGoogleMap && (

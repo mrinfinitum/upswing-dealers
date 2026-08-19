@@ -41,6 +41,7 @@ assert.match(dealerLocator, /Choose a state/, "the initial left panel offers a s
 assert.match(dealerLocator, /if \(value\) void runSearch\(value, Boolean\(typedLocation\)\)/, "the initial search card waits for explicit form submission");
 assert.match(dealerLocator, /runSearch\(value, !stateOnly\)/, "submitted state selection shows every lexical state match instead of applying a radius around the state centroid");
 assert.match(mapPanel, /onUseMyLocation/, "the initial map prompt preserves optional browser geolocation");
+assert.match(mapPanel, /upswing-logo-white\.png/, "the map header carries the approved UpSwing brand mark");
 assert.match(dealerLocator, /error\.PERMISSION_DENIED/, "geolocation permission denial receives specific recovery guidance");
 assert.match(dealerLocator, /error\.POSITION_UNAVAILABLE/, "unavailable device positioning is distinct from permission denial");
 assert.match(dealerLocator, /error\.TIMEOUT/, "geolocation timeout receives a retryable error state");

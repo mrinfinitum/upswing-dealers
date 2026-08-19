@@ -201,7 +201,6 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
           )}
         </form> : (
           <div className="locator-start-card">
-            <span className="locator-start-card__icon" aria-hidden="true">◎</span>
             <p className="eyebrow">Find your closest dealer</p>
             <h2>Start with your location.</h2>
             <p>Choose a state or enter a ZIP code, city, or address to find authorized UpSwing dealers near you.</p>
