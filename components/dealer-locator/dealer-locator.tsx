@@ -124,11 +124,23 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
           ? "Results are sorted nearest first."
           : "Location received. Verified dealer coordinates are still needed for distance sorting; search by city or state for now.");
       },
-      () => {
+      (error) => {
         setLocationStatus("error");
-        setLocationMessage("We couldn’t access your location. You can still search by city or state.");
+        if (error.code === error.PERMISSION_DENIED) {
+          setLocationMessage("Location access is blocked for this site. Enable Location in your browser’s site settings, then try again—or search by ZIP code.");
+          return;
+        }
+        if (error.code === error.POSITION_UNAVAILABLE) {
+          setLocationMessage("Your device couldn’t determine its location. Check that Location Services are turned on, then try again—or search by ZIP code.");
+          return;
+        }
+        if (error.code === error.TIMEOUT) {
+          setLocationMessage("Finding your location took too long. Try again, or search by ZIP code, city, or state.");
+          return;
+        }
+        setLocationMessage("We couldn’t access your location. Try again, or search by ZIP code, city, or state.");
       },
-      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 },
+      { enableHighAccuracy: false, timeout: 20000, maximumAge: 300000 },
     );
   }
 

@@ -42,6 +42,10 @@ assert.match(mapPanel, /onSubmitInitialSearch\(value, !typedLocation && Boolean\
 assert.doesNotMatch(mapPanel, /onChange=\{\(event\) => event\.target\.value && onSelectState/, "choosing a state does not automatically open the results map");
 assert.match(dealerLocator, /runSearch\(value, !stateOnly\)/, "submitted state selection shows every lexical state match instead of applying a radius around the state centroid");
 assert.match(mapPanel, /onUseMyLocation/, "the initial map prompt preserves optional browser geolocation");
+assert.match(dealerLocator, /error\.PERMISSION_DENIED/, "geolocation permission denial receives specific recovery guidance");
+assert.match(dealerLocator, /error\.POSITION_UNAVAILABLE/, "unavailable device positioning is distinct from permission denial");
+assert.match(dealerLocator, /error\.TIMEOUT/, "geolocation timeout receives a retryable error state");
+assert.match(dealerLocator, /timeout: 20000/, "slower devices receive sufficient time to resolve their location");
 
 const { dealers } = normalizeDealerRows(rawDealerRows);
 assert.equal(rawDealerRows.length, 71, "The source dataset must retain 71 rows");
