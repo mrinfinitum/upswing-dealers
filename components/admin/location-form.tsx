@@ -32,7 +32,7 @@ export function LocationForm({ dealer, mapConfig, cancelHref = "/admin/locations
   const error = (name: string) => state.fieldErrors?.[name];
 
   return (
-    <form action={action} className="admin-location-form">
+    <form action={action} className={`admin-location-form${dealer ? "" : " admin-location-form--create"}`}>
       {dealer ? <input type="hidden" name="returnTo" value={cancelHref} /> : null}
       {state.message ? <p className="admin-form-error" role="alert">{state.message}</p> : null}
       <fieldset>
