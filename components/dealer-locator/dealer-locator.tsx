@@ -172,7 +172,7 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
       <div className="locator-panel">
         <div className="locator-panel__intro">
           <p className="eyebrow">Find your fit. Find your dealer.</p>
-          <h1 id="locator-heading">Find an UpSwing Dealer</h1>
+          <h2 id="locator-heading">Find an UpSwing Dealer</h2>
           <p>Search current retail partners by address, postal code, city, state, province, country, or dealer name.</p>
         </div>
         {hasSearchContext ? <form className="locator-search" role="search" onSubmit={submitSearch}>

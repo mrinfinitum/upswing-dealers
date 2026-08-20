@@ -21,6 +21,20 @@ export async function listManagedDealers(query = "") {
   return (data as DealerRow[]).map(dealerRowToDealer);
 }
 
+export async function listManagedDealerOptions() {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("dealers").select("name").order("name");
+  if (error) throw new DealerAdminDataError(error.code === "PGRST205" ? "Database setup required" : "Dealers could not be loaded");
+
+  const counts = new Map<string, number>();
+  for (const row of data ?? []) {
+    const name = typeof row.name === "string" ? row.name.trim() : "";
+    if (name) counts.set(name, (counts.get(name) ?? 0) + 1);
+  }
+
+  return [...counts.entries()].map(([name, locationCount]) => ({ name, locationCount }));
+}
+
 export async function getManagedDealer(id: string) {
   const supabase = await createClient();
   const { data, error } = await supabase.from("dealers").select("*").eq("id", id).maybeSingle();

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import Link from "next/link";
 import { createLocationAction, updateLocationAction } from "@/app/admin/actions";
 import { initialAdminFormState } from "@/lib/admin/form-state";
@@ -13,7 +13,13 @@ function FieldError({ error }: { error?: string }) {
   return error ? <span className="admin-field__error">{error}</span> : null;
 }
 
-export function LocationForm({ dealer, mapConfig, cancelHref = "/admin/locations" }: { dealer?: Dealer; mapConfig: MapConfiguration; cancelHref?: string }) {
+type ExistingDealerOption = { name: string; locationCount: number };
+
+export function LocationForm({ dealer, mapConfig, cancelHref = "/admin/locations", existingDealers = [], defaultDealerName }: { dealer?: Dealer; mapConfig: MapConfiguration; cancelHref?: string; existingDealers?: ExistingDealerOption[]; defaultDealerName?: string }) {
+  const matchingDefault = existingDealers.find((option) => option.name.toLowerCase() === defaultDealerName?.toLowerCase());
+  const [dealerSelection, setDealerSelection] = useState(dealer?.name ?? matchingDefault?.name ?? "");
+  const [newDealerName, setNewDealerName] = useState("");
+  const addingNewDealer = dealerSelection === "__new__";
   const serverAction = dealer ? updateLocationAction.bind(null, dealer.id) : createLocationAction;
   async function geocodingAction(previousState: typeof initialAdminFormState, formData: FormData) {
     const addressChanged = !dealer || formAddressFingerprint(formData) !== dealerAddressFingerprint(dealer);
@@ -37,9 +43,18 @@ export function LocationForm({ dealer, mapConfig, cancelHref = "/admin/locations
       {state.message ? <p className="admin-form-error" role="alert">{state.message}</p> : null}
       <fieldset>
         <legend>Location identity</legend>
+        {!dealer ? <div className="admin-dealer-picker">
+          <div><p className="admin-dealer-picker__label">Choose a dealer *</p><p>Select an existing dealer to keep its locations grouped together, or create a new dealer.</p></div>
+          <div className="admin-dealer-picker__options" role="radiogroup" aria-label="Choose a dealer">
+            {existingDealers.map((option) => <label key={option.name}><input type="radio" name="dealerSelection" value={option.name} checked={dealerSelection === option.name} onChange={() => setDealerSelection(option.name)} required /><span><strong>{option.name}</strong><small>{option.locationCount} {option.locationCount === 1 ? "location" : "locations"}</small></span></label>)}
+            <label className="admin-dealer-picker__new"><input type="radio" name="dealerSelection" value="__new__" checked={addingNewDealer} onChange={() => setDealerSelection("__new__")} required /><span><strong><b aria-hidden="true">＋</b> Add new dealer</strong><small>Create a new retailer group</small></span></label>
+          </div>
+          {addingNewDealer ? <div className="admin-field admin-dealer-picker__name"><label htmlFor="name">New retailer / dealer name *</label><input id="name" name="name" value={newDealerName} onChange={(event) => setNewDealerName(event.target.value)} autoFocus required /><FieldError error={error("name")} /></div> : <input type="hidden" name="name" value={dealerSelection} />}
+          {!addingNewDealer ? <FieldError error={error("name")} /> : null}
+        </div> : null}
         <div className="admin-form-grid">
-          <div className="admin-field"><label htmlFor="name">Retailer / dealer name *</label><input id="name" name="name" defaultValue={dealer?.name} required /><FieldError error={error("name")} /></div>
-          <div className="admin-field"><label htmlFor="locationName">Location name</label><input id="locationName" name="locationName" defaultValue={dealer?.locationName} /></div>
+          {dealer ? <div className="admin-field"><label htmlFor="name">Retailer / dealer name *</label><input id="name" name="name" defaultValue={dealer.name} required /><FieldError error={error("name")} /></div> : null}
+          <div className={`admin-field${dealer ? "" : " admin-field--wide"}`}><label htmlFor="locationName">Location name</label><input id="locationName" name="locationName" defaultValue={dealer?.locationName} /></div>
           <div className="admin-field"><label htmlFor="dealerType">Type / category</label><input id="dealerType" name="dealerType" defaultValue={dealer?.dealerType} /></div>
           <div className="admin-field"><label htmlFor="verificationStatus">Verification status *</label><select id="verificationStatus" name="verificationStatus" defaultValue={dealer?.verificationStatus ?? "unverified"}><option value="unverified">Unverified</option><option value="needs-review">Needs review</option><option value="verified">Verified</option><option value="rejected">Rejected</option></select><FieldError error={error("verificationStatus")} /></div>
         </div>
