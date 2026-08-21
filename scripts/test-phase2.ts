@@ -37,7 +37,8 @@ assert.match(googleMap, /DEALER_LOGOS\[dealer\.name\]/, "the dealer marker infor
 assert.match(googleMap, /heading\.textContent = dealer\.name/, "dealer marker cards preserve a text fallback when no retailer logo is configured");
 assert.doesNotMatch(googleMap, /map\.addListener\("click"/, "the map canvas does not immediately close a marker card through click bubbling");
 assert.match(dealerLocator, /if \(!hasSearchContext\) return \[\]/, "the locator renders no dealer list before a user searches");
-assert.match(dealerLocator, /dealers=\{mapDealers\}/, "the initial map receives the complete verified dealer set");
+assert.match(dealerLocator, /dealers=\{dealers\}/, "the map retains the complete verified dealer network after a search");
+assert.match(dealerLocator, /focusDealers=\{mapFocusDealers\}/, "map camera bounds continue to follow only the active search results");
 assert.match(dealerLocator, /awaitingSearch=\{false\}/, "the initial map stays visible and interactive beside the search card");
 assert.match(dealerLocator, /Start with your location\./, "the initial left panel asks for a ZIP code or city and state");
 assert.match(dealerLocator, /Choose a state/, "the initial left panel offers a state selector");

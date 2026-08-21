@@ -9,6 +9,7 @@ import { GoogleMap } from "./google-map";
 type MapPanelProps = {
   config: MapConfiguration;
   dealers: Dealer[];
+  focusDealers: Dealer[];
   selectedDealer?: Dealer;
   origin?: DealerCoordinates;
   originIsUserLocation: boolean;
@@ -27,7 +28,7 @@ type MapPanelProps = {
   onSelectDealer: (dealerId: string) => void;
 };
 
-export function MapPanel({ config, dealers, selectedDealer, origin, originIsUserLocation, useUnitedStatesOverview, awaitingSearch, searchValue, selectedState, availableStates, locationLoading, locationStatus, locationMessage, onSearchValueChange, onSelectedStateChange, onSubmitInitialSearch, onUseMyLocation, onSelectDealer }: MapPanelProps) {
+export function MapPanel({ config, dealers, focusDealers, selectedDealer, origin, originIsUserLocation, useUnitedStatesOverview, awaitingSearch, searchValue, selectedState, availableStates, locationLoading, locationStatus, locationMessage, onSearchValueChange, onSelectedStateChange, onSubmitInitialSearch, onUseMyLocation, onSelectDealer }: MapPanelProps) {
   const promptSearchId = useId();
   const promptStateId = useId();
   const [mapFailed, setMapFailed] = useState(false);
@@ -44,7 +45,7 @@ export function MapPanel({ config, dealers, selectedDealer, origin, originIsUser
       </div>
       <div className={`map-panel__canvas${awaitingSearch ? " is-awaiting-search" : ""}`}>
         {useGoogleMap && (
-          <GoogleMap config={config} dealers={dealers} selectedDealerId={selectedDealer?.id} origin={origin} originLabel={originIsUserLocation ? "Your location" : "Search location"} useUnitedStatesOverview={useUnitedStatesOverview} onSelectDealer={onSelectDealer} onFailure={handleFailure} />
+          <GoogleMap config={config} dealers={dealers} focusDealers={focusDealers} selectedDealerId={selectedDealer?.id} origin={origin} originLabel={originIsUserLocation ? "Your location" : "Search location"} useUnitedStatesOverview={useUnitedStatesOverview} onSelectDealer={onSelectDealer} onFailure={handleFailure} />
         )}
         {!useGoogleMap && (
           <>

@@ -10,6 +10,7 @@ import type { Dealer, DealerCoordinates } from "@/types/dealer";
 type GoogleMapProps = {
   config: GoogleMapConfiguration;
   dealers: Dealer[];
+  focusDealers: Dealer[];
   selectedDealerId?: string;
   origin?: DealerCoordinates;
   originLabel: string;
@@ -25,9 +26,9 @@ const DEALER_LOGOS: Record<string, { src: string; inverted?: boolean }> = {
   "PGA TOUR Superstore": { src: "https://www.pgatoursuperstore.com/on/demandware.static/Sites-pgatss-sfra-Site/-/default/dwb27c47bd/images/logo.svg" },
 };
 
-function createDealerMarkerIcon(selected: boolean) {
+function createDealerMarkerIcon(selected: boolean, isSearchResult: boolean) {
   const icon = document.createElement("div");
-  icon.className = `map-dealer-marker${selected ? " is-selected" : ""}`;
+  icon.className = `map-dealer-marker${selected ? " is-selected" : ""}${isSearchResult ? "" : " is-outside-search"}`;
 
   const artwork = document.createElement("img");
   artwork.src = "/brand/dealer-map-marker.svg";
@@ -122,7 +123,7 @@ function createDealerInfoCard(dealer: Dealer) {
   return card;
 }
 
-export function GoogleMap({ config, dealers, selectedDealerId, origin, originLabel, useUnitedStatesOverview, onSelectDealer, onFailure }: GoogleMapProps) {
+export function GoogleMap({ config, dealers, focusDealers, selectedDealerId, origin, originLabel, useUnitedStatesOverview, onSelectDealer, onFailure }: GoogleMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<google.maps.Map | undefined>(undefined);
   const markersRef = useRef<google.maps.marker.AdvancedMarkerElement[]>([]);
@@ -170,8 +171,10 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
     const bounds = new google.maps.LatLngBounds();
     const infoWindow = new mapsLibrary.InfoWindow();
     const mappableDealers = getMappableDealers(dealers);
+    const focusedMappableDealers = getMappableDealers(focusDealers);
+    const focusedDealerIds = new Set(focusedMappableDealers.map((dealer) => dealer.id));
     const cameraScope = JSON.stringify({
-      dealerPoints: mappableDealers.map((dealer) => [dealer.id, dealer.coordinates?.latitude, dealer.coordinates?.longitude]),
+      dealerPoints: focusedMappableDealers.map((dealer) => [dealer.id, dealer.coordinates?.latitude, dealer.coordinates?.longitude]),
       origin,
       useUnitedStatesOverview,
     });
@@ -191,7 +194,7 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
         map,
         position,
         title: `${dealer.name}, ${dealer.city}`,
-        content: createDealerMarkerIcon(selected),
+        content: createDealerMarkerIcon(selected, focusedDealerIds.has(dealer.id)),
         gmpClickable: true,
       });
       marker.addEventListener("gmp-click", (event) => {
@@ -201,7 +204,7 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
       });
       dealerMarkers.push(marker);
       dealerMarkersById.set(dealer.id, marker);
-      bounds.extend(position);
+      if (focusedDealerIds.has(dealer.id)) bounds.extend(position);
     }
 
     const openDealer = dealers.find((dealer) => dealer.id === openDealerId);
@@ -229,7 +232,7 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
         map.moveCamera({ center: UNITED_STATES_CENTER, zoom: UNITED_STATES_ZOOM });
       } else if (!bounds.isEmpty()) {
         map.fitBounds(bounds, 54);
-        if (mappableDealers.length === 1 && !origin) {
+        if (focusedMappableDealers.length === 1 && !origin) {
           google.maps.event.addListenerOnce(map, "idle", () => { if ((map.getZoom() ?? 0) > 13) map.setZoom(13); });
         }
       }
@@ -247,7 +250,7 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
       clustererRef.current?.clearMarkers();
       markers.forEach((marker) => { marker.map = null; });
     };
-  }, [dealers, libraries, onSelectDealer, openDealerId, origin, originLabel, selectedDealerId, useUnitedStatesOverview]);
+  }, [dealers, focusDealers, libraries, onSelectDealer, openDealerId, origin, originLabel, selectedDealerId, useUnitedStatesOverview]);
 
   return (
     <div
@@ -255,6 +258,7 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
       className="map-panel__google-map"
       aria-label="Map showing the visible dealer results"
       data-dealer-marker-count={getMappableDealers(dealers).length}
+      data-focused-dealer-marker-count={getMappableDealers(focusDealers).length}
       data-selected-dealer-id={selectedDealerId}
     />
   );

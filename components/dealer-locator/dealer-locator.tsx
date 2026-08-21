@@ -42,8 +42,8 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
     if (origin && hasCoordinateDealers) return dealersWithinRadius(dealers, origin, radiusMiles);
     return sortDealersAlphabetically(sortDealersByDistance(filteredDealers, origin));
   }, [dealers, filteredDealers, hasCoordinateDealers, hasSearchContext, origin, radiusMiles]);
-  const mapDealers = hasSearchContext ? results : dealers;
-  const selectedDealer = mapDealers.find((dealer) => dealer.id === selectedDealerId) ?? (hasSearchContext ? results[0] : undefined);
+  const mapFocusDealers = hasSearchContext ? results : dealers;
+  const selectedDealer = dealers.find((dealer) => dealer.id === selectedDealerId) ?? (hasSearchContext ? results[0] : undefined);
 
   async function runSearch(value: string, geocode = true, source: "location" | "state" = "location") {
     const nextQuery = value.trim();
@@ -279,7 +279,8 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
       </div>
       <MapPanel
         config={mapConfig}
-        dealers={mapDealers}
+        dealers={dealers}
+        focusDealers={mapFocusDealers}
         selectedDealer={selectedDealer}
         origin={origin}
         originIsUserLocation={Boolean(userLocation)}
