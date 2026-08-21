@@ -168,6 +168,11 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
     const auxiliaryMarkers: google.maps.marker.AdvancedMarkerElement[] = [];
     const bounds = new google.maps.LatLngBounds();
     const infoWindow = new mapsLibrary.InfoWindow();
+    const updateMarkerScale = () => {
+      containerRef.current?.classList.toggle("is-zoomed-out", (map.getZoom() ?? UNITED_STATES_ZOOM) <= 5);
+    };
+    const zoomListener = map.addListener("zoom_changed", updateMarkerScale);
+    updateMarkerScale();
 
     for (const dealer of getMappableDealers(dealers)) {
       const coordinates = dealer.coordinates!;
@@ -225,6 +230,7 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
     }
     previousSelectedDealerId.current = selectedDealerId;
     return () => {
+      zoomListener.remove();
       closeListener.remove();
       infoWindow.close();
       cancelAnimationFrame(cameraFrame);

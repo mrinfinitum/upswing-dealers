@@ -30,6 +30,7 @@ assert.match(googleMap, /google\.maps\.event\.trigger\(map, "resize"\)/, "the fi
 assert.match(googleMap, /marker\.addEventListener\("gmp-click"/, "dealer markers use the current Advanced Marker click event");
 assert.match(googleMap, /gmpClickable: true/, "dealer markers explicitly enable current Google Maps click and keyboard interaction");
 assert.match(googleMap, /\/brand\/dealer-map-marker\.svg/, "dealer markers use the approved UpSwing golfer artwork");
+assert.match(googleMap, /map\.getZoom\(\).*<= 5/, "dealer marker artwork scales down at continental map zoom levels");
 assert.match(googleMap, /infoWindow\.setContent\(createDealerInfoCard\(openDealer\)\)/, "dealer marker selection opens a location information card");
 assert.match(googleMap, /DEALER_LOGOS\[dealer\.name\]/, "the dealer marker information card uses an approved retailer logo when available");
 assert.match(googleMap, /heading\.textContent = dealer\.name/, "dealer marker cards preserve a text fallback when no retailer logo is configured");
