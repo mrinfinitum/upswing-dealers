@@ -1290,9 +1290,9 @@ button { color: inherit; }
 .map-panel__brand-mark { display: flex; align-items: center; justify-content: flex-end; }
 .map-panel__brand-mark img { width: 88px; height: auto; display: block; filter: invert(1); }
 .map-panel__canvas { position: relative; flex: 1; min-height: 0; overflow: hidden; display: grid; place-items: center; isolation: isolate; border: 1px solid #d8dde3; border-radius: 20px; background: #e7eaee; box-shadow: 0 8px 26px rgb(20 32 49 / .08); }
-.map-dealer-marker { width: 38px; height: 52px; display: grid; place-items: center; cursor: pointer; filter: drop-shadow(1px 0 #fff) drop-shadow(-1px 0 #fff) drop-shadow(0 1px #fff) drop-shadow(0 -1px #fff) drop-shadow(0 5px 5px rgb(12 24 39 / .3)); transition: filter .18s ease, transform .18s ease; }
+.map-dealer-marker { width: 38px; height: 52px; display: grid; place-items: center; cursor: pointer; filter: drop-shadow(0 5px 5px rgb(12 24 39 / .3)); transition: filter .18s ease, transform .18s ease; }
 .map-dealer-marker img { width: 38px; height: 52px; display: block; object-fit: contain; }
-.map-dealer-marker:hover, .map-dealer-marker.is-selected { filter: drop-shadow(1px 0 #fff) drop-shadow(-1px 0 #fff) drop-shadow(0 1px #fff) drop-shadow(0 -1px #fff) drop-shadow(0 6px 7px rgb(40 120 209 / .58)); transform: scale(1.16); }
+.map-dealer-marker:hover, .map-dealer-marker.is-selected { filter: drop-shadow(0 6px 7px rgb(40 120 209 / .58)); transform: scale(1.16); }
 .map-panel__google-map { position: absolute; inset: 0; width: 100%; height: 100%; transition: filter .35s ease, opacity .35s ease, transform .35s ease; }
 .map-panel__canvas.is-awaiting-search .map-panel__google-map { filter: blur(3px) saturate(.68); opacity: .78; pointer-events: none; transform: scale(1.018); }
 .map-panel__canvas.is-awaiting-search::after { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(135deg, rgb(236 243 250 / .2), rgb(255 255 255 / .12)); pointer-events: none; }
