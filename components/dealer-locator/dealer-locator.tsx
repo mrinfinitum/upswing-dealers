@@ -201,8 +201,9 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
           )}
         </form> : (
           <div className="locator-start-card">
-            <p className="eyebrow">Find your closest dealer</p>
-            <h2 id="locator-start-heading">Start with your location.</h2>
+            <p className="eyebrow">Find your fit. Find your dealer.</p>
+            <h2 id="locator-start-heading">Find an UpSwing Dealer</h2>
+            <h3 className="locator-start-card__subhead">Start with your location.</h3>
             <p>Choose a state or enter a ZIP code, city, or address to find authorized UpSwing dealers near you.</p>
             <form className="locator-start-card__form" role="search" onSubmit={(event) => {
               event.preventDefault();
