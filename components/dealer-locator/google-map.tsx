@@ -25,6 +25,19 @@ const DEALER_LOGOS: Record<string, { src: string; inverted?: boolean }> = {
   "PGA TOUR Superstore": { src: "https://www.pgatoursuperstore.com/on/demandware.static/Sites-pgatss-sfra-Site/-/default/dwb27c47bd/images/logo.svg" },
 };
 
+function createDealerMarkerIcon(selected: boolean) {
+  const icon = document.createElement("div");
+  icon.className = `map-dealer-marker${selected ? " is-selected" : ""}`;
+
+  const artwork = document.createElement("img");
+  artwork.src = "/brand/dealer-map-marker.svg";
+  artwork.alt = "";
+  artwork.setAttribute("aria-hidden", "true");
+  icon.append(artwork);
+
+  return icon;
+}
+
 function getDirectionsUrl(dealer: Dealer) {
   const destination = [dealer.name, dealer.addressLine1, dealer.addressLine2, dealer.city, dealer.stateProvince, dealer.postalCode, dealer.country]
     .filter(Boolean)
@@ -159,18 +172,12 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
     for (const dealer of getMappableDealers(dealers)) {
       const coordinates = dealer.coordinates!;
       const selected = dealer.id === selectedDealerId;
-      const pin = new markerLibrary.PinElement({
-        background: selected ? "#2878d1" : "#111111",
-        borderColor: "#ffffff",
-        glyphColor: "#ffffff",
-        scale: selected ? 1.2 : 1,
-      });
       const position = { lat: coordinates.latitude, lng: coordinates.longitude };
       const marker = new markerLibrary.AdvancedMarkerElement({
         map,
         position,
         title: `${dealer.name}, ${dealer.city}`,
-        content: pin,
+        content: createDealerMarkerIcon(selected),
         gmpClickable: true,
       });
       marker.addEventListener("gmp-click", (event) => {
