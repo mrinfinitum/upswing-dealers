@@ -128,6 +128,7 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
   const markersRef = useRef<google.maps.marker.AdvancedMarkerElement[]>([]);
   const clustererRef = useRef<MarkerClusterer | undefined>(undefined);
   const previousSelectedDealerId = useRef<string | undefined>(undefined);
+  const cameraScopeRef = useRef("");
   const [libraries, setLibraries] = useState<[google.maps.MapsLibrary, google.maps.MarkerLibrary]>();
   const [openDealerId, setOpenDealerId] = useState<string>();
 
@@ -168,13 +169,21 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
     const auxiliaryMarkers: google.maps.marker.AdvancedMarkerElement[] = [];
     const bounds = new google.maps.LatLngBounds();
     const infoWindow = new mapsLibrary.InfoWindow();
+    const mappableDealers = getMappableDealers(dealers);
+    const cameraScope = JSON.stringify({
+      dealerPoints: mappableDealers.map((dealer) => [dealer.id, dealer.coordinates?.latitude, dealer.coordinates?.longitude]),
+      origin,
+      useUnitedStatesOverview,
+    });
+    const shouldFrameResults = cameraScopeRef.current !== cameraScope;
+    cameraScopeRef.current = cameraScope;
     const updateMarkerScale = () => {
       containerRef.current?.classList.toggle("is-zoomed-out", (map.getZoom() ?? UNITED_STATES_ZOOM) <= 5);
     };
     const zoomListener = map.addListener("zoom_changed", updateMarkerScale);
     updateMarkerScale();
 
-    for (const dealer of getMappableDealers(dealers)) {
+    for (const dealer of mappableDealers) {
       const coordinates = dealer.coordinates!;
       const selected = dealer.id === selectedDealerId;
       const position = { lat: coordinates.latitude, lng: coordinates.longitude };
@@ -215,11 +224,12 @@ export function GoogleMap({ config, dealers, selectedDealerId, origin, originLab
     clustererRef.current = new MarkerClusterer({ map, markers: dealerMarkers });
     const cameraFrame = requestAnimationFrame(() => {
       google.maps.event.trigger(map, "resize");
+      if (!shouldFrameResults) return;
       if (useUnitedStatesOverview) {
         map.moveCamera({ center: UNITED_STATES_CENTER, zoom: UNITED_STATES_ZOOM });
       } else if (!bounds.isEmpty()) {
         map.fitBounds(bounds, 54);
-        if (getMappableDealers(dealers).length === 1 && !origin) {
+        if (mappableDealers.length === 1 && !origin) {
           google.maps.event.addListenerOnce(map, "idle", () => { if ((map.getZoom() ?? 0) > 13) map.setZoom(13); });
         }
       }
