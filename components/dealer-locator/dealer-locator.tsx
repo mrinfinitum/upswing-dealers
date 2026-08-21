@@ -168,13 +168,13 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
   }, []);
 
   return (
-    <section id="locator" className={`locator-shell${hasSearchContext ? "" : " is-awaiting-search"}`} aria-labelledby="locator-heading">
+    <section id="locator" className={`locator-shell${hasSearchContext ? "" : " is-awaiting-search"}`} aria-labelledby={hasSearchContext ? "locator-heading" : "locator-start-heading"}>
       <div className="locator-panel">
-        <div className="locator-panel__intro">
+        {hasSearchContext ? <div className="locator-panel__intro">
           <p className="eyebrow">Find your fit. Find your dealer.</p>
           <h2 id="locator-heading">Find an UpSwing Dealer</h2>
           <p>Search current retail partners by address, postal code, city, state, province, country, or dealer name.</p>
-        </div>
+        </div> : null}
         {hasSearchContext ? <form className="locator-search" role="search" onSubmit={submitSearch}>
           <label htmlFor={searchId}>ZIP code or City, State</label>
           <div className="locator-search__row">
@@ -202,7 +202,7 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
         </form> : (
           <div className="locator-start-card">
             <p className="eyebrow">Find your closest dealer</p>
-            <h2>Start with your location.</h2>
+            <h2 id="locator-start-heading">Start with your location.</h2>
             <p>Choose a state or enter a ZIP code, city, or address to find authorized UpSwing dealers near you.</p>
             <form className="locator-start-card__form" role="search" onSubmit={(event) => {
               event.preventDefault();
