@@ -1,6 +1,6 @@
 import type { User } from "@supabase/supabase-js";
 import Link from "next/link";
-import { AddUserForm } from "@/components/admin/add-user-form";
+import { AddUserModal } from "@/components/admin/add-user-modal";
 import { DeleteUserButton } from "@/components/admin/delete-user-button";
 import { requireAdmin } from "@/lib/admin/auth";
 import { AdminUserDirectoryError, listAuthUsers } from "@/lib/admin/users";
@@ -86,8 +86,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
       {setupError ? <section className="admin-setup"><h2>User directory unavailable</h2><p>{setupError}</p></section> : <>
         <section className="admin-user-summary"><article><span>Total accounts</span><strong>{users.length}</strong></article><article><span>Administrators</span><strong>{administratorCount}</strong></article><article><span>Dealers</span><strong>{dealerCount}</strong></article><article><span>Unassigned</span><strong>{unassignedCount}</strong></article></section>
         <section className="admin-user-directory">
-          <header><div><p className="eyebrow">Master directory</p><h2>All users</h2><p>{visibleUsers.length} of {users.length} accounts shown</p></div></header>
-          <div className="admin-user-create"><div><p className="eyebrow">Account provisioning</p><h3>Add user</h3><p>Create an active account, choose its role, and assign dealer access in one step.</p></div><AddUserForm organizations={activeOrganizations} /></div>
+          <header><div><p className="eyebrow">Master directory</p><h2>All users</h2><p>{visibleUsers.length} of {users.length} accounts shown</p></div><AddUserModal organizations={activeOrganizations} /></header>
           <form className="admin-user-filters">
             <div className="admin-field admin-user-filter-search"><label htmlFor="userSearch">Search</label><input id="userSearch" name="q" defaultValue={q} placeholder="Email, name, role, or dealer" /></div>
             <div className="admin-field"><label htmlFor="userGroup">Group</label><select id="userGroup" name="group" defaultValue={group}><option value="all">All groups</option><option value="admin">Administrators</option><option value="dealer">Dealers</option><option value="unassigned">Unassigned</option></select></div>
