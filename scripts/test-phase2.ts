@@ -38,8 +38,8 @@ assert.match(dealerLocator, /dealers=\{mapDealers\}/, "the initial map receives 
 assert.match(dealerLocator, /awaitingSearch=\{false\}/, "the initial map stays visible and interactive beside the search card");
 assert.match(dealerLocator, /Start with your location\./, "the initial left panel asks for a ZIP code or city and state");
 assert.match(dealerLocator, /Choose a state/, "the initial left panel offers a state selector");
-assert.match(dealerLocator, /if \(value\) void runSearch\(value, Boolean\(typedLocation\)\)/, "the initial search card waits for explicit form submission");
-assert.match(dealerLocator, /runSearch\(value, !stateOnly\)/, "submitted state selection shows every lexical state match instead of applying a radius around the state centroid");
+assert.match(dealerLocator, /if \(value\) void runSearch\(value, Boolean\(typedLocation\), typedLocation \? "location" : "state"\)/, "the state and location interfaces wait for explicit form submission");
+assert.match(dealerLocator, /runSearch\(value, !stateOnly, stateOnly \? "state" : "location"\)/, "submitted state selection shows every lexical state match instead of applying a radius around the state centroid");
 assert.match(mapPanel, /onUseMyLocation/, "the initial map prompt preserves optional browser geolocation");
 assert.match(mapPanel, /upswing-logo-white\.png/, "the map header carries the approved UpSwing brand mark");
 assert.match(dealerLocator, /error\.PERMISSION_DENIED/, "geolocation permission denial receives specific recovery guidance");

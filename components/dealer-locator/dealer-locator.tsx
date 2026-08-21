@@ -45,10 +45,11 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
   const mapDealers = hasSearchContext ? results : dealers;
   const selectedDealer = mapDealers.find((dealer) => dealer.id === selectedDealerId) ?? (hasSearchContext ? results[0] : undefined);
 
-  async function runSearch(value: string, geocode = true) {
+  async function runSearch(value: string, geocode = true, source: "location" | "state" = "location") {
     const nextQuery = value.trim();
     const exactState = getStateCodeForQuery(nextQuery);
-    setQuery(nextQuery);
+    setQuery(source === "location" ? nextQuery : "");
+    setStateQuery(source === "state" ? nextQuery : "");
     startTransition(() => {
       setActiveQuery(nextQuery);
       setActiveState(exactState ?? "");
@@ -85,7 +86,9 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
 
   function submitSearch(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    void runSearch(query);
+    const typedLocation = query.trim();
+    const value = typedLocation || stateQuery;
+    if (value) void runSearch(value, Boolean(typedLocation), typedLocation ? "location" : "state");
   }
 
   function resetSearch() {
@@ -176,10 +179,28 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
           <p>Search current retail partners by address, postal code, city, state, province, country, or dealer name.</p>
         </div> : null}
         {hasSearchContext ? <form className="locator-search" role="search" onSubmit={submitSearch}>
-          <label htmlFor={searchId}>ZIP code or City, State</label>
-          <div className="locator-search__row">
-            <input id={searchId} type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="e.g. 74133 or Tulsa, OK" autoComplete="postal-code" />
-            <button type="submit" disabled={isPending || locationStatus === "loading"}>{isPending || locationStatus === "loading" ? "Searching" : "Search"}</button>
+          <div className="locator-start-card__form locator-search__choices">
+            <label htmlFor={stateId}>
+              <span>Browse by state</span>
+              <select id={stateId} value={stateQuery} onChange={(event) => {
+                setStateQuery(event.target.value);
+                setQuery("");
+              }}>
+                <option value="" disabled>Choose a state</option>
+                {availableStates.map((state) => <option key={state} value={state}>{state}</option>)}
+              </select>
+            </label>
+            <span className="locator-start-card__divider">or</span>
+            <label htmlFor={searchId}>
+              <span>Search by location</span>
+              <input id={searchId} type="search" value={query} onChange={(event) => {
+                setStateQuery("");
+                setQuery(event.target.value);
+              }} placeholder="ZIP code or City, State" autoComplete="postal-code" />
+            </label>
+            <button className="locator-start-card__search" type="submit" disabled={isPending || locationStatus === "loading" || (!query.trim() && !stateQuery)}>
+              {isPending || locationStatus === "loading" ? "Searching" : "Search"}<span aria-hidden="true">→</span>
+            </button>
           </div>
           <div className="locator-search__utilities">
             <button type="button" onClick={requestLocation} disabled={locationStatus === "loading"}>
@@ -209,7 +230,7 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
               event.preventDefault();
               const typedLocation = query.trim();
               const value = typedLocation || stateQuery;
-              if (value) void runSearch(value, Boolean(typedLocation));
+              if (value) void runSearch(value, Boolean(typedLocation), typedLocation ? "location" : "state");
             }}>
               <label htmlFor={stateId}>
                 <span>Browse by state</span>
@@ -272,7 +293,7 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
         locationMessage={locationMessage}
         onSearchValueChange={setQuery}
         onSelectedStateChange={setStateQuery}
-        onSubmitInitialSearch={(value, stateOnly) => void runSearch(value, !stateOnly)}
+        onSubmitInitialSearch={(value, stateOnly) => void runSearch(value, !stateOnly, stateOnly ? "state" : "location")}
         onUseMyLocation={requestLocation}
         onSelectDealer={selectDealer}
       />

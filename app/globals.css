@@ -1222,6 +1222,7 @@ button { color: inherit; }
 .locator-start-card__location button i { color: var(--blue); font-size: 17px; font-style: normal; }
 .locator-start-card__location button:hover { border-color: #9cbce9; color: var(--blue); }
 .locator-search { padding: 22px 32px 24px; border-bottom: 1px solid #e2e6eb; background: #f7f8fa; }
+.locator-search__choices { margin-top: 0; }
 .locator-search > label { display: block; margin-bottom: 8px; font-size: 11px; font-weight: 500; letter-spacing: .09em; text-transform: uppercase; }
 .locator-search__row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 5px; padding: 5px; border: 1px solid #d7dce2; border-radius: 16px; background: #fff; box-shadow: 0 5px 18px rgb(23 39 60 / .06); transition: border-color .2s ease, box-shadow .2s ease; }
 .locator-search__row:focus-within { border-color: #9cbce9; box-shadow: 0 0 0 4px rgb(52 126 228 / .1), 0 7px 22px rgb(23 39 60 / .08); }
