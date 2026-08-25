@@ -1,4 +1,5 @@
 import type { DealerWithDistance } from "@/types/dealer";
+import { getDealerBrandAsset } from "@/lib/dealers/brand";
 
 type DealerCardProps = {
   dealer: DealerWithDistance;
@@ -8,6 +9,7 @@ type DealerCardProps = {
 };
 
 export function DealerCard({ dealer, index, selected, onSelect }: DealerCardProps) {
+  const dealerBrand = getDealerBrandAsset(dealer.name);
   const location = [dealer.city, dealer.stateProvince].filter(Boolean).join(", ");
   const directionsQuery = [dealer.name, dealer.addressLine1, dealer.addressLine2, dealer.city, dealer.stateProvince, dealer.postalCode, dealer.country].filter(Boolean).join(", ");
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(directionsQuery)}`;
@@ -17,7 +19,12 @@ export function DealerCard({ dealer, index, selected, onSelect }: DealerCardProp
       <button className="dealer-card__select" onClick={() => onSelect(dealer.id)} aria-label={`Show ${dealer.name} in ${dealer.city} on map`}>
         <span className="dealer-card__number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
         <span>
-          <span className="dealer-card__name">{dealer.name}</span>
+          {dealerBrand ? <span className="dealer-card__brand">
+            {/* Approved retailer artwork is intentionally served by the retailer until local brand assets are supplied. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className={dealerBrand.inverted ? "is-inverted" : undefined} src={dealerBrand.src} alt="" aria-hidden="true" referrerPolicy="no-referrer" />
+            <span className="dealer-card__name dealer-card__name--supporting">{dealer.name}</span>
+          </span> : <span className="dealer-card__name">{dealer.name}</span>}
           {dealer.addressLine1 && <span className="dealer-card__address">{dealer.addressLine1}{dealer.addressLine2 ? `, ${dealer.addressLine2}` : ""}</span>}
           <span className="dealer-card__location">{location}</span>
           {dealer.postalCode && <span className="dealer-card__postal">{dealer.postalCode}</span>}

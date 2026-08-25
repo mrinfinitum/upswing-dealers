@@ -1261,6 +1261,10 @@ button { color: inherit; }
 .dealer-card.is-selected .dealer-card__number { background: var(--blue); color: #fff; }
 .dealer-card__name, .dealer-card__address, .dealer-card__location, .dealer-card__postal, .dealer-card__country, .dealer-card__distance { display: block; }
 .dealer-card__name { margin-bottom: 5px; font-size: 15px; font-weight: 600; letter-spacing: -.01em; }
+.dealer-card__brand { min-height: 48px; display: flex; align-items: flex-start; flex-direction: column; justify-content: center; gap: 5px; margin-bottom: 8px; }
+.dealer-card__brand img { width: auto; max-width: 142px; height: auto; max-height: 31px; display: block; object-fit: contain; object-position: left center; }
+.dealer-card__brand img.is-inverted { filter: invert(1); }
+.dealer-card__name--supporting { margin: 0; color: #69727d; font-size: 9px; font-weight: 600; letter-spacing: .08em; line-height: 1.2; text-transform: uppercase; }
 .dealer-card__address { font-size: 13px; line-height: 1.4; }
 .dealer-card__location { font-size: 14px; }
 .dealer-card__postal, .dealer-card__country, .dealer-card__distance { margin-top: 2px; color: var(--muted); font-size: 12px; }
@@ -1333,9 +1337,10 @@ button { color: inherit; }
 .map-dealer-card { width: min(310px, calc(100vw - 72px)); padding: 16px 22px 20px; color: #090b0d; font-family: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif; }
 .map-dealer-card__eyebrow { width: max-content; margin: 0 36px 12px 0; padding: 6px 9px; border: 1px solid #d7e6fa; border-radius: 999px; background: #edf5ff; color: #2465b8; font-size: 8px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
 .map-dealer-card h3 { margin: 0 36px 14px 0; font-size: 21px; font-weight: 700; letter-spacing: -.03em; line-height: 1.08; }
-.map-dealer-card h3.has-logo { min-height: 42px; display: flex; align-items: center; }
+.map-dealer-card h3.has-logo { min-height: 50px; display: flex; align-items: flex-start; flex-direction: column; justify-content: center; gap: 5px; }
 .map-dealer-card__retailer-logo { width: auto; max-width: 158px; height: auto; max-height: 42px; display: block; object-fit: contain; object-position: left center; }
 .map-dealer-card__retailer-logo.is-inverted { filter: invert(1); }
+.map-dealer-card__retailer-name { color: #69727d; font-size: 9px; font-weight: 600; letter-spacing: .08em; line-height: 1.2; text-transform: uppercase; }
 .map-dealer-card address { display: grid; gap: 1px; margin: 0; padding: 13px 14px; border: 1px solid #e8ebef; border-radius: 13px; background: #f7f8fa; color: #505965; font-size: 12px; font-style: normal; line-height: 1.45; }
 .map-dealer-card address span { display: block; }
 .map-dealer-card__phone { width: max-content; display: inline-flex; align-items: center; gap: 7px; margin-top: 13px; color: #25364b; font-size: 12px; font-weight: 600; text-decoration: none; }

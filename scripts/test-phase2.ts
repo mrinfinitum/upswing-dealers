@@ -11,6 +11,7 @@ import { reviewGeocodeCandidate } from "../lib/geo/geocode-review";
 import { applyVerifiedGoogleCoordinates, reviewGoogleCoordinates, validateCoordinateApprovals } from "../lib/dealers/coordinates";
 import { googleBrowserGeocodeBatch } from "../lib/dealers/google-geocodes";
 import { dealerCoordinateApprovals } from "../lib/dealers/coordinate-approvals";
+import { getDealerBrandAsset } from "../lib/dealers/brand";
 import type { Dealer } from "../types/dealer";
 
 const homePage = readFileSync("app/page.tsx", "utf8");
@@ -33,8 +34,11 @@ assert.match(googleMap, /\/brand\/dealer-map-marker\.svg/, "dealer markers use t
 assert.match(googleMap, /map\.getZoom\(\).*<= 5/, "dealer marker artwork scales down at continental map zoom levels");
 assert.match(googleMap, /if \(!shouldFrameResults\) return/, "marker selection does not refit all visible results and reset the user's zoom");
 assert.match(googleMap, /infoWindow\.setContent\(createDealerInfoCard\(openDealer\)\)/, "dealer marker selection opens a location information card");
-assert.match(googleMap, /DEALER_LOGOS\[dealer\.name\]/, "the dealer marker information card uses an approved retailer logo when available");
+assert.match(googleMap, /getDealerBrandAsset\(dealer\.name\)/, "the dealer marker information card uses an approved retailer logo when available");
 assert.match(googleMap, /heading\.textContent = dealer\.name/, "dealer marker cards preserve a text fallback when no retailer logo is configured");
+assert.ok(getDealerBrandAsset("Club Champion"), "Club Champion has approved retailer artwork");
+assert.ok(getDealerBrandAsset("PGA TOUR Superstore"), "PGA TOUR Superstore has approved retailer artwork");
+assert.equal(getDealerBrandAsset("Unknown retailer"), undefined, "unknown retailers safely fall back to text");
 assert.doesNotMatch(googleMap, /map\.addListener\("click"/, "the map canvas does not immediately close a marker card through click bubbling");
 assert.match(dealerLocator, /if \(!hasSearchContext\) return \[\]/, "the locator renders no dealer list before a user searches");
 assert.match(dealerLocator, /dealers=\{dealers\}/, "the map retains the complete verified dealer network after a search");
