@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { MarkerClusterer } from "@googlemaps/markerclusterer";
+import { MarkerClusterer, SuperClusterAlgorithm } from "@googlemaps/markerclusterer";
 import { getDealerBrandAsset } from "@/lib/dealers/brand";
 import { loadGoogleMaps } from "@/lib/maps/google-loader";
 import { getMappableDealers } from "@/lib/maps/markers";
@@ -22,6 +22,8 @@ type GoogleMapProps = {
 
 const UNITED_STATES_CENTER = { lat: 39.5, lng: -98.35 };
 const UNITED_STATES_ZOOM = 4;
+const MAX_CLUSTER_ZOOM = 7;
+const CLUSTER_RADIUS = 48;
 function createDealerMarkerIcon(selected: boolean, isSearchResult: boolean) {
   const icon = document.createElement("div");
   icon.className = `map-dealer-marker${selected ? " is-selected" : ""}${isSearchResult ? "" : " is-outside-search"}`;
@@ -227,7 +229,14 @@ export function GoogleMap({ config, dealers, focusDealers, selectedDealerId, ori
 
     const markers = [...dealerMarkers, ...auxiliaryMarkers];
     markersRef.current = markers;
-    clustererRef.current = new MarkerClusterer({ map, markers: dealerMarkers });
+    clustererRef.current = new MarkerClusterer({
+      map,
+      markers: dealerMarkers,
+      algorithm: new SuperClusterAlgorithm({
+        maxZoom: MAX_CLUSTER_ZOOM,
+        radius: CLUSTER_RADIUS,
+      }),
+    });
     const cameraFrame = requestAnimationFrame(() => {
       google.maps.event.trigger(map, "resize");
       if (!shouldFrameResults) return;

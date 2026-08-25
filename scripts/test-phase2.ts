@@ -33,6 +33,8 @@ assert.match(googleMap, /marker\.addEventListener\("gmp-click"/, "dealer markers
 assert.match(googleMap, /gmpClickable: true/, "dealer markers explicitly enable current Google Maps click and keyboard interaction");
 assert.match(googleMap, /\/brand\/dealer-map-marker\.svg/, "dealer markers use the approved UpSwing golfer artwork");
 assert.match(googleMap, /map\.getZoom\(\).*<= 5/, "dealer marker artwork scales down at continental map zoom levels");
+assert.match(googleMap, /const MAX_CLUSTER_ZOOM = 7/, "dealer clusters stop before city-level zooms");
+assert.match(googleMap, /new SuperClusterAlgorithm\(\{[\s\S]*maxZoom: MAX_CLUSTER_ZOOM,[\s\S]*radius: CLUSTER_RADIUS/, "the map uses an explicit low-zoom clustering strategy");
 assert.match(googleMap, /if \(!shouldFrameResults\) return/, "marker selection does not refit all visible results and reset the user's zoom");
 assert.match(googleMap, /infoWindow\.setContent\(createDealerInfoCard\(openDealer\)\)/, "dealer marker selection opens a location information card");
 assert.match(googleMap, /getDealerBrandAsset\(dealer\.name\)/, "the dealer marker information card uses an approved retailer logo when available");
