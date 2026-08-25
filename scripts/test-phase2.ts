@@ -39,6 +39,7 @@ assert.match(googleMap, /getDealerBrandAsset\(dealer\.name\)/, "the dealer marke
 assert.match(googleMap, /heading\.textContent = dealer\.name/, "dealer marker cards preserve a text fallback when no retailer logo is configured");
 assert.ok(getDealerBrandAsset("Club Champion"), "Club Champion has approved retailer artwork");
 assert.ok(getDealerBrandAsset("PGA TOUR Superstore"), "PGA TOUR Superstore has approved retailer artwork");
+assert.deepEqual(getDealerBrandAsset("GOLFTEC"), { src: "/brand/golftec-logo.svg" }, "GOLFTEC uses the supplied local retailer logo");
 assert.equal(getDealerBrandAsset("Unknown retailer"), undefined, "unknown retailers safely fall back to text");
 assert.doesNotMatch(googleMap, /map\.addListener\("click"/, "the map canvas does not immediately close a marker card through click bubbling");
 assert.match(dealerLocator, /if \(!hasSearchContext\) return \[\]/, "the locator renders no dealer list before a user searches");

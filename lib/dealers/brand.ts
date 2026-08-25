@@ -14,6 +14,9 @@ const dealerBrandAssets: Record<string, DealerBrandAsset> = {
   SCHEELS: {
     src: "/brand/scheels-logo.svg",
   },
+  GOLFTEC: {
+    src: "/brand/golftec-logo.svg",
+  },
 };
 
 export function getDealerBrandAsset(dealerName: string) {
