@@ -121,7 +121,6 @@ export async function importDealerBatchAction(_: BatchImportState, formData: For
       phone: cellText(row, headers, "phone") || undefined,
       website,
       email,
-      dealerType: cellText(row, headers, "dealer_type") || undefined,
       active: parseActive(cellText(row, headers, "active")),
       notes: cellText(row, headers, "notes") || undefined,
       verificationStatus: "unverified",

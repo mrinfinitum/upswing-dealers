@@ -15,7 +15,6 @@ export type DealerRow = {
   phone: string | null;
   website: string | null;
   email: string | null;
-  dealer_type: string | null;
   active: boolean;
   notes: string | null;
   verification_status: DealerVerificationStatus;
@@ -33,7 +32,7 @@ export type DealerRow = {
 export type PublicDealerRow = Pick<DealerRow,
   | "id" | "name" | "location_name" | "address_line_1" | "address_line_2"
   | "city" | "state_province" | "postal_code" | "country" | "latitude"
-  | "longitude" | "phone" | "website" | "email" | "dealer_type" | "active"
+  | "longitude" | "phone" | "website" | "email" | "active"
   | "verification_status"
 >;
 
@@ -58,7 +57,6 @@ export function dealerRowToDealer(row: DealerRow): Dealer {
     phone: optional(row.phone),
     website: optional(row.website),
     email: optional(row.email),
-    dealerType: optional(row.dealer_type),
     active: row.active,
     notes: optional(row.notes),
     verificationStatus: row.verification_status,
@@ -90,7 +88,6 @@ export function publicDealerRowToDealer(row: PublicDealerRow): Dealer {
     phone: optional(row.phone),
     website: optional(row.website),
     email: optional(row.email),
-    dealerType: optional(row.dealer_type),
     active: row.active,
     verificationStatus: row.verification_status,
     source: { workbook: "Managed dealer database", sheet: "Public", row: 0, rawCity: row.city },
@@ -113,7 +110,6 @@ export function dealerToMutation(dealer: Omit<Dealer, "source"> & { source?: Dea
     phone: dealer.phone ?? null,
     website: dealer.website ?? null,
     email: dealer.email ?? null,
-    dealer_type: dealer.dealerType ?? null,
     active: dealer.active ?? true,
     notes: dealer.notes ?? null,
     verification_status: dealer.verificationStatus ?? "unverified",

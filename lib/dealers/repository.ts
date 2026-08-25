@@ -30,7 +30,7 @@ export class SupabaseDealerRepository implements DealerRepository {
     });
     const { data, error } = await supabase
       .from("dealers")
-      .select("id,name,location_name,address_line_1,address_line_2,city,state_province,postal_code,country,latitude,longitude,phone,website,email,dealer_type,active,verification_status")
+      .select("id,name,location_name,address_line_1,address_line_2,city,state_province,postal_code,country,latitude,longitude,phone,website,email,active,verification_status")
       .eq("active", true)
       .eq("verification_status", "verified")
       .order("name")

@@ -55,7 +55,6 @@ export function LocationForm({ dealer, mapConfig, cancelHref = "/admin/locations
         <div className="admin-form-grid">
           {dealer ? <div className="admin-field"><label htmlFor="name">Retailer / dealer name *</label><input id="name" name="name" defaultValue={dealer.name} required /><FieldError error={error("name")} /></div> : null}
           <div className={`admin-field${dealer ? "" : " admin-field--wide"}`}><label htmlFor="locationName">Location name</label><input id="locationName" name="locationName" defaultValue={dealer?.locationName} /></div>
-          <div className="admin-field"><label htmlFor="dealerType">Type / category</label><input id="dealerType" name="dealerType" defaultValue={dealer?.dealerType} /></div>
           <div className="admin-field"><label htmlFor="verificationStatus">Verification status *</label><select id="verificationStatus" name="verificationStatus" defaultValue={dealer?.verificationStatus ?? "unverified"}><option value="unverified">Unverified</option><option value="needs-review">Needs review</option><option value="verified">Verified</option><option value="rejected">Rejected</option></select><FieldError error={error("verificationStatus")} /></div>
         </div>
         <label className="admin-checkbox"><input name="active" type="checkbox" defaultChecked={dealer?.active ?? true} /><span>Active and eligible for publication when verified</span></label>

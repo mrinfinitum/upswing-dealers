@@ -189,7 +189,6 @@ function parseIndependentRows(rows: WorkbookRow[], workbookName: string, existin
         phone: null,
         website: null,
         email: null,
-        dealer_type: null,
         active: true,
         notes: normalizationNotes,
         verification_status: "unverified",

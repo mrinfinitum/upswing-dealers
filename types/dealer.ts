@@ -72,7 +72,6 @@ export type Dealer = {
   phone?: string;
   website?: string;
   email?: string;
-  dealerType?: string;
   active?: boolean;
   notes?: string;
   verificationStatus?: DealerVerificationStatus;

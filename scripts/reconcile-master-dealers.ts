@@ -15,7 +15,6 @@ const TEMPLATE_HEADERS = [
   "phone",
   "website",
   "email",
-  "dealer_type",
   "active",
   "notes",
 ] as const;
@@ -33,7 +32,6 @@ type DatabaseDealer = {
   phone: string | null;
   website: string | null;
   email: string | null;
-  dealer_type: string | null;
   active: boolean;
   notes: string | null;
 };
@@ -88,7 +86,6 @@ function databaseDealerToCsvRow(dealer: DatabaseDealer) {
     dealer.phone,
     dealer.website,
     dealer.email,
-    dealer.dealer_type,
     dealer.active ? "true" : "false",
     dealer.notes,
   ];
@@ -141,7 +138,7 @@ async function main() {
     { auth: { persistSession: false, autoRefreshToken: false } },
   );
 
-  const selectColumns = "id,name,location_name,address_line_1,address_line_2,city,state_province,postal_code,country,phone,website,email,dealer_type,active,notes";
+  const selectColumns = "id,name,location_name,address_line_1,address_line_2,city,state_province,postal_code,country,phone,website,email,active,notes";
   const { data: existingData, error: existingError } = await supabase
     .from("dealers")
     .select(selectColumns)
@@ -186,7 +183,6 @@ async function main() {
       phone: null,
       website: null,
       email: null,
-      dealer_type: null,
       active: true,
       notes: [
         row.manager ? `Center manager: ${row.manager}.` : "",

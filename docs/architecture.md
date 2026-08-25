@@ -23,7 +23,7 @@ The deterministic import upserts all 71 preserved records by stable ID, includin
 
 `/partner` is a separate no-index dealer surface. A protected `dealer` role is connected to one or more `dealer_organizations` through memberships. Every membership has an explicit page-permission array; organizations own their allowed location set. Dealers never receive direct access to the full `dealers` row. `get_dealer_portal_locations()` returns only approved operational fields after checking the signed user and active membership. Location edits enter an approval queue rather than mutating verified public records or coordinates directly.
 
-The typed model supports addresses, coordinates, contact fields, category, active status, notes, verification status, and enrichment evidence. Only source-supported fields are populated.
+The typed model supports addresses, coordinates, contact fields, active status, notes, verification status, and enrichment evidence. Only source-supported fields are populated.
 
 ## Search and geolocation
 

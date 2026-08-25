@@ -1,6 +1,6 @@
 import { requireAdmin } from "@/lib/admin/auth";
 
-const headers = ["dealer_name", "location_name", "address_line_1", "address_line_2", "city", "state_province", "postal_code", "country", "phone", "website", "email", "dealer_type", "active", "notes"];
+const headers = ["dealer_name", "location_name", "address_line_1", "address_line_2", "city", "state_province", "postal_code", "country", "phone", "website", "email", "active", "notes"];
 const example = ["Example Golf Retailer", "Downtown", "123 Main Street", "Suite 100", "Tulsa", "OK", "74103", "United States", "+1 918 555 0100", "https://example.com/tulsa", "tulsa@example.com", "Retail", "true", "Replace this example row"];
 const csvCell = (value: string) => `"${value.replaceAll('"', '""')}"`;
 

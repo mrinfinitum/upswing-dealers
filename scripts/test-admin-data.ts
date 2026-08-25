@@ -46,6 +46,7 @@ const adminGalleryPage = readFileSync("app/admin/(protected)/gallery/page.tsx", 
 const adminGalleryClient = readFileSync("components/image-gallery/admin-image-gallery.tsx", "utf8");
 const galleryMultiCategoryMigration = readFileSync("supabase/migrations/202608170004_gallery_multiple_categories.sql", "utf8");
 const galleryCategoryCatalogMigration = readFileSync("supabase/migrations/202608170005_gallery_category_catalog.sql", "utf8");
+const dealerTypeRemovalMigration = readFileSync("supabase/migrations/202608250001_remove_dealer_type.sql", "utf8");
 const adminDealerDirectory = readFileSync("app/admin/(protected)/dealers/page.tsx", "utf8");
 const adminDealerLocations = readFileSync("app/admin/(protected)/dealers/locations/page.tsx", "utf8");
 const adminBatchImport = readFileSync("app/admin/(protected)/locations/new/actions.ts", "utf8");
@@ -104,7 +105,7 @@ assert.match(galleryCategoryCatalogMigration, /references public\.gallery_catego
 assert.doesNotMatch(adminDashboard, /admin\/requests/, "update requests are removed from the admin hub");
 assert.doesNotMatch(adminDashboard, /href: "\/admin\/locations"/, "raw locations are grouped behind Dealers in the admin hub");
 assert.match(adminDealerDirectory, /groupDealers\(dealers\)/, "the dealer directory groups current location records by retailer");
-assert.match(adminDealerDirectory, /name="category"/, "the dealer directory supports category filtering");
+assert.doesNotMatch(adminDealerDirectory, /name="category"|dealerType|categories:/, "dealer categories are removed from the directory");
 assert.match(adminDealerDirectory, /name="country"/, "the dealer directory supports country filtering");
 assert.match(adminDealerDirectory, /Most locations/, "the dealer directory supports useful sort orders");
 assert.match(adminDealerDirectory, /view === "list"/, "the dealer directory supports card and list views");
@@ -115,5 +116,7 @@ assert.match(adminBatchImport, /Nothing was imported/, "batch validation fails a
 assert.match(adminBatchImport, /existingFingerprints/, "batch imports reject existing dealer address duplicates");
 assert.match(adminBatchImport, /MAX_ROWS = 500/, "batch imports have a bounded row count");
 assert.match(adminBatchTemplate, /await requireAdmin\(\)/, "template downloads require administrator authorization");
+assert.doesNotMatch(adminBatchTemplate, /dealer_type/, "batch templates no longer include dealer categories");
+assert.match(dealerTypeRemovalMigration, /drop column if exists dealer_type/i, "the retired dealer category column is removed from Supabase");
 
 console.log("Admin data checks passed: 71 preserved, 70 publishable, RLS migration present.");

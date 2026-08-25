@@ -56,7 +56,6 @@ function parseDealerForm(formData: FormData, existing?: Dealer) {
     phone: optionalText(formData, "phone"),
     website,
     email,
-    dealerType: optionalText(formData, "dealerType"),
     active: formData.get("active") === "on",
     notes: optionalText(formData, "notes"),
     verificationStatus,

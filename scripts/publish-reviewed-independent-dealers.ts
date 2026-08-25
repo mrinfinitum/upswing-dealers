@@ -108,7 +108,6 @@ async function main() {
     phone: dealer.phone ?? null,
     website: dealer.website ?? null,
     email: null,
-    dealer_type: "Independent retailer",
     active: true,
     notes: `${dealer.discrepancyNote} Address and dealer identity were manually reviewed on ${reviewedAt}. Coordinates remain pending the approved Google Maps JavaScript geocoding workflow.`,
     verification_status: "verified",
