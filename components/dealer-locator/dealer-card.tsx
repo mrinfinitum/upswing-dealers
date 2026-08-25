@@ -40,7 +40,7 @@ export function DealerCard({ dealer, index, selected, onSelect }: DealerCardProp
       )}
       <div className="dealer-card__actions">
         {dealer.phone && <a href={`tel:${dealer.phone}`}>Call</a>}
-        {dealer.website && <a href={dealer.website}>Website</a>}
+        {dealer.website && <a href={dealer.website} target="_blank" rel="noreferrer">Website</a>}
         <a href={directionsUrl} target="_blank" rel="noreferrer">Get directions <span aria-hidden="true">↗</span></a>
       </div>
     </article>

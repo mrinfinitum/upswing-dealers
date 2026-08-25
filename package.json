@@ -22,7 +22,8 @@
     "dealers:reconcile": "tsx --env-file=.env.local scripts/reconcile-master-dealers.ts",
     "dealers:import-master": "tsx --env-file=.env.local scripts/import-master-independent-dealers.ts",
     "dealers:publish-reviewed": "tsx --env-file=.env.local scripts/publish-reviewed-independent-dealers.ts",
-    "dealers:publish-manual": "tsx --env-file=.env.local scripts/publish-manually-supplied-dealers.ts"
+    "dealers:publish-manual": "tsx --env-file=.env.local scripts/publish-manually-supplied-dealers.ts",
+    "dealers:enrich-websites": "tsx --env-file=.env.local scripts/enrich-dealer-websites.ts"
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^2.1.1",

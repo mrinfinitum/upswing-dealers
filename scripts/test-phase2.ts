@@ -18,6 +18,7 @@ const homePage = readFileSync("app/page.tsx", "utf8");
 const mapsPreloader = readFileSync("components/dealer-locator/google-maps-preloader.tsx", "utf8");
 const googleLoader = readFileSync("lib/maps/google-loader.ts", "utf8");
 const googleMap = readFileSync("components/dealer-locator/google-map.tsx", "utf8");
+const dealerCard = readFileSync("components/dealer-locator/dealer-card.tsx", "utf8");
 const dealerLocator = readFileSync("components/dealer-locator/dealer-locator.tsx", "utf8");
 const mapPanel = readFileSync("components/dealer-locator/map-panel.tsx", "utf8");
 assert.match(homePage, /GoogleMapsPreloader config=\{mapConfig\}/, "the home page starts warming Google Maps before the locator renders");
@@ -39,6 +40,8 @@ assert.match(googleMap, /if \(!shouldFrameResults\) return/, "marker selection d
 assert.match(googleMap, /infoWindow\.setContent\(createDealerInfoCard\(openDealer\)\)/, "dealer marker selection opens a location information card");
 assert.match(googleMap, /getDealerBrandAsset\(dealer\.name\)/, "the dealer marker information card uses an approved retailer logo when available");
 assert.match(googleMap, /heading\.textContent = dealer\.name/, "dealer marker cards preserve a text fallback when no retailer logo is configured");
+assert.match(googleMap, /if \(dealer\.website\)[\s\S]*website\.textContent = "Website"/, "map cards only render Website for dealers with a URL");
+assert.match(dealerCard, /\{dealer\.website && <a href=\{dealer\.website\} target="_blank" rel="noreferrer">Website<\/a>\}/, "result cards only render a safe external Website action for dealers with a URL");
 assert.ok(getDealerBrandAsset("Club Champion"), "Club Champion has approved retailer artwork");
 assert.ok(getDealerBrandAsset("PGA TOUR Superstore"), "PGA TOUR Superstore has approved retailer artwork");
 assert.deepEqual(getDealerBrandAsset("GOLFTEC"), { src: "/brand/golftec-logo.svg" }, "GOLFTEC uses the supplied local retailer logo");
