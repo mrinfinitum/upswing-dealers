@@ -72,13 +72,14 @@ export default async function DealersPage({ searchParams }: { searchParams: Prom
   const sharedParams = { q, country, state, sort };
   const filtersApplied = Boolean(q || country || state || sort !== "name");
   const unmappedPublishedDealers = dealers.filter((dealer) => dealer.active && dealer.verificationStatus === "verified" && dealer.addressLine1 && !dealer.coordinates);
+  const coordinateReviewCount = unmappedPublishedDealers.filter((dealer) => dealer.coordinateEvidence?.verificationStatus === "needs-review" || dealer.coordinateEvidence?.verificationStatus === "failed").length;
 
   return (
     <div className="admin-page admin-dealers-page">
       <Link className="admin-back-link" href="/admin">← Administration</Link>
       <header className="admin-page__heading"><div><p className="eyebrow">Dealer network</p><h1>Dealers</h1><p>Sort, filter, and choose a retailer to manage its locations.</p></div><Link className="admin-button admin-button--primary admin-add-button" href="/admin/locations/new">Add dealer <span aria-hidden="true">＋</span></Link></header>
       {setupRequired ? <section className="admin-setup"><h2>Database setup required</h2><p>Apply the Supabase migration and run the dealer import before managing dealers. See <code>docs/supabase-admin.md</code>.</p></section> : <>
-        <DealerCoordinateBatch dealers={unmappedPublishedDealers} mapConfig={mapConfig} />
+        <DealerCoordinateBatch dealers={unmappedPublishedDealers} mapConfig={mapConfig} reviewCount={coordinateReviewCount} />
         <form className="admin-dealer-controls">
           <div className="admin-field admin-dealer-search"><label htmlFor="dealer-directory-search">Search</label><input id="dealer-directory-search" name="q" defaultValue={q} placeholder="Dealer, city, state, or country" /></div>
           <div className="admin-field"><label htmlFor="dealer-country">Country</label><select id="dealer-country" name="country" defaultValue={country}><option value="">All countries</option>{countries.map((item) => <option value={item} key={item}>{item}</option>)}</select></div>

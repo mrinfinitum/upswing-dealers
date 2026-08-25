@@ -1,27 +1,17 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { saveDealerCoordinateBatchAction } from "@/app/admin/(protected)/dealers/actions";
+import { buildDealerGeocodeQuery } from "@/lib/geo/geocode-query";
 import { geocodeCandidatesWithGoogle } from "@/lib/maps/google-loader";
 import type { MapConfiguration } from "@/lib/maps/provider";
 import type { Dealer } from "@/types/dealer";
 
 const BATCH_SIZE = 5;
 
-function addressQuery(dealer: Dealer) {
-  return [
-    dealer.name,
-    dealer.addressLine1,
-    dealer.addressLine2,
-    dealer.city,
-    dealer.stateProvince,
-    dealer.postalCode,
-    dealer.country,
-  ].filter(Boolean).join(", ");
-}
-
-export function DealerCoordinateBatch({ dealers, mapConfig }: { dealers: Dealer[]; mapConfig: MapConfiguration }) {
+export function DealerCoordinateBatch({ dealers, mapConfig, reviewCount }: { dealers: Dealer[]; mapConfig: MapConfiguration; reviewCount: number }) {
   const router = useRouter();
   const [running, setRunning] = useState(false);
   const [processed, setProcessed] = useState(0);
@@ -47,7 +37,7 @@ export function DealerCoordinateBatch({ dealers, mapConfig }: { dealers: Dealer[
         const batch = dealers.slice(index, index + BATCH_SIZE);
         const submissions = await Promise.all(batch.map(async (dealer) => {
           try {
-            const candidates = await geocodeCandidatesWithGoogle(addressQuery(dealer), mapConfig);
+            const candidates = await geocodeCandidatesWithGoogle(buildDealerGeocodeQuery(dealer), mapConfig);
             return { dealerId: dealer.id, candidates };
           } catch {
             return { dealerId: dealer.id, candidates: [] };
@@ -78,7 +68,7 @@ export function DealerCoordinateBatch({ dealers, mapConfig }: { dealers: Dealer[
       <div>
         <p className="eyebrow">Map data</p>
         <h2 id="coordinate-batch-heading">Sync Map Data</h2>
-        <p>{dealers.length} published {dealers.length === 1 ? "location is" : "locations are"} missing coordinates. Google will validate each complete address; ambiguous results remain unmapped for review.</p>
+        <p>{dealers.length} published {dealers.length === 1 ? "location is" : "locations are"} missing coordinates. Google automatically maps exact address matches; only ambiguous or materially mismatched results are held for review.</p>
       </div>
       <div className="admin-coordinate-batch__action">
         <button className="admin-button admin-button--primary" type="button" onClick={geocodeDealers} disabled={running || mapConfig.provider !== "google"}>
@@ -87,6 +77,7 @@ export function DealerCoordinateBatch({ dealers, mapConfig }: { dealers: Dealer[
         {mapConfig.provider !== "google" ? <small>Google Maps is not configured.</small> : null}
         {message ? <p role="status">{message}</p> : null}
         {running || processed ? <small>{accepted} mapped · {needsReview} review · {failed} failed</small> : null}
+        {reviewCount ? <Link className="admin-coordinate-batch__review" href="/admin/dealers/map-review">Review {reviewCount} flagged {reviewCount === 1 ? "location" : "locations"} →</Link> : null}
       </div>
     </section>
   );

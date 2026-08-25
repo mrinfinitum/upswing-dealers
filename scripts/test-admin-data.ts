@@ -8,6 +8,7 @@ import { normalizeDealerRows } from "../lib/dealers/normalize";
 import { rawDealerRows } from "../lib/dealers/source";
 import { dealerRowToDealer, dealerToMutation } from "../lib/dealers/supabase-mapper";
 import { safeAdminReturnPath } from "../lib/admin/return-path";
+import { buildDealerGeocodeQuery } from "../lib/geo/geocode-query";
 
 const normalized = normalizeDealerRows(rawDealerRows).dealers;
 const enriched = applyVerifiedEnrichments(normalized, dealerEnrichmentProposals).dealers;
@@ -50,6 +51,7 @@ const dealerTypeRemovalMigration = readFileSync("supabase/migrations/20260825000
 const adminDealerDirectory = readFileSync("app/admin/(protected)/dealers/page.tsx", "utf8");
 const adminDealerActions = readFileSync("app/admin/(protected)/dealers/actions.ts", "utf8");
 const adminCoordinateBatch = readFileSync("components/admin/dealer-coordinate-batch.tsx", "utf8");
+const adminMapReview = readFileSync("app/admin/(protected)/dealers/map-review/page.tsx", "utf8");
 const adminDealerLocations = readFileSync("app/admin/(protected)/dealers/locations/page.tsx", "utf8");
 const adminBatchImport = readFileSync("app/admin/(protected)/locations/new/actions.ts", "utf8");
 const adminBatchTemplate = readFileSync("app/admin/(protected)/locations/new/template/route.ts", "utf8");
@@ -113,9 +115,14 @@ assert.match(adminDealerDirectory, /name="state"/, "the dealer directory support
 assert.match(adminDealerDirectory, /dealer\.country === "United States"/, "state filtering is limited to U.S. dealer locations");
 assert.match(adminDealerDirectory, /DealerCoordinateBatch/, "the dealer directory exposes protected coordinate activation for published addresses");
 assert.match(adminCoordinateBatch, /geocodeCandidatesWithGoogle/, "coordinate activation uses the browser-authorized Google Maps JavaScript geocoder");
+assert.equal(buildDealerGeocodeQuery({ ...sample, name: "Never send this retailer name" }).includes("Never send this retailer name"), false, "coordinate activation geocodes the authoritative address without biasing Google with the retailer name");
 assert.match(adminDealerActions, /await requireAdmin\(\)/, "coordinate persistence rechecks administrator authorization");
 assert.match(adminDealerActions, /reviewGeocodeCandidate/, "coordinate persistence applies strict component and precision review");
 assert.match(adminDealerActions, /verified\.length !== 1/, "ambiguous coordinate candidates cannot be accepted automatically");
+assert.match(adminDealerActions, /proposedCoordinates/, "flagged Google candidates are retained for administrator review");
+assert.match(adminCoordinateBatch, /Review \{reviewCount\} flagged/, "the dealer directory links to the coordinate review queue");
+assert.match(adminMapReview, /approveDealerCoordinateCandidateAction/, "the review queue supports explicit administrator approval");
+assert.match(adminMapReview, /Edit address/, "the review queue supports correcting the authoritative address instead of accepting a mismatch");
 assert.match(adminDealerDirectory, /Most locations/, "the dealer directory supports useful sort orders");
 assert.match(adminDealerDirectory, /view === "list"/, "the dealer directory supports card and list views");
 assert.match(adminDealerLocations, /location\.name\.localeCompare\(dealerName/, "dealer location pages enforce an exact retailer match");

@@ -145,6 +145,28 @@ button { color: inherit; }
 .admin-coordinate-batch__action { display: flex; align-items: flex-end; flex-direction: column; gap: 7px; text-align: right; }
 .admin-coordinate-batch__action p, .admin-coordinate-batch__action small { margin: 0; color: #5f6873; font-size: 11px; line-height: 1.45; }
 .admin-coordinate-batch__action .admin-button { min-width: 220px; }
+.admin-coordinate-batch__review { color: #1f68ca; font-size: 11px; font-weight: 650; text-underline-offset: 4px; }
+.admin-map-review-summary { width: max-content; display: flex; align-items: baseline; gap: 9px; margin-bottom: 18px; padding: 12px 18px; border: 1px solid #cfdaea; border-radius: 999px; background: #fff; box-shadow: 0 8px 24px rgb(31 68 120 / .06); }
+.admin-map-review-summary strong { font-size: 20px; }
+.admin-map-review-summary span { color: #626b76; font-size: 11px; text-transform: uppercase; letter-spacing: .07em; }
+.admin-map-review-list { display: grid; gap: 18px; }
+.admin-map-review-list > article { padding: 25px; border: 1px solid #d7e0eb; border-radius: 24px; background: #fff; box-shadow: 0 14px 36px rgb(31 68 120 / .07); }
+.admin-map-review-list > article > header { display: flex; align-items: flex-start; justify-content: space-between; gap: 22px; padding-bottom: 19px; border-bottom: 1px solid #e6eaf0; }
+.admin-map-review-list > article > header span { color: #1f68ca; font-size: 9px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
+.admin-map-review-list > article > header h2 { margin: 7px 0 2px; font-size: 25px; font-weight: 550; letter-spacing: -.035em; }
+.admin-map-review-list > article > header p { margin: 0; color: #6a7380; }
+.admin-map-review-list > article > header a { color: #1f2732; font-size: 11px; font-weight: 650; text-decoration: none; }
+.admin-map-review-comparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 20px 0; }
+.admin-map-review-comparison section { min-height: 120px; display: flex; align-items: flex-start; flex-direction: column; gap: 9px; padding: 18px; border: 1px solid #dde3eb; border-radius: 16px; background: #f8fafc; }
+.admin-map-review-comparison small { color: #748090; font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.admin-map-review-comparison strong { font-size: 14px; line-height: 1.5; }
+.admin-map-review-comparison code { color: #5b6572; font-size: 11px; }
+.admin-map-review-comparison a { margin-top: auto; color: #1f68ca; font-size: 11px; }
+.admin-map-review-details { display: grid; grid-template-columns: minmax(160px, .35fr) 1fr; gap: 18px; padding: 15px 0 20px; }
+.admin-map-review-details > span { color: #4d5866; font-size: 10px; font-weight: 650; letter-spacing: .05em; text-transform: uppercase; }
+.admin-map-review-details ul { margin: 0; padding-left: 18px; color: #646f7c; font-size: 12px; line-height: 1.6; }
+.admin-map-review-list form { display: flex; align-items: center; gap: 14px; }
+.admin-map-review-list form small { max-width: 420px; color: #697381; line-height: 1.45; }
 .admin-directory-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin: 0 0 16px; }
 .admin-directory-heading > p { margin: 0; color: #69717b; font-size: 13px; }
 .admin-directory-heading > p strong { color: #000; font-size: 18px; font-weight: 600; }
@@ -1008,6 +1030,8 @@ button { color: inherit; }
   .admin-dealer-controls { grid-template-columns: 1fr; }
   .admin-dealer-search { grid-column: auto; }
   .admin-gallery-grid { grid-template-columns: 1fr; }
+  .admin-map-review-comparison, .admin-map-review-details { grid-template-columns: 1fr; }
+  .admin-map-review-list > article > header, .admin-map-review-list form { align-items: flex-start; flex-direction: column; }
   .admin-gallery-setup { min-height: 420px; padding: 36px 24px; border-radius: 24px; }
   .portal-content, .brand-portal { width: min(calc(100% - 28px), 1480px); }
   .portal-header { position: relative; grid-template-columns: 1fr auto; gap: 10px; padding: 14px 16px 0; }

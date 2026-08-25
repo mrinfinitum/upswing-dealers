@@ -7,6 +7,7 @@ export type DealerCoordinateEvidence = {
   source: "official-retailer" | "google-maps-js-geocoder" | "manual-coordinate-review";
   retrievedAt: string;
   formattedAddress?: string;
+  proposedCoordinates?: DealerCoordinates;
   resultTypes?: string[];
   locationType?: string;
   verificationStatus: "verified" | "needs-review" | "failed";
