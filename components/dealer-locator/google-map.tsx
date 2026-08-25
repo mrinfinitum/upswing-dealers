@@ -147,6 +147,7 @@ export function GoogleMap({ config, dealers, focusDealers, selectedDealerId, ori
           mapId: config.mapId,
           center: UNITED_STATES_CENTER,
           zoom: UNITED_STATES_ZOOM,
+          gestureHandling: "greedy",
           clickableIcons: false,
           fullscreenControl: false,
           mapTypeControl: false,

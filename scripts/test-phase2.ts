@@ -26,6 +26,7 @@ assert.match(mapsPreloader, /preconnect\("https:\/\/maps\.gstatic\.com"/, "Googl
 assert.match(mapsPreloader, /loadGoogleMaps\(config\)/, "the Maps and marker libraries preload during the hero view");
 assert.match(googleLoader, /mapsPromise \?\?=/, "the visible map reuses the in-flight preload promise");
 assert.match(googleMap, /UNITED_STATES_CENTER/, "the default map uses an explicit continental U.S. center");
+assert.match(googleMap, /gestureHandling: "greedy"/, "the map supports direct one-finger panning and pinch zoom without the cooperative two-finger overlay");
 assert.match(googleMap, /map\.moveCamera\(\{ center: UNITED_STATES_CENTER, zoom: UNITED_STATES_ZOOM \}\)/, "the default map camera is restored after the panel has dimensions");
 assert.match(googleMap, /google\.maps\.event\.trigger\(map, "resize"\)/, "the first map render is resized after layout before setting its camera");
 assert.match(googleMap, /marker\.addEventListener\("gmp-click"/, "dealer markers use the current Advanced Marker click event");
