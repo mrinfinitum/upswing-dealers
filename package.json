@@ -20,7 +20,8 @@
     "test:dropbox": "tsx scripts/test-dropbox.ts",
     "supabase:import": "tsx --env-file=.env.local scripts/import-dealers-to-supabase.ts",
     "dealers:reconcile": "tsx --env-file=.env.local scripts/reconcile-master-dealers.ts",
-    "dealers:import-master": "tsx --env-file=.env.local scripts/import-master-independent-dealers.ts"
+    "dealers:import-master": "tsx --env-file=.env.local scripts/import-master-independent-dealers.ts",
+    "dealers:publish-reviewed": "tsx --env-file=.env.local scripts/publish-reviewed-independent-dealers.ts"
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^2.1.1",
