@@ -22,8 +22,8 @@ type GoogleMapProps = {
 
 const UNITED_STATES_CENTER = { lat: 39.5, lng: -98.35 };
 const UNITED_STATES_ZOOM = 4;
-const MAX_CLUSTER_ZOOM = 7;
-const CLUSTER_RADIUS = 48;
+const MAX_CLUSTER_ZOOM = 5;
+const CLUSTER_RADIUS = 42;
 function createDealerMarkerIcon(selected: boolean, isSearchResult: boolean) {
   const icon = document.createElement("div");
   icon.className = `map-dealer-marker${selected ? " is-selected" : ""}${isSearchResult ? "" : " is-outside-search"}`;
