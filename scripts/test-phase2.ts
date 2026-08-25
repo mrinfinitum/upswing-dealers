@@ -44,6 +44,7 @@ assert.doesNotMatch(googleMap, /map\.addListener\("click"/, "the map canvas does
 assert.match(dealerLocator, /if \(!hasSearchContext\) return \[\]/, "the locator renders no dealer list before a user searches");
 assert.match(dealerLocator, /dealers=\{dealers\}/, "the map retains the complete verified dealer network after a search");
 assert.match(dealerLocator, /focusDealers=\{mapFocusDealers\}/, "map camera bounds continue to follow only the active search results");
+assert.ok(dealerLocator.indexOf("<MapPanel") < dealerLocator.indexOf('className="locator-results-panel"'), "mobile DOM order places the map before dealer results");
 assert.match(dealerLocator, /awaitingSearch=\{false\}/, "the initial map stays visible and interactive beside the search card");
 assert.match(dealerLocator, /Start with your location\./, "the initial left panel asks for a ZIP code or city and state");
 assert.match(dealerLocator, /Choose a state/, "the initial left panel offers a state selector");

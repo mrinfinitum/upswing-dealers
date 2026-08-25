@@ -1217,18 +1217,20 @@ button { color: inherit; }
 
 .locator-section-wrap { padding-block: 32px 104px; }
 .locator-shell {
-  min-height: 960px;
+  height: 960px;
   display: grid;
   grid-template-columns: minmax(400px, 480px) minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
   overflow: hidden;
   border: 1px solid #dce1e7;
   border-radius: 28px;
   background: #eef1f5;
   box-shadow: 0 30px 80px rgb(20 32 49 / .14), 0 2px 8px rgb(20 32 49 / .06);
 }
-.locator-shell.is-awaiting-search { min-height: 760px; }
-.locator-panel { min-width: 0; height: 960px; display: flex; flex-direction: column; border-right: 1px solid #dce1e7; background: rgb(255 255 255 / .96); }
-.locator-shell.is-awaiting-search .locator-panel { height: 900px; }
+.locator-shell.is-awaiting-search { height: 900px; min-height: 760px; }
+.locator-panel { min-width: 0; grid-column: 1; grid-row: 1; display: flex; flex-direction: column; border-right: 1px solid #dce1e7; background: rgb(255 255 255 / .96); }
+.locator-shell.is-awaiting-search .locator-panel { grid-row: 1 / -1; }
+.locator-results-panel { min-width: 0; min-height: 0; grid-column: 1; grid-row: 2; display: flex; flex-direction: column; border-right: 1px solid #dce1e7; background: rgb(255 255 255 / .96); }
 .locator-panel__intro { padding: 34px 32px 26px; border-bottom: 1px solid #edf0f3; background: linear-gradient(135deg, #fff, #fafbfc); }
 .locator-panel__intro .eyebrow { margin-bottom: 12px; color: var(--blue); }
 .locator-panel__intro h2 { margin: 0 0 11px; font-size: 36px; font-weight: 500; letter-spacing: -.04em; line-height: 1.04; }
@@ -1315,7 +1317,7 @@ button { color: inherit; }
 .locator-empty p { max-width: 310px; margin: 0; color: var(--muted); }
 .locator-show-all { display: none; }
 
-.map-panel { min-width: 0; min-height: 0; display: flex; flex-direction: column; padding: 0 14px 14px; background: #eef1f5; }
+.map-panel { min-width: 0; min-height: 0; grid-column: 2; grid-row: 1 / -1; display: flex; flex-direction: column; padding: 0 14px 14px; background: #eef1f5; }
 .map-panel.is-awaiting-search { padding: 0; }
 .map-panel.is-awaiting-search .map-panel__topline { display: none; }
 .map-panel.is-awaiting-search .map-panel__canvas { border: 0; border-radius: 0; box-shadow: none; }
@@ -1474,8 +1476,11 @@ button { color: inherit; }
   .dealer-network-story__retailer > a { width: max-content; margin-top: 5px; }
   .locator-section-wrap { padding-block: 24px 64px; }
   .locator-shell { display: flex; flex-direction: column; min-height: 0; border-radius: 20px; box-shadow: 0 20px 52px rgb(20 32 49 / .12); }
-  .locator-panel { height: auto; border-right: 0; }
-  .locator-shell.is-awaiting-search .locator-panel { height: auto; }
+  .locator-shell, .locator-shell.is-awaiting-search { height: auto; }
+  .locator-panel, .locator-results-panel { border-right: 0; }
+  .locator-panel { order: 1; }
+  .map-panel { order: 2; }
+  .locator-results-panel { order: 3; }
   .locator-panel__intro { padding: 30px 24px 24px; }
   .locator-panel__intro h2 { font-size: 30px; }
   .locator-search { padding: 0 24px 22px; }

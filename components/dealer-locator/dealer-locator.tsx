@@ -263,19 +263,6 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
             {locationMessage && <p className={`locator-search__status is-${locationStatus}`} role="status">{locationMessage}</p>}
           </div>
         )}
-        {hasSearchContext && (
-          <>
-            <p className="locator-results-status" aria-live="polite">
-              {results.length} {results.length === 1 ? "location" : "locations"}{origin && hasCoordinateDealers ? ` within ${radiusMiles} miles` : ` for “${activeQuery}”`}
-            </p>
-            <ResultsList dealers={results} selectedDealerId={selectedDealer?.id} query={activeQuery} postalQuery={queryLooksPostal(activeQuery)} showAll={showAll} onSelectDealer={selectDealer} />
-          </>
-        )}
-        {hasSearchContext && results.length > 12 && (
-          <button className="locator-show-all" type="button" onClick={() => setShowAll((value) => !value)}>
-            {showAll ? "Show fewer locations" : `Show all ${results.length} locations`}
-          </button>
-        )}
       </div>
       <MapPanel
         config={mapConfig}
@@ -298,6 +285,17 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
         onUseMyLocation={requestLocation}
         onSelectDealer={selectDealer}
       />
+      {hasSearchContext && <div className="locator-results-panel">
+        <p className="locator-results-status" aria-live="polite">
+          {results.length} {results.length === 1 ? "location" : "locations"}{origin && hasCoordinateDealers ? ` within ${radiusMiles} miles` : ` for “${activeQuery}”`}
+        </p>
+        <ResultsList dealers={results} selectedDealerId={selectedDealer?.id} query={activeQuery} postalQuery={queryLooksPostal(activeQuery)} showAll={showAll} onSelectDealer={selectDealer} />
+        {results.length > 12 && (
+          <button className="locator-show-all" type="button" onClick={() => setShowAll((value) => !value)}>
+            {showAll ? "Show fewer locations" : `Show all ${results.length} locations`}
+          </button>
+        )}
+      </div>}
     </section>
   );
 }
