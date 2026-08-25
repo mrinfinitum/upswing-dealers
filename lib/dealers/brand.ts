@@ -11,6 +11,9 @@ const dealerBrandAssets: Record<string, DealerBrandAsset> = {
   "PGA TOUR Superstore": {
     src: "https://www.pgatoursuperstore.com/on/demandware.static/Sites-pgatss-sfra-Site/-/default/dwb27c47bd/images/logo.svg",
   },
+  SCHEELS: {
+    src: "/brand/scheels-logo.svg",
+  },
 };
 
 export function getDealerBrandAsset(dealerName: string) {
