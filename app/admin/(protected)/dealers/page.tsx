@@ -1,5 +1,8 @@
 import Link from "next/link";
+import { DealerCoordinateBatch } from "@/components/admin/dealer-coordinate-batch";
 import { DealerAdminDataError, listManagedDealers } from "@/lib/admin/dealers";
+import { getUsStateLabel } from "@/lib/geo/us-states";
+import { getMapConfiguration } from "@/lib/maps/provider";
 import type { Dealer } from "@/types/dealer";
 
 type DealerGroup = {
@@ -12,6 +15,7 @@ type DealerGroup = {
 type DealerDirectoryParams = {
   q?: string | string[];
   country?: string | string[];
+  state?: string | string[];
   sort?: string | string[];
   view?: string | string[];
 };
@@ -38,18 +42,26 @@ export default async function DealersPage({ searchParams }: { searchParams: Prom
   const rawParams = await searchParams;
   const q = firstValue(rawParams.q);
   const country = firstValue(rawParams.country);
+  const state = firstValue(rawParams.state).toUpperCase();
   const sort = firstValue(rawParams.sort) || "name";
   const view = firstValue(rawParams.view) === "list" ? "list" : "cards";
+  const mapConfig = getMapConfiguration();
   let dealers: Dealer[] = [];
   let setupRequired = false;
   try { dealers = await listManagedDealers(); } catch (error) { if (error instanceof DealerAdminDataError) setupRequired = true; else throw error; }
 
   const allGroups = groupDealers(dealers);
   const countries = [...new Set(allGroups.flatMap((group) => group.countries))].sort();
+  const states = [...new Set(dealers
+    .filter((dealer) => dealer.country === "United States" && dealer.stateProvince)
+    .map((dealer) => dealer.stateProvince!))]
+    .sort((left, right) => getUsStateLabel(left).localeCompare(getUsStateLabel(right)));
   const needle = q.trim().toLowerCase();
-  const groups = allGroups
-    .filter((group) => !needle || group.name.toLowerCase().includes(needle) || group.countries.some((item) => item.toLowerCase().includes(needle)))
-    .filter((group) => !country || group.countries.includes(country))
+  const directoryDealers = dealers
+    .filter((dealer) => !country || dealer.country === country)
+    .filter((dealer) => !state || (dealer.country === "United States" && dealer.stateProvince?.toUpperCase() === state));
+  const groups = groupDealers(directoryDealers)
+    .filter((group) => !needle || group.name.toLowerCase().includes(needle) || group.locations.some((location) => [location.city, location.stateProvince, location.postalCode, location.country].some((value) => value?.toLowerCase().includes(needle))))
     .sort((left, right) => {
       if (sort === "country") return (left.countries[0] || "").localeCompare(right.countries[0] || "") || left.name.localeCompare(right.name);
       if (sort === "locations") return right.locations.length - left.locations.length || left.name.localeCompare(right.name);
@@ -57,17 +69,20 @@ export default async function DealersPage({ searchParams }: { searchParams: Prom
       return left.name.localeCompare(right.name);
     });
 
-  const sharedParams = { q, country, sort };
-  const filtersApplied = Boolean(q || country || sort !== "name");
+  const sharedParams = { q, country, state, sort };
+  const filtersApplied = Boolean(q || country || state || sort !== "name");
+  const unmappedPublishedDealers = dealers.filter((dealer) => dealer.active && dealer.verificationStatus === "verified" && dealer.addressLine1 && !dealer.coordinates);
 
   return (
     <div className="admin-page admin-dealers-page">
       <Link className="admin-back-link" href="/admin">← Administration</Link>
       <header className="admin-page__heading"><div><p className="eyebrow">Dealer network</p><h1>Dealers</h1><p>Sort, filter, and choose a retailer to manage its locations.</p></div><Link className="admin-button admin-button--primary admin-add-button" href="/admin/locations/new">Add dealer <span aria-hidden="true">＋</span></Link></header>
       {setupRequired ? <section className="admin-setup"><h2>Database setup required</h2><p>Apply the Supabase migration and run the dealer import before managing dealers. See <code>docs/supabase-admin.md</code>.</p></section> : <>
+        <DealerCoordinateBatch dealers={unmappedPublishedDealers} mapConfig={mapConfig} />
         <form className="admin-dealer-controls">
-          <div className="admin-field admin-dealer-search"><label htmlFor="dealer-directory-search">Search</label><input id="dealer-directory-search" name="q" defaultValue={q} placeholder="Dealer or country" /></div>
+          <div className="admin-field admin-dealer-search"><label htmlFor="dealer-directory-search">Search</label><input id="dealer-directory-search" name="q" defaultValue={q} placeholder="Dealer, city, state, or country" /></div>
           <div className="admin-field"><label htmlFor="dealer-country">Country</label><select id="dealer-country" name="country" defaultValue={country}><option value="">All countries</option>{countries.map((item) => <option value={item} key={item}>{item}</option>)}</select></div>
+          <div className="admin-field"><label htmlFor="dealer-state">U.S. state</label><select id="dealer-state" name="state" defaultValue={state}><option value="">All U.S. states</option>{states.map((item) => <option value={item} key={item}>{getUsStateLabel(item)}</option>)}</select></div>
           <div className="admin-field"><label htmlFor="dealer-sort">Sort by</label><select id="dealer-sort" name="sort" defaultValue={sort}><option value="name">Name A–Z</option><option value="country">Country A–Z</option><option value="locations">Most locations</option><option value="published">Most published</option></select></div>
           <input type="hidden" name="view" value={view} />
           <button className="admin-button admin-button--primary" type="submit">Apply</button>

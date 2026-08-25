@@ -48,6 +48,8 @@ const galleryMultiCategoryMigration = readFileSync("supabase/migrations/20260817
 const galleryCategoryCatalogMigration = readFileSync("supabase/migrations/202608170005_gallery_category_catalog.sql", "utf8");
 const dealerTypeRemovalMigration = readFileSync("supabase/migrations/202608250001_remove_dealer_type.sql", "utf8");
 const adminDealerDirectory = readFileSync("app/admin/(protected)/dealers/page.tsx", "utf8");
+const adminDealerActions = readFileSync("app/admin/(protected)/dealers/actions.ts", "utf8");
+const adminCoordinateBatch = readFileSync("components/admin/dealer-coordinate-batch.tsx", "utf8");
 const adminDealerLocations = readFileSync("app/admin/(protected)/dealers/locations/page.tsx", "utf8");
 const adminBatchImport = readFileSync("app/admin/(protected)/locations/new/actions.ts", "utf8");
 const adminBatchTemplate = readFileSync("app/admin/(protected)/locations/new/template/route.ts", "utf8");
@@ -107,6 +109,13 @@ assert.doesNotMatch(adminDashboard, /href: "\/admin\/locations"/, "raw locations
 assert.match(adminDealerDirectory, /groupDealers\(dealers\)/, "the dealer directory groups current location records by retailer");
 assert.doesNotMatch(adminDealerDirectory, /name="category"|dealerType|categories:/, "dealer categories are removed from the directory");
 assert.match(adminDealerDirectory, /name="country"/, "the dealer directory supports country filtering");
+assert.match(adminDealerDirectory, /name="state"/, "the dealer directory supports U.S. state filtering");
+assert.match(adminDealerDirectory, /dealer\.country === "United States"/, "state filtering is limited to U.S. dealer locations");
+assert.match(adminDealerDirectory, /DealerCoordinateBatch/, "the dealer directory exposes protected coordinate activation for published addresses");
+assert.match(adminCoordinateBatch, /geocodeCandidatesWithGoogle/, "coordinate activation uses the browser-authorized Google Maps JavaScript geocoder");
+assert.match(adminDealerActions, /await requireAdmin\(\)/, "coordinate persistence rechecks administrator authorization");
+assert.match(adminDealerActions, /reviewGeocodeCandidate/, "coordinate persistence applies strict component and precision review");
+assert.match(adminDealerActions, /verified\.length !== 1/, "ambiguous coordinate candidates cannot be accepted automatically");
 assert.match(adminDealerDirectory, /Most locations/, "the dealer directory supports useful sort orders");
 assert.match(adminDealerDirectory, /view === "list"/, "the dealer directory supports card and list views");
 assert.match(adminDealerLocations, /location\.name\.localeCompare\(dealerName/, "dealer location pages enforce an exact retailer match");
