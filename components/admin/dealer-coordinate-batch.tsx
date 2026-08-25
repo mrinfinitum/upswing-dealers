@@ -76,13 +76,13 @@ export function DealerCoordinateBatch({ dealers, mapConfig }: { dealers: Dealer[
   return (
     <section className="admin-coordinate-batch" aria-labelledby="coordinate-batch-heading">
       <div>
-        <p className="eyebrow">Map readiness</p>
-        <h2 id="coordinate-batch-heading">{dealers.length} published {dealers.length === 1 ? "address needs" : "addresses need"} coordinates</h2>
-        <p>Google will validate each complete address. Only one precise, component-matched result is saved automatically; ambiguous results remain unmapped for review.</p>
+        <p className="eyebrow">Map data</p>
+        <h2 id="coordinate-batch-heading">Sync Map Data</h2>
+        <p>{dealers.length} published {dealers.length === 1 ? "location is" : "locations are"} missing coordinates. Google will validate each complete address; ambiguous results remain unmapped for review.</p>
       </div>
       <div className="admin-coordinate-batch__action">
         <button className="admin-button admin-button--primary" type="button" onClick={geocodeDealers} disabled={running || mapConfig.provider !== "google"}>
-          {running ? `Validating ${processed} of ${dealers.length}…` : "Map verified addresses"}
+          {running ? `Syncing ${processed} of ${dealers.length}…` : "Sync Map Data"}
         </button>
         {mapConfig.provider !== "google" ? <small>Google Maps is not configured.</small> : null}
         {message ? <p role="status">{message}</p> : null}
