@@ -6,5 +6,6 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
+  // Keep public static files, including /email-assets/:path*, outside the auth proxy.
   matcher: ["/admin/:path*", "/partner/:path*", "/image-gallery/:path*"],
 };
