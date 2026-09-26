@@ -2,7 +2,6 @@ import Image from "next/image";
 
 const links = [
   ["Home", "https://www.upswinggolf.com/"],
-  ["Galaxy", "https://www.upswinggolf.com/pages/upswing-galaxy"],
   ["Products", "https://www.upswinggolf.com/collections/get-an-edge-on-competition-with-upswing"],
   ["Find Your Fit", "https://www.upswinggolf.com/pages/virtual-fitting-tool"],
   ["About UpSwing", "https://www.upswinggolf.com/pages/our-story-2"],
