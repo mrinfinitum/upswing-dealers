@@ -2,6 +2,7 @@ import "server-only";
 
 import { redirect } from "next/navigation";
 import { getAdminIdentity } from "@/lib/admin/auth";
+import { portalAccessEndedPath } from "@/lib/portal/access";
 import { getDealerPortalIdentity } from "@/lib/portal/auth";
 
 export type GalleryIdentity =
@@ -18,6 +19,7 @@ export async function getGalleryIdentity(): Promise<GalleryIdentity | null> {
 
 export async function requireGalleryIdentity() {
   const identity = await getGalleryIdentity();
-  if (!identity) redirect("/partner/login");
+  // Proxy sends signed-out visitors to /partner/login; a revoked dealer session must be ended to avoid a loop.
+  if (!identity) redirect(portalAccessEndedPath);
   return identity;
 }

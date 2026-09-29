@@ -1,6 +1,7 @@
 import "server-only";
 
 import { redirect } from "next/navigation";
+import { dealerPortalRedirect, portalAccessEndedPath } from "@/lib/portal/access";
 import { createClient } from "@/lib/supabase/server";
 import { portalPageKeys, type DealerPortalIdentity, type DealerPortalMembership, type PortalPageKey } from "@/types/portal";
 
@@ -60,7 +61,9 @@ export async function getDealerPortalIdentity(): Promise<DealerPortalIdentity | 
 
 export async function requireDealerPortal(page?: PortalPageKey) {
   const identity = await getDealerPortalIdentity();
-  if (!identity) redirect("/partner/login");
-  if (page && !identity.permissions.includes(page)) redirect("/partner?denied=1");
+  // Proxy sends signed-out visitors to /partner/login; a revoked dealer session must be ended to avoid a loop.
+  if (!identity) redirect(portalAccessEndedPath);
+  const destination = dealerPortalRedirect(identity.permissions, page);
+  if (destination) redirect(destination);
   return identity;
 }
