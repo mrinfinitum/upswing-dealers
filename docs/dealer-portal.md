@@ -5,16 +5,18 @@ The dealer portal is part of the locator application because it shares the same 
 ## Routes
 
 - `/partner/login` — dealer-only sign in
-- `/partner` — permitted organization overview
-- `/partner/locations` — safe assigned-location fields
-- `/partner/brand` — UpSwing standards and approved downloads
+- `/partner` — organization overview (Overview permission)
+- `/partner/locations` — safe assigned-location fields (Locations permission)
+- `/partner/brand` — UpSwing standards and approved downloads (Brand permission)
+- `/image-gallery` — shared read-only Dropbox image gallery for every active dealer
+- `/partner/access-ended` — signs out a dealer session whose access was revoked and returns to sign in
 - `/admin/users` — combined user directory, direct account creation, organization assignment, and page permissions
 
 All portal and admin routes are `noindex` and protected by Supabase cookie sessions. Proxy redirects improve navigation, but each protected layout and every mutation independently validates authorization.
 
 ## Database setup
 
-Apply migrations in order:
+Apply every migration in `supabase/migrations/` in filename order; see `docs/supabase-admin.md`. The portal depends on:
 
 1. `202608150001_create_dealers.sql`
 2. `202608170001_create_dealer_portal.sql`
@@ -36,6 +38,8 @@ Inviting the same non-admin email again can add another organization membership 
 
 - `admin`: full dealer management through existing RLS policies; may manage portal users and permissions.
 - `dealer`: limited to active memberships and the pages listed on each membership.
+- Any combination of page permissions is valid. Sign-in lands on Overview when it is enabled; otherwise on the first enabled page, in the order Locations, Brand, then the image gallery. Requesting a page that is not enabled redirects to that landing page. Overview shows a notice when it is the landing page.
+- Deactivating a profile, membership, or organization takes effect on the dealer's next request, even if their session is still valid. The session is ended at `/partner/access-ended` and the sign-in page explains that access is inactive.
 - Organization memberships support both a single-location organization and a multi-location retailer.
 - Dealers cannot query the complete dealer table. A guarded RPC returns only name, public address/contact fields, organization, and active status for assigned verified locations.
 - Dealers have read-only access to the safe public fields for assigned locations. They cannot publish, change verification state, edit coordinates, or alter provenance.

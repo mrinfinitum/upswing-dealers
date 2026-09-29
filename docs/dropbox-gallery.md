@@ -59,3 +59,9 @@ Bootstrap routes fail closed unless the signed-in user is an administrator, the 
 - Thumbnail and original responses use private browser caching. Explicit downloads are `no-store` and retain the Dropbox filename.
 
 The integration implements no upload, delete, move, rename, share, or other Dropbox write operation.
+
+## Categories
+
+Administrators manage categories at `/admin/gallery`. They can create categories and assign each image to one or more of them. Dealers and administrators can then filter `/image-gallery` by category. Categories are stored in Supabase (`gallery_categories` and `gallery_image_categories`), keyed by the Dropbox file ID. They do not rename or move anything in Dropbox. RLS allows only administrators to write, and active dealers can read. The seeded categories are UpSwing, Galaxy, and Accessories.
+
+If a signed-in dealer's access is revoked, `/image-gallery` sends them to `/partner/access-ended` to end the session rather than bouncing them between sign in and the gallery.
