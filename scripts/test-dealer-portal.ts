@@ -68,3 +68,14 @@ assert.match(accessEndedRoute, /auth\.signOut\(\)[\s\S]*redirect\("\/partner\/lo
 assert.match(dealerLoginPage, /access === "inactive"/, "the login page explains why a revoked session was signed out");
 
 console.log("Dealer portal authorization and brand-surface checks passed.");
+
+const dealerLocationActions = read("app/partner/(protected)/locations/actions.ts");
+for (const action of ["createDealerLocationAction", "updateDealerLocationAction", "setDealerLocationActiveAction"]) {
+  const body = dealerLocationActions.slice(dealerLocationActions.indexOf(`export async function ${action}`));
+  assert.match(body.slice(0, 400), /await requireDealerPortal\("locations"\)/, `${action} re-checks Locations permission on the server`);
+}
+assert.match(dealerLocationActions, /\.in\("organization_id", organizationIds\)/, "edits are limited to locations linked to the dealer's own organizations");
+assert.match(dealerLocationActions, /editableOrganizations\(identity\)\.find/, "new locations can only be added to the dealer's own organizations");
+assert.match(dealerLocationActions, /applyAutomaticCoordinates\(dealer, formData/, "dealer addresses pass the same precise-geocode check as admin edits");
+assert.doesNotMatch(dealerLocationActions, /verificationStatus: values|coordinates: values|source: values/, "dealers cannot set verification, coordinates, or provenance from form input");
+assert.doesNotMatch(dealerLocationActions, /\.from\("dealers"\)\.delete\(\)\.eq\("id", dealerId\)/, "dealer removal hides a location instead of deleting it");
