@@ -2,12 +2,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DealerMembershipForm } from "@/components/admin/dealer-access-forms";
 import { DealerOrganizationForm } from "@/components/admin/dealer-organization-form";
+import { DealerLogoForm } from "@/components/dealer-logo/dealer-logo-form";
 import { LocationViewToggle, type LocationView } from "@/components/layout/location-view-toggle";
+import { dealerLogoUrl } from "@/lib/dealers/logo-url";
 import { dealerRowToDealer, type DealerRow } from "@/lib/dealers/supabase-mapper";
 import { createClient } from "@/lib/supabase/server";
 import type { PortalPageKey } from "@/types/portal";
+import { updateOrganizationLogoAdminAction } from "../actions";
 
-type Organization = { id: string; name: string; slug: string; active: boolean };
+type Organization = { id: string; name: string; slug: string; active: boolean; logo_path: string | null };
 type Membership = { user_id: string; organization_id: string; page_permissions: PortalPageKey[]; active: boolean };
 type Profile = { user_id: string; email: string; display_name: string | null; active: boolean };
 
@@ -16,7 +19,7 @@ export default async function DealerOrganizationPage({ params, searchParams }: {
   const view: LocationView = query.view === "list" ? "list" : "grid";
   const returnTo = `/admin/dealers/${id}?view=${view}`;
   const supabase = await createClient();
-  const { data: organizationData, error: organizationError } = await supabase.from("dealer_organizations").select("id, name, slug, active").eq("id", id).maybeSingle();
+  const { data: organizationData, error: organizationError } = await supabase.from("dealer_organizations").select("id, name, slug, active, logo_path").eq("id", id).maybeSingle();
   if (organizationError || !organizationData) notFound();
   const organization = organizationData as Organization;
 
@@ -40,6 +43,8 @@ export default async function DealerOrganizationPage({ params, searchParams }: {
       <header className="admin-page__heading"><div><p className="eyebrow">Dealer organization</p><h1>{organization.name}</h1><p>{dealers.length} linked {dealers.length === 1 ? "location" : "locations"} · {memberships.length} portal {memberships.length === 1 ? "user" : "users"}</p></div><span className={organization.active ? "admin-status admin-status--verified" : "admin-status"}>{organization.active ? "Active" : "Inactive"}</span></header>
 
       <section className="admin-organization-settings"><div><p className="eyebrow">Organization settings</p><h2>Dealer details</h2><p>These settings control the dealer organization and portal access. Individual public location information is edited below.</p></div><DealerOrganizationForm organization={organization} /></section>
+
+      <section className="admin-organization-settings"><div><p className="eyebrow">Locator branding</p><h2>Company logo</h2><p>Shown with every location linked to this dealer on the public locator. Dealers with location access can change it from their portal; you’ll get an email when they do.</p></div><DealerLogoForm action={updateOrganizationLogoAdminAction.bind(null, organization.id)} logoUrl={dealerLogoUrl(organization.logo_path)} organizationName={organization.name} variant="admin" /></section>
 
       <section className="admin-organization-section"><header><div><p className="eyebrow">Dealer network</p><h2>Locations</h2><p>Review every public and internal field, then open the full editor to make verified changes.</p></div><div className="admin-location-view-actions"><LocationViewToggle basePath={`/admin/dealers/${id}`} view={view} /><Link className="admin-button" href={`/admin/locations?q=${encodeURIComponent(organization.name)}`}>Search all locations</Link></div></header>{dealers.length && view === "grid" ? <div className="admin-dealer-location-grid">{dealers.map((dealer) => {
         const address = [dealer.addressLine1, dealer.addressLine2, [dealer.city, dealer.stateProvince, dealer.postalCode].filter(Boolean).join(" "), dealer.country].filter(Boolean);

@@ -4,8 +4,10 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
 import { applyAutomaticCoordinates } from "@/lib/dealers/geocode-form";
+import { readLogoUpload, replaceOrganizationLogo } from "@/lib/dealers/logo";
 import { dealerRowToDealer, dealerToMutation, type DealerRow } from "@/lib/dealers/supabase-mapper";
 import { sendDealerLocationChangeEmail, type LocationChange } from "@/lib/email/dealer-location-change";
+import { sendDealerLogoChangeEmail } from "@/lib/email/dealer-logo-change";
 import { requireDealerPortal } from "@/lib/portal/auth";
 import type { PortalFormState } from "@/lib/portal/form-state";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -157,6 +159,24 @@ export async function updateDealerLocationAction(dealerId: string, _: DealerLoca
   after(() => sendDealerLocationChangeEmail({ kind: "edited", dealer, organizationName: organization.organizationName, actorEmail: identity.email, changes }));
   revalidateLocation(dealerId);
   redirect(`/partner/locations/${encodeURIComponent(dealerId)}?saved=updated`);
+}
+
+// Uploads (or, with intent=remove, clears) the corporate logo shown beside this dealer's locations.
+export async function updateOrganizationLogoAction(organizationId: string, _: PortalFormState, formData: FormData): Promise<PortalFormState> {
+  const identity = await requireDealerPortal("locations");
+  const organization = editableOrganizations(identity).find((membership) => membership.organizationId === organizationId);
+  if (!organization) return { message: "This dealer isn’t assigned to your account." };
+
+  const remove = formData.get("intent") === "remove";
+  const upload = remove ? null : await readLogoUpload(formData);
+  if (upload && "error" in upload) return { message: upload.error };
+  const result = await replaceOrganizationLogo(organizationId, upload);
+  if ("error" in result) return { message: result.error };
+
+  after(() => sendDealerLogoChangeEmail({ organizationId, organizationName: organization.organizationName, actorEmail: identity.email, logoPath: result.logoPath }));
+  revalidatePath("/partner/locations");
+  revalidatePath(`/admin/dealers/${organizationId}`);
+  return { success: true, message: remove ? "Logo removed from the locator." : "Logo uploaded. It’s now live on the locator." };
 }
 
 // Removing hides the location from the public locator; the record is kept so it can be restored.

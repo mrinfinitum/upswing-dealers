@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin/auth";
+import { readLogoUpload, replaceOrganizationLogo } from "@/lib/dealers/logo";
 import { dealerRowToDealer, type DealerRow } from "@/lib/dealers/supabase-mapper";
 import { reviewGeocodeCandidate, type GeocodeCandidate } from "@/lib/geo/geocode-review";
 import { createClient } from "@/lib/supabase/server";
@@ -198,4 +199,17 @@ export async function updateDealerOrganizationAction(_: PortalFormState, formDat
   revalidatePath("/admin/users");
   revalidatePath(`/admin/dealers/${organizationId}`);
   return { success: true, message: "Dealer organization updated." };
+}
+
+export async function updateOrganizationLogoAdminAction(organizationId: string, _: PortalFormState, formData: FormData): Promise<PortalFormState> {
+  await requireAdmin();
+  const remove = formData.get("intent") === "remove";
+  const upload = remove ? null : await readLogoUpload(formData);
+  if (upload && "error" in upload) return { message: upload.error };
+  const result = await replaceOrganizationLogo(organizationId, upload);
+  if ("error" in result) return { message: result.error };
+
+  revalidatePath(`/admin/dealers/${organizationId}`);
+  revalidatePath("/partner/locations");
+  return { success: true, message: remove ? "Logo removed." : "Logo uploaded." };
 }

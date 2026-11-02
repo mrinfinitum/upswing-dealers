@@ -60,3 +60,11 @@ The canonical portal origin is `https://dealers.upswinggolf.com`. Preview hosts 
 ## Initial brand resources
 
 The brand page uses the existing UpSwing logo and established locator visual system. The current approved download is the white transparent PNG already stored in `public/brand`. Add future master SVGs, print assets, PDFs, photography, and campaign kits through a private Supabase Storage bucket and asset metadata table; do not place confidential dealer assets in `public/`.
+
+## Dealer logos
+
+Each dealer organization can have a corporate logo (PNG, JPG, WebP, or SVG up to 2 MB). Dealers with Locations access upload or remove it at the top of `/partner/locations`; admins do the same on `/admin/dealers/[id]`. Dealer changes go live immediately and email info@ (the `DEALER_APPLICATION_EMAIL_TO` list) with a preview.
+
+- Files live in the public Supabase Storage bucket `dealer-logos` at `<organization id>/<timestamp>.<ext>`; each upload gets a new name, so CDN caches never serve stale art. The format is detected from the file bytes, and SVGs containing scripts, event handlers, or embedded content are refused.
+- The storefront locator reads logos anonymously with `rpc("get_public_dealer_logos")`, which returns `dealer_id`, `organization_name`, and `logo_path` for published locations of active organizations. The image URL is `<SUPABASE_URL>/storage/v1/object/public/dealer-logos/<logo_path>`.
+- `scripts/import-existing-dealer-logos.ts` moved the retailer logos that were hard-coded in `lib/dealers/brand.ts` (Club Champion, PGA TOUR Superstore, SCHEELS, GOLFTEC) into the bucket, creating and linking an organization for each brand. Run it with `npx tsx --env-file=.env.local scripts/import-existing-dealer-logos.ts` (add `--apply` to write).
