@@ -1666,3 +1666,25 @@ button { color: inherit; }
 .portal-home__label-row a:hover, .portal-home__back:hover { text-decoration: underline; text-underline-offset: 3px; }
 .portal-home__back { display: inline-flex; gap: 6px; margin-bottom: 28px; color: var(--muted); }
 .portal-home__sent .portal-home__submit { margin-top: 28px; text-decoration: none; }
+
+/* Dealer-managed locations */
+.portal-location-toolbar__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+.portal-location-form { max-width: 880px; padding: 40px; border: 1px solid #d9e3df; border-radius: 24px; background: #fff; }
+.portal-location-form fieldset { margin: 0 0 30px; padding: 0; border: 0; }
+.portal-location-form legend { margin-bottom: 16px; padding: 0; font-size: 20px; font-weight: 600; letter-spacing: -.02em; }
+.portal-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 20px; }
+.portal-field--wide { grid-column: 1 / -1; }
+.portal-field select { width: 100%; min-height: 50px; padding: 0 14px; border: 1px solid #aeb6b3; border-radius: 8px; background: #fff; color: #071b18; font: inherit; }
+.portal-location-form > .portal-field { max-width: 420px; margin-bottom: 26px; }
+.portal-field small { display: block; margin-top: 6px; color: #6b7774; font-size: 12px; }
+.portal-field__error { display: block; margin-top: 6px; color: #a3302c; font-size: 12px; }
+.portal-form-help { margin: 0 0 22px; color: #52605d; font-size: 13px; }
+.portal-form-actions, .portal-location-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.portal-location-actions { margin-top: 28px; }
+.portal-location-actions + .portal-form-help { margin-top: 14px; }
+.portal-button--danger { border-color: #c4413c; background: #fff; color: #a3302c; }
+.portal-button--danger:hover { background: #fff0ef; }
+@media (max-width: 700px) {
+  .portal-location-form { padding: 24px 18px; border-radius: 18px; }
+  .portal-form-grid { grid-template-columns: 1fr; }
+}

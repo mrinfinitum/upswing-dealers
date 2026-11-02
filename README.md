@@ -54,4 +54,4 @@ The Add Dealer workflow supports a single location or an all-or-nothing batch up
 
 ## Dealer partner portal
 
-The no-index `/partner` area gives limited `dealer` users read-only access to assigned locations and explicitly enabled pages, plus the shared read-only `/image-gallery`. Dealers never submit location changes; UpSwing administrators make all edits. Administrators manage accounts, memberships, and page permissions in `/admin/users`. See `docs/dealer-portal.md`.
+The no-index `/partner` area gives limited `dealer` users access to their assigned locations and explicitly enabled pages, plus the shared read-only `/image-gallery`. Dealers with the Locations permission can add, edit, and remove their own locations, and changes publish immediately. Administrators manage accounts, memberships, and page permissions in `/admin/users`. See `docs/dealer-portal.md`.

@@ -9,7 +9,8 @@ const text = (formData: FormData, key: string) => String(formData.get(key) ?? ""
 // Single sign-in for the portal home page: administrators land in /admin, dealers in /partner.
 export async function portalSignInAction(_: PortalFormState, formData: FormData): Promise<PortalFormState> {
   const email = text(formData, "email");
-  const password = text(formData, "password");
+  // Passwords are compared exactly as typed; trimming would reject passwords that start or end with a space.
+  const password = String(formData.get("password") ?? "");
   if (!email || !password) return { message: "Enter your email and password." };
 
   const supabase = await createClient();

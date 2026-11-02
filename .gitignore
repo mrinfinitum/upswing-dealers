@@ -47,3 +47,6 @@ next-env.d.ts
 
 # local backups (may contain auth user data)
 /outputs/old-supabase-backup-*/
+
+# dealer contact lists (personal data)
+/outputs/dealer-portal-contacts*.csv

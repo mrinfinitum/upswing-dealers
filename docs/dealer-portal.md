@@ -6,7 +6,8 @@ The dealer portal is part of the locator application because it shares the same 
 
 - `/partner/login` — dealer-only sign in
 - `/partner` — organization overview (Overview permission)
-- `/partner/locations` — safe assigned-location fields (Locations permission)
+- `/partner/locations` — assigned locations, with add, edit, and remove (Locations permission)
+- `/partner/locations/new`, `/partner/locations/[id]/edit` — dealer location forms (Locations permission)
 - `/partner/brand` — UpSwing standards and approved downloads (Brand permission)
 - `/image-gallery` — shared read-only Dropbox image gallery for every active dealer
 - `/partner/access-ended` — signs out a dealer session whose access was revoked and returns to sign in
@@ -42,7 +43,13 @@ Inviting the same non-admin email again can add another organization membership 
 - Deactivating a profile, membership, or organization takes effect on the dealer's next request, even if their session is still valid. The session is ended at `/partner/access-ended` and the sign-in page explains that access is inactive.
 - Organization memberships support both a single-location organization and a multi-location retailer.
 - Dealers cannot query the complete dealer table. A guarded RPC returns only name, public address/contact fields, organization, and active status for assigned verified locations.
-- Dealers have read-only access to the safe public fields for assigned locations. They cannot publish, change verification state, edit coordinates, or alter provenance.
+- Dealers with the Locations permission manage their own locations, and **changes publish immediately**:
+  - **Add:** creates a live, verified location named after the dealer organization and links it to that organization.
+  - **Edit:** location name, address, phone, email, and website. A changed address must geocode to exactly one precise Google match, using the same check as the admin form.
+  - **Remove / restore:** toggles `active`, which hides or shows the location on the public locator. The record is never deleted, so it can be restored; only admins delete.
+- Dealers cannot change the dealer name, verification status, coordinates (other than by re-geocoding an address), notes, or provenance.
+- Each dealer change appends a timestamped line with the dealer's email to the location's internal notes, and emails info@upswinggolf.com with the before and after values (`lib/email/dealer-location-change.ts`).
+- Server actions in `app/partner/(protected)/locations/actions.ts` re-check the Locations permission and organization ownership on every request, then write with the service-role client. RLS still gives dealers no direct write access.
 
 ## Secrets and production configuration
 
