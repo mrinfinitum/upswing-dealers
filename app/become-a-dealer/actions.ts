@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
+import { after } from "next/server";
 import {
   APPLICATION_SOURCE_SHEET,
   APPLICATION_SOURCE_WORKBOOK,
@@ -12,6 +13,7 @@ import {
   type DealerApplicationValues,
 } from "@/lib/dealers/application";
 import { dealerToMutation } from "@/lib/dealers/supabase-mapper";
+import { sendDealerApplicationNotification } from "@/lib/email/dealer-application-notification";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { verifyTurnstileToken } from "@/lib/turnstile";
 
@@ -61,8 +63,9 @@ export async function submitDealerApplicationAction(_: DealerApplicationState, f
   if (emailError) return { status: "error", message: "Something went wrong saving your application. Please try again.", values };
   if ((pendingForEmail ?? 0) >= 5) return { status: "success", message: "We already have applications from this email address, and our team is reviewing them." };
 
+  const id = crypto.randomUUID();
   const { error } = await supabase.from("dealers").insert(dealerToMutation({
-    id: crypto.randomUUID(),
+    id,
     name: application.businessName,
     addressLine1: application.addressLine1,
     addressLine2: application.addressLine2,
@@ -82,6 +85,7 @@ export async function submitDealerApplicationAction(_: DealerApplicationState, f
     return { status: "error", message: "Something went wrong saving your application. Please try again.", values };
   }
 
+  after(() => sendDealerApplicationNotification(id, application));
   revalidatePath("/admin");
   revalidatePath("/admin/applications");
   return { status: "success", message: "" };

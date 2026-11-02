@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import Script from "next/script";
 import { useActionState, useEffect, useState } from "react";
 import { submitDealerApplicationAction, type DealerApplicationState } from "@/app/become-a-dealer/actions";
 import { BUSINESS_TYPES, CA_PROVINCE_NAMES, type DealerApplicationValues } from "@/lib/dealers/application";
 import { US_STATE_NAMES } from "@/lib/geo/us-states";
+import { dealerLocatorUrl } from "@/lib/site";
 
 declare global {
   interface Window { turnstile?: { reset: (widget?: string) => void } }
@@ -49,7 +49,7 @@ export function DealerApplicationForm({ siteKey }: { siteKey: string }) {
         <p className="eyebrow">Application received</p>
         <h2>Thanks — we’ll be in touch.</h2>
         <p>{state.message || "Our dealer team reviews every application and will reach out within a few business days."}</p>
-        <Link href="/">Back to the dealer locator <span aria-hidden="true">→</span></Link>
+        <a href={dealerLocatorUrl}>Back to the dealer locator <span aria-hidden="true">↗</span></a>
       </div>
     );
   }
@@ -120,7 +120,7 @@ export function DealerApplicationForm({ siteKey }: { siteKey: string }) {
       </div>
 
       <div className="apply-form__submit">
-        <div className="cf-turnstile" data-sitekey={siteKey} data-action="dealer-application" />
+        <div className="cf-turnstile" data-sitekey={siteKey} data-action="dealer-application" data-theme="light" />
         <button type="submit" disabled={pending}>{pending ? "Submitting…" : "Submit application"} <span aria-hidden="true">→</span></button>
       </div>
     </form>

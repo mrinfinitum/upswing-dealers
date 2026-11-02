@@ -1,6 +1,8 @@
-# UpSwing Dealer Locator
+# UpSwing Dealer Portal
 
-A standalone Next.js dealer locator for UpSwing Golf. The application is designed for Vercel and links back to the canonical Shopify storefront; it does not embed or reproduce Shopify commerce.
+The UpSwing Golf dealer portal at dealers.upswinggolf.com. The home page is a single sign-in screen that sends administrators to `/admin` and dealers to `/partner`; the public dealer locator now lives on the storefront at https://www.upswinggolf.com/pages/find-a-dealer, and the locator components in `components/dealer-locator/` are no longer mounted here. Prospective retailers apply at `/become-a-dealer`.
+
+Originally a standalone Next.js dealer locator for UpSwing Golf. The application is designed for Vercel and links back to the canonical Shopify storefront; it does not embed or reproduce Shopify commerce.
 
 ## Local development
 

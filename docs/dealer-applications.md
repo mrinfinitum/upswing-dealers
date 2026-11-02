@@ -1,6 +1,6 @@
 # Dealer applications
 
-Prospective retailers apply at `/become-a-dealer`. The homepage "Become a retailer" button links there, and the "Become a retailer" button on the storefront's www.upswinggolf.com/pages/find-a-dealer page should link there as well.
+Prospective retailers apply at `/become-a-dealer`. The portal sign-in page (`/`) links there, and the "Become a retailer" button on the storefront's www.upswinggolf.com/pages/find-a-dealer page should link there as well.
 
 ## Flow
 
@@ -17,7 +17,7 @@ Prospective retailers apply at `/become-a-dealer`. The homepage "Become a retail
    - **Approve:** open the application, confirm the address, set the status to **Verified**, tick **Active**, and save. Saving geocodes the address, and the store appears on the locator.
    - **Decline:** set the status to **Rejected**.
 
-No email notifications are sent yet. The project uses Supabase's default SMTP, so admins have to check `/admin`.
+After a row is saved, an email goes to info@upswinggolf.com through Resend (`lib/email/dealer-application-notification.ts`, sent with `after()` so it never delays or breaks the submission). It lists the application details, sets reply-to to the applicant, and links to the review page and `/admin/applications`. Without `RESEND_API_KEY` the email is skipped and logged.
 
 ## Configuration
 
@@ -25,6 +25,9 @@ No email notifications are sent yet. The project uses Supabase's default SMTP, s
 |---|---|---|
 | `TURNSTILE_SECRET_KEY` | Vercel Production (and Preview if you test there) | Same value as the storefront project's. Required in production: without it the form shows an "email us instead" message. |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Optional | Defaults to the "UpSwing Golf site forms" widget key in production, and to Cloudflare's test key elsewhere. |
+| `RESEND_API_KEY` | Vercel Production | A **sending-only** Resend key restricted to `send.upswinggolf.com`. Also used for password reset emails. Without it neither email is sent. |
+| `DEALER_APPLICATION_EMAIL_TO` | Optional | Comma-separated recipients. Defaults to `info@upswinggolf.com`. |
+| `DEALER_PORTAL_EMAIL_FROM` | Optional | Defaults to `UpSwing Dealer Portal <dealers@send.upswinggolf.com>`. Must be on the Resend-verified `send.upswinggolf.com` domain. |
 
 The Turnstile widget's hostname list must include `dealers.upswinggolf.com`. The storefront team says the widget covers upswinggolf.com subdomains.
 

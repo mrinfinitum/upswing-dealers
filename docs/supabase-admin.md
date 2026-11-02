@@ -81,3 +81,14 @@ At request time the public locator reads active, verified Supabase rows. Until t
 - Admins enter a complete address rather than latitude/longitude. The authorized browser geocodes it with Google, and the Server Action stores coordinates only when a unique precise result passes component validation.
 - **Sync Map Data** on `/admin/dealers` geocodes active, verified dealers that have a street address but no coordinates. Results that do not pass automatically are stored as coordinate evidence and listed in `/admin/dealers/map-review`, where an administrator can compare the candidate with the verified address and approve it.
 - Rotate the service-role key immediately if it is ever exposed. Never paste it into browser code, logs, tickets, or screenshots.
+
+## Self-service password reset
+
+`/forgot-password` (linked from the sign-in page at `/`) lets admins and dealers reset their own password without Supabase's built-in email, which only delivers to Supabase team members on the default SMTP.
+
+1. The visitor enters their email and passes Cloudflare Turnstile.
+2. `requestPasswordResetAction` (`app/forgot-password/actions.ts`) uses the service-role client to call `auth.admin.generateLink({ type: "recovery" })`. The redirect goes to `/admin/reset-password` for admins or `/partner/reset-password` for dealers, and both are already in the Supabase redirect allow-list.
+3. The link is emailed through Resend from `dealers@send.upswinggolf.com` (`lib/email/password-reset.ts`). The link works once and expires in one hour.
+4. The page always shows the same "if this email has an account" message, so it never reveals which emails have accounts. Accounts without the admin or dealer role get no email.
+
+Requires `RESEND_API_KEY` (and `TURNSTILE_SECRET_KEY`) in Vercel Production.
