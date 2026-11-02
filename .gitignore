@@ -40,3 +40,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.t3/
+
+# supabase cli
+/supabase/.temp/
+
+# local backups (may contain auth user data)
+/outputs/old-supabase-backup-*/

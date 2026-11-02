@@ -10,9 +10,9 @@ export async function AdminShell({ children }: Readonly<{ children: React.ReactN
       <Link href="/admin"><Image src="/brand/upswing-logo-white.png" alt="UpSwing Golf administration" width={230} height={65} priority /></Link>
       <nav aria-label="Admin navigation">
         <Link href="/admin/dealers">Dealers</Link>
+        <Link href="/admin/applications">Applications</Link>
         <Link href="/admin/users">Users</Link>
         <Link href="/admin/brand">Brand portal</Link>
-        <Link href="/" target="_blank" rel="noreferrer">View locator <span aria-hidden="true">↗</span></Link>
         <Link href="/image-gallery" target="_blank" rel="noreferrer">View gallery <span aria-hidden="true">↗</span></Link>
       </nav>
       <details className="admin-account-menu">
@@ -25,7 +25,6 @@ export async function AdminShell({ children }: Readonly<{ children: React.ReactN
           <span>Account</span>
           <Link href="/admin/account">Account</Link>
           <Link href="/admin">Admin</Link>
-          <Link href="/" target="_blank" rel="noreferrer">View locator ↗</Link>
           <form action={logoutAction}><button type="submit">Sign out</button></form>
         </div>
       </details>

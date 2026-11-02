@@ -34,6 +34,8 @@ The responsive QA runner in `scripts/qa-responsive.mjs` expects a local app on p
 - `lib/maps/provider.ts` is the provider boundary. Google Maps activates only when both public configuration values are present; otherwise the accessible list-mode fallback remains active.
 - `lib/geo/distance.ts` implements Haversine distance, nearest-first sorting, and geographic radius filtering for verified coordinates.
 
+Public dealer signups at `/become-a-dealer` are described in `docs/dealer-applications.md`.
+
 See `docs/brand-audit.md`, `docs/dealer-import-audit.md`, `docs/enrichment-workflow.md`, `docs/google-maps-setup.md`, and `docs/architecture.md` for the discovery record and remaining decisions.
 
 The workbook fixture preserves 71 source records, 70 of which are verified and publishable; Preston, Washington remains excluded. All 70 have approved coordinates, including 3 retailer-published coordinates retained as higher-authority evidence. These figures describe the fallback dataset only. The live inventory in Supabase has since grown through admin edits, batch uploads, and the reviewed dealer import scripts described in `docs/supabase-admin.md`.
@@ -42,7 +44,7 @@ The workbook fixture preserves 71 source records, 70 of which are verified and p
 
 The protected `/image-gallery` is available to administrators and all active dealer users. It reads approved images recursively from a dedicated Dropbox folder, renders authenticated thumbnails, and provides original-file downloads. Only administrators can create gallery categories and assign images to them, from `/admin/gallery`. Configuration, one-time OAuth bootstrap, and least-privilege Dropbox app setup are documented in [`docs/dropbox-gallery.md`](docs/dropbox-gallery.md).
 
-The authenticated `/admin` hub manages Supabase dealer records without changing the approved public locator UI. Its primary navigation links to Dealers, Users, and the public locator, while the account menu provides profile and session controls. Dealers opens a retailer-level directory and scopes the next screen to that dealer’s locations. At `/admin/users`, administrators can search and filter all accounts, directly create UpSwing administrators and dealer users, delete accounts, and assign dealer organizations and portal-page permissions. Apply the migrations and import, then provision the first admin-role Supabase Auth user by following `docs/supabase-admin.md`.
+The authenticated `/admin` hub manages Supabase dealer records without changing the approved public locator UI. Its primary navigation links to Dealers, Applications, Users, Brand portal, and the gallery, while the account menu provides profile and session controls. Dealers opens a retailer-level directory and scopes the next screen to that dealer’s locations. At `/admin/users`, administrators can search and filter all accounts, directly create UpSwing administrators and dealer users, delete accounts, and assign dealer organizations and portal-page permissions. Apply the migrations and import, then provision the first admin-role Supabase Auth user by following `docs/supabase-admin.md`.
 
 Dealers without coordinates are mapped from the Dealers screen with **Sync Map Data**. Google candidates that pass the review rules are stored automatically; ambiguous or approximate results go to the Coordinate Review queue at `/admin/dealers/map-review` for administrator approval.
 
