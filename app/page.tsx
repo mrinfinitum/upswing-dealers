@@ -24,7 +24,7 @@ export default async function Home() {
                 <p className="eyebrow">Authorized UpSwing retailers</p>
                 <h1>Find UpSwing Golf Dealers Near You</h1>
                 <p className="dealer-network-story__lead">Find authorized retailers, golf shops, and fitting locations carrying premium UpSwing clubs for growing players.</p>
-                <div className="dealer-network-story__actions"><a href="#dealer-locator">View dealer map <span aria-hidden="true">↓</span></a><a href="mailto:info@upswinggolf.com">Become a retailer <span aria-hidden="true">↗</span></a></div>
+                <div className="dealer-network-story__actions"><a href="#dealer-locator">View dealer map <span aria-hidden="true">↓</span></a><a href="/become-a-dealer">Become a retailer <span aria-hidden="true">↗</span></a></div>
               </div>
               <figure className="dealer-network-story__media">
                 <Image src="/brand/upswing-dealer-retail-hero.jpg" alt="UpSwing Golf junior driver and golf balls on a course" fill priority sizes="(max-width: 900px) 100vw, 46vw" />
