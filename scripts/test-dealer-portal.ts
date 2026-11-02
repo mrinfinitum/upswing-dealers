@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { detectLogoFormat } from "../lib/dealers/logo-format";
 import { dealerPortalHome, dealerPortalRedirect, portalAccessEndedPath, portalPagePaths } from "../lib/portal/access";
 import { portalPageKeys, type PortalPageKey } from "../types/portal";
 
@@ -79,3 +80,21 @@ assert.match(dealerLocationActions, /editableOrganizations\(identity\)\.find/, "
 assert.match(dealerLocationActions, /applyAutomaticCoordinates\(dealer, formData/, "dealer addresses pass the same precise-geocode check as admin edits");
 assert.doesNotMatch(dealerLocationActions, /verificationStatus: values|coordinates: values|source: values/, "dealers cannot set verification, coordinates, or provenance from form input");
 assert.doesNotMatch(dealerLocationActions, /\.from\("dealers"\)\.delete\(\)\.eq\("id", dealerId\)/, "dealer removal hides a location instead of deleting it");
+
+const logoMigration = read("supabase/migrations/202611020001_dealer_logos.sql");
+const svg = (body: string) => new TextEncoder().encode(body);
+assert.deepEqual(detectLogoFormat(svg('<?xml version="1.0"?>\n<svg xmlns="http://www.w3.org/2000/svg"><path fill="#000" d="M0 0h1v1z"/></svg>')), { extension: "svg", contentType: "image/svg+xml" }, "plain SVG logos are accepted");
+assert.equal(detectLogoFormat(svg('<svg onload="alert(1)"></svg>')), "unsafe-svg", "SVG event handlers are refused");
+assert.equal(detectLogoFormat(svg('<svg><script>alert(1)</script></svg>')), "unsafe-svg", "SVG scripts are refused");
+assert.equal(detectLogoFormat(svg("<html><body>hi</body></html>")), null, "non-image uploads are refused");
+assert.deepEqual(detectLogoFormat(new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a])), { extension: "png", contentType: "image/png" }, "PNG logos are detected from their bytes");
+for (const file of ["club-champion-logo.svg", "pga-tour-superstore-logo.svg", "scheels-logo.svg", "golftec-logo.svg"]) {
+  const format = detectLogoFormat(new Uint8Array(readFileSync(resolve(root, "public/brand", file))));
+  assert.ok(format && format !== "unsafe-svg", `${file} passes logo validation for import`);
+}
+assert.match(logoMigration, /'dealer-logos', 'dealer-logos', true/, "dealer logos are stored in a public bucket");
+assert.match(logoMigration, /grant execute on function public\.get_public_dealer_logos\(\) to anon/, "the storefront can read published dealer logos");
+assert.match(logoMigration, /d\.active\s+and d\.verification_status = 'verified'\s+and o\.active/, "logos are exposed only for published locations of active dealers");
+assert.match(dealerLocationActions, /updateOrganizationLogoAction[\s\S]*editableOrganizations\(identity\)\.find/, "dealers can change only their own organization's logo");
+assert.match(dealerLocationsPage, /DealerLogoForm/, "dealers manage their logo from the Locations page");
+assert.match(adminDealerPage, /DealerLogoForm/, "admins manage dealer logos from the organization page");
