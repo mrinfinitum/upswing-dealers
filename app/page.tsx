@@ -1,49 +1,36 @@
-import Image from "next/image";
-import { DealerLocator } from "@/components/dealer-locator/dealer-locator";
-import { GoogleMapsPreloader } from "@/components/dealer-locator/google-maps-preloader";
-import { SiteFooter } from "@/components/layout/site-footer";
-import { SiteHeader } from "@/components/layout/site-header";
-import { dealerRepository } from "@/lib/dealers/repository";
-import { getMapConfiguration } from "@/lib/maps/provider";
-import { connection } from "next/server";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { PortalAuthShell } from "@/components/auth/portal-auth-shell";
+import { PortalSignInForm } from "@/components/auth/portal-sign-in-form";
+import { dealerLocatorUrl } from "@/lib/site";
+import { createClient } from "@/lib/supabase/server";
+
+export const metadata: Metadata = {
+  title: "UpSwing Dealer Portal | Sign in",
+  description: "Sign in to the UpSwing Golf dealer portal.",
+  alternates: { canonical: "/" },
+  robots: { index: false, follow: true },
+};
 
 export default async function Home() {
-  await connection();
-  const dealers = await dealerRepository.getAll();
-  const mapConfig = getMapConfiguration();
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getClaims();
+  const role = data?.claims?.app_metadata?.role;
+  if (role === "admin") redirect("/admin");
+  if (role === "dealer") redirect("/partner");
 
   return (
-    <>
-      {mapConfig.provider === "google" ? <GoogleMapsPreloader config={mapConfig} /> : null}
-      <SiteHeader />
-      <main>
-        <section className="dealer-network-story">
-          <div className="shell">
-            <div className="dealer-network-story__card">
-              <div className="dealer-network-story__copy">
-                <p className="eyebrow">Authorized UpSwing retailers</p>
-                <h1>Find UpSwing Golf Dealers Near You</h1>
-                <p className="dealer-network-story__lead">Find authorized retailers, golf shops, and fitting locations carrying premium UpSwing clubs for growing players.</p>
-                <div className="dealer-network-story__actions"><a href="#dealer-locator">View dealer map <span aria-hidden="true">↓</span></a><a href="/become-a-dealer">Become a retailer <span aria-hidden="true">↗</span></a></div>
-              </div>
-              <figure className="dealer-network-story__media">
-                <Image src="/brand/upswing-dealer-retail-hero.jpg" alt="UpSwing Golf junior driver and golf balls on a course" fill priority sizes="(max-width: 900px) 100vw, 46vw" />
-                <figcaption><span>UpSwing Golf</span><strong>Premium equipment.<br />Purpose-built for juniors.</strong></figcaption>
-              </figure>
-            </div>
-          </div>
-        </section>
-        <div className="shell locator-section-wrap" id="dealer-locator">
-          <DealerLocator dealers={dealers} mapConfig={mapConfig} />
-        </div>
-        <section className="locator-cta">
-          <div className="shell">
-            <div><p className="eyebrow">Not sure where to start?</p><h2>Find the right fit before you visit.</h2></div>
-            <a href="https://www.upswinggolf.com/pages/virtual-fitting-tool">Get a virtual fitting <span aria-hidden="true">↗</span></a>
-          </div>
-        </section>
-      </main>
-      <SiteFooter />
-    </>
+    <PortalAuthShell labelledBy="portal-home-title">
+      <p className="portal-home__kicker">Welcome back</p>
+      <h1 id="portal-home-title">Sign in to your account</h1>
+      <p className="portal-home__lead">For UpSwing team members and authorized dealers.</p>
+      <PortalSignInForm />
+      <div className="portal-home__divider"><span>Not a dealer yet?</span></div>
+      <div className="portal-home__links">
+        <Link href="/become-a-dealer">Become an UpSwing dealer <span aria-hidden="true">→</span></Link>
+        <a href={dealerLocatorUrl}>Find a dealer near you <span aria-hidden="true">↗</span></a>
+      </div>
+    </PortalAuthShell>
   );
 }

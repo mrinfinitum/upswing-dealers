@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -51,8 +52,8 @@ export function DealerResetPasswordForm() {
   }
 
   if (recoveryState === "checking") return <p role="status">Checking your secure invitation…</p>;
-  if (recoveryState === "invalid") return <div><p className="portal-form-error" role="alert">This invitation is invalid or has expired.</p><a href="/partner/login">Return to sign in</a></div>;
-  if (recoveryState === "complete") return <div><p>Password created. You can now access the dealer portal.</p><a className="portal-button portal-button--light" href="/partner/login">Sign in <span aria-hidden="true">→</span></a></div>;
+  if (recoveryState === "invalid") return <div><p className="portal-form-error" role="alert">This invitation is invalid or has expired.</p><Link href="/">Return to sign in</Link></div>;
+  if (recoveryState === "complete") return <div><p>Password created. You can now access the dealer portal.</p><Link className="portal-button portal-button--light" href="/">Sign in <span aria-hidden="true">→</span></Link></div>;
 
   return (
     <form className="portal-login-form" onSubmit={handleSubmit}>

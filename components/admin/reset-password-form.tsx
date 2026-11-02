@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -91,8 +92,8 @@ export function ResetPasswordForm() {
   }
 
   if (recoveryState === "checking") return <p className="admin-form-help" role="status">Checking your reset link…</p>;
-  if (recoveryState === "complete") return <div className="admin-reset-complete"><p>Your password has been updated.</p><a className="admin-button admin-button--primary" href="/admin/login">Return to sign in</a></div>;
-  if (recoveryState === "invalid") return <div><p className="admin-form-error" role="alert">{message}</p><a href="/admin/login">Return to sign in</a></div>;
+  if (recoveryState === "complete") return <div className="admin-reset-complete"><p>Your password has been updated.</p><Link className="admin-button admin-button--primary" href="/">Return to sign in</Link></div>;
+  if (recoveryState === "invalid") return <div><p className="admin-form-error" role="alert">{message}</p><Link href="/">Return to sign in</Link></div>;
 
   return (
     <form className="admin-login__form" onSubmit={handleSubmit}>

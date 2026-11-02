@@ -83,7 +83,8 @@ assert.match(adminShell, /href="\/admin\/dealers"/, "Dealers is available in pri
 assert.match(adminShell, /href="\/admin\/users"/, "Users is available in primary admin navigation");
 assert.match(adminShell, /href="\/admin\/brand"/, "Brand Portal is available in primary admin navigation");
 assert.match(adminShell, /href="\/image-gallery" target="_blank" rel="noreferrer">View gallery/, "the shared gallery is available as an external admin navigation link");
-assert.match(adminShell, /href="\/" target="_blank" rel="noreferrer">View locator/, "the public locator is available as an external admin navigation link");
+assert.doesNotMatch(adminShell, /View locator/, "the admin navigation no longer links to the retired on-site locator");
+assert.match(adminShell, /href="\/admin\/applications">Applications</, "the admin navigation links to dealer applications");
 for (const href of ["/admin/dealers", "/admin/users"]) assert.match(adminDashboard, new RegExp(`href: "${href}"`), `${href} is available from the admin hub`);
 assert.match(adminAuth, /displayName:/, "the protected admin identity supplies a friendly display name");
 assert.match(adminDashboard, /Welcome, \{admin\.displayName\}/, "the admin hub welcomes the signed-in administrator");
