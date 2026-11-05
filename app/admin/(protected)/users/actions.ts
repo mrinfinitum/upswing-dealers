@@ -101,3 +101,26 @@ export async function deleteUserAction(userId: string, previousState: AdminUserF
     return { message: "User deletion requires the server-only Supabase service role configuration." };
   }
 }
+
+// Removes every authenticator from another administrator's account, e.g. after a lost phone.
+// They set up a new one the next time they sign in.
+export async function resetUserMfaAction(userId: string, previousState: AdminUserFormState, formData: FormData): Promise<AdminUserFormState> {
+  void previousState;
+  void formData;
+  const currentAdmin = await requireAdmin();
+  if (userId === currentAdmin.id) return { message: "Ask another administrator to reset your own two-step verification." };
+
+  try {
+    const supabase = createSupabaseAdminClient();
+    const { data, error } = await supabase.auth.admin.mfa.listFactors({ userId });
+    if (error) return { message: "Two-step verification could not be loaded for this user." };
+    for (const factor of data.factors) {
+      const { error: deleteError } = await supabase.auth.admin.mfa.deleteFactor({ id: factor.id, userId });
+      if (deleteError) return { message: "Two-step verification could not be fully reset. Try again." };
+    }
+    revalidatePath("/admin/users");
+    return { success: true, message: "Two-step verification reset. They’ll set up a new authenticator at their next sign-in." };
+  } catch {
+    return { message: "Resetting two-step verification requires the server-only Supabase service role configuration." };
+  }
+}

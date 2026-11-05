@@ -26,7 +26,8 @@ export async function portalSignInAction(_: PortalFormState, formData: FormData)
   const { data: claimsData } = await supabase.auth.getClaims();
   const claims = claimsData?.claims;
   const role = claims?.app_metadata?.role;
-  if (role === "admin") redirect("/admin");
+  // Administrators continue to the authenticator step; /admin/mfa handles both first-time setup and verification.
+  if (role === "admin") redirect("/admin/mfa");
 
   if (role === "dealer" && claims?.sub) {
     const [{ data: profile }, { count }] = await Promise.all([

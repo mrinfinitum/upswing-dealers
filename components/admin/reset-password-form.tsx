@@ -10,6 +10,8 @@ export function ResetPasswordForm() {
   const supabase = useMemo(() => createClient(), []);
   const [recoveryState, setRecoveryState] = useState<RecoveryState>("checking");
   const [message, setMessage] = useState("");
+  // Supabase only lets an aal2 session change the password of an account with two-step verification.
+  const [mfaFactorId, setMfaFactorId] = useState<string>();
 
   useEffect(() => {
     let active = true;
@@ -52,7 +54,15 @@ export function ResetPasswordForm() {
 
       const { data } = await supabase.auth.getSession();
       if (!active) return;
-      if (data.session) setRecoveryState("ready");
+      if (data.session) {
+        const [{ data: assurance }, { data: factors }] = await Promise.all([
+          supabase.auth.mfa.getAuthenticatorAssuranceLevel(),
+          supabase.auth.mfa.listFactors(),
+        ]);
+        if (!active) return;
+        if (assurance?.nextLevel === "aal2" && assurance.currentLevel !== "aal2") setMfaFactorId(factors?.totp[0]?.id);
+        setRecoveryState("ready");
+      }
       else {
         setMessage("This password-reset link is invalid or has expired.");
         setRecoveryState("invalid");
@@ -78,8 +88,23 @@ export function ResetPasswordForm() {
       return;
     }
 
+    const mfaCode = String(formData.get("mfaCode") ?? "").replace(/\s+/g, "");
+    if (mfaFactorId && !/^\d{6}$/.test(mfaCode)) {
+      setMessage("Enter the 6-digit code from your authenticator app.");
+      return;
+    }
+
     setRecoveryState("saving");
     setMessage("");
+    if (mfaFactorId) {
+      const { error: mfaError } = await supabase.auth.mfa.challengeAndVerify({ factorId: mfaFactorId, code: mfaCode });
+      if (mfaError) {
+        setMessage("That authenticator code didn’t work. Enter the newest code and try again.");
+        setRecoveryState("ready");
+        return;
+      }
+      setMfaFactorId(undefined);
+    }
     const { error } = await supabase.auth.updateUser({ password });
     if (error) {
       setMessage("The password could not be updated. Request a new reset link and try again.");
@@ -99,6 +124,7 @@ export function ResetPasswordForm() {
     <form className="admin-login__form" onSubmit={handleSubmit}>
       <div className="admin-field"><label htmlFor="password">New password</label><input id="password" name="password" type="password" minLength={12} autoComplete="new-password" required /></div>
       <div className="admin-field"><label htmlFor="passwordConfirmation">Confirm new password</label><input id="passwordConfirmation" name="passwordConfirmation" type="password" minLength={12} autoComplete="new-password" required /></div>
+      {mfaFactorId ? <div className="admin-field"><label htmlFor="mfaCode">Authenticator code</label><input id="mfaCode" name="mfaCode" inputMode="numeric" autoComplete="one-time-code" maxLength={7} required /><small>Two-step verification is on for this account, so enter the 6-digit code from your app.</small></div> : null}
       {message ? <p className="admin-form-error" role="alert">{message}</p> : null}
       <button className="admin-button admin-button--primary" disabled={recoveryState === "saving"} type="submit">{recoveryState === "saving" ? "Updating…" : "Update password"}</button>
     </form>

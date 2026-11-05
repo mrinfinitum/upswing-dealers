@@ -108,3 +108,17 @@ assert.match(logoMigration, /d\.active\s+and d\.verification_status = 'verified'
 assert.match(dealerLocationActions, /updateOrganizationLogoAction[\s\S]*editableOrganizations\(identity\)\.find/, "dealers can change only their own organization's logo");
 assert.match(dealerLocationsPage, /DealerLogoForm/, "dealers manage their logo from the Locations page");
 assert.match(adminDealerPage, /DealerLogoForm/, "admins manage dealer logos from the organization page");
+
+const adminAuth = read("lib/admin/auth.ts");
+const mfaMigration = read("supabase/migrations/202611040001_require_admin_mfa.sql");
+const mfaForm = read("components/admin/admin-mfa-form.tsx");
+const adminResetForm = read("components/admin/reset-password-form.tsx");
+assert.match(adminAuth, /claims\.aal !== "aal2"\) return null/, "admin identity requires a two-step verified (aal2) session");
+assert.match(proxy, /const isAdmin = isAdminRole && data\?\.claims\?\.aal === "aal2"/, "proxy admits administrators only after two-step verification");
+assert.match(proxy, /pathname = isAdminRole \? "\/admin\/mfa" : "\/"/, "password-only admin sessions are sent to the authenticator step");
+assert.match(mfaMigration, /'role'\) = 'admin'\s+and \(auth\.jwt\(\) ->> 'aal'\) = 'aal2'/, "RLS admin policies require aal2");
+assert.match(signInAction, /role === "admin"\) redirect\("\/admin\/mfa"\)/, "administrators continue to two-step verification after the password");
+assert.match(mfaForm, /challengeAndVerify\(\{ factorId: targetFactor, code \}\)/, "the MFA page verifies a TOTP code");
+assert.match(mfaForm, /status === "unverified"\) await supabase\.auth\.mfa\.unenroll/, "abandoned authenticator setups are cleared before enrolling again");
+assert.match(adminResetForm, /nextLevel === "aal2"[\s\S]*challengeAndVerify[\s\S]*updateUser\(\{ password \}\)/, "password resets on MFA accounts verify a code first");
+assert.match(read("app/admin/(protected)/users/actions.ts"), /resetUserMfaAction[\s\S]*userId === currentAdmin\.id\) return/, "administrators cannot reset their own two-step verification");
