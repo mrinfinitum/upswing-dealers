@@ -1,10 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/admin/auth";
 import { readLogoUpload, replaceOrganizationLogo } from "@/lib/dealers/logo";
+import { DEALER_LOGO_BUCKET } from "@/lib/dealers/logo-url";
 import { dealerRowToDealer, type DealerRow } from "@/lib/dealers/supabase-mapper";
 import { reviewGeocodeCandidate, type GeocodeCandidate } from "@/lib/geo/geocode-review";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { portalPageKeys, type PortalPageKey } from "@/types/portal";
 import type { PortalFormState } from "@/lib/portal/form-state";
@@ -212,4 +215,37 @@ export async function updateOrganizationLogoAdminAction(organizationId: string, 
   revalidatePath(`/admin/dealers/${organizationId}`);
   revalidatePath("/partner/locations");
   return { success: true, message: remove ? "Logo removed." : "Logo uploaded." };
+}
+
+// Permanently deletes a dealer organization once none of its locations remain. Memberships cascade with it;
+// portal users left with no other organization are deactivated (not deleted), and its logo file is removed.
+export async function deleteDealerOrganizationAction(organizationId: string, _: PortalFormState, formData: FormData): Promise<PortalFormState> {
+  void formData;
+  await requireAdmin();
+  const supabase = createSupabaseAdminClient();
+  const { data: organization } = await supabase.from("dealer_organizations").select("id, name, logo_path").eq("id", organizationId).maybeSingle();
+  if (!organization) return { message: "This dealer organization no longer exists." };
+
+  // Checked again here, not just in the page, so a location added in the meantime still blocks the delete.
+  const { count, error: countError } = await supabase.from("dealer_organization_locations").select("dealer_id", { count: "exact", head: true }).eq("organization_id", organizationId);
+  if (countError) return { message: "The dealer’s locations could not be checked. Try again." };
+  if (count) return { message: `Delete its ${count} ${count === 1 ? "location" : "locations"} first.` };
+
+  const { data: members } = await supabase.from("dealer_memberships").select("user_id").eq("organization_id", organizationId);
+  const memberIds = (members || []).map((member) => member.user_id);
+
+  const { error } = await supabase.from("dealer_organizations").delete().eq("id", organizationId);
+  if (error) return { message: "The dealer organization could not be deleted." };
+
+  if (memberIds.length) {
+    const { data: remaining } = await supabase.from("dealer_memberships").select("user_id").in("user_id", memberIds);
+    const stillMembers = new Set((remaining || []).map((membership) => membership.user_id));
+    const orphaned = memberIds.filter((userId) => !stillMembers.has(userId));
+    if (orphaned.length) await supabase.from("dealer_portal_users").update({ active: false, updated_at: new Date().toISOString() }).in("user_id", orphaned);
+  }
+  if (organization.logo_path) await supabase.storage.from(DEALER_LOGO_BUCKET).remove([organization.logo_path]);
+
+  revalidatePath("/admin/users");
+  revalidatePath("/admin/dealers");
+  redirect(`/admin/users?deletedDealer=${encodeURIComponent(organization.name)}`);
 }

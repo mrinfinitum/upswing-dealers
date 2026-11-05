@@ -1726,3 +1726,4 @@ button { color: inherit; }
 .admin-user-mfa { display: block; margin-top: 6px; color: #8b302d; font-size: 11px; }
 .admin-user-mfa.is-on { color: #14764f; }
 .admin-user-actions { display: grid; gap: 8px; justify-items: start; }
+.admin-organization-danger { border-color: #ecd0ce; }

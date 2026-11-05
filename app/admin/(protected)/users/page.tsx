@@ -42,7 +42,7 @@ function sortUsers(users: User[], sort: UserSort) {
   });
 }
 
-export default async function AdminUsersPage({ searchParams }: { searchParams: Promise<{ q?: string; group?: string; sort?: string }> }) {
+export default async function AdminUsersPage({ searchParams }: { searchParams: Promise<{ q?: string; group?: string; sort?: string; deletedDealer?: string }> }) {
   const currentAdmin = await requireAdmin();
   const params = await searchParams;
   const q = params.q || "";
@@ -52,17 +52,20 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
   let users: Awaited<ReturnType<typeof listAuthUsers>> = [];
   let memberships: Membership[] = [];
   let organizations: Organization[] = [];
+  const locationCounts = new Map<string, number>();
 
   try {
     users = await listAuthUsers();
     const supabase = createSupabaseAdminClient();
-    const [membershipResult, organizationResult] = await Promise.all([
+    const [membershipResult, organizationResult, linkResult] = await Promise.all([
       supabase.from("dealer_memberships").select("user_id, organization_id, active, page_permissions"),
-      supabase.from("dealer_organizations").select("id, name, active"),
+      supabase.from("dealer_organizations").select("id, name, active").order("name"),
+      supabase.from("dealer_organization_locations").select("organization_id"),
     ]);
-    if (membershipResult.error || organizationResult.error) throw new AdminUserDirectoryError("Dealer groups and permissions could not be loaded.");
+    if (membershipResult.error || organizationResult.error || linkResult.error) throw new AdminUserDirectoryError("Dealer groups and permissions could not be loaded.");
     memberships = (membershipResult.data || []) as Membership[];
     organizations = (organizationResult.data || []) as Organization[];
+    for (const link of linkResult.data || []) locationCounts.set(link.organization_id, (locationCounts.get(link.organization_id) ?? 0) + 1);
   } catch (error) {
     setupError = error instanceof AdminUserDirectoryError ? error.message : "The server-only Supabase user administration configuration is unavailable.";
   }
@@ -86,6 +89,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
     <div className="admin-page admin-users-page">
       <Link className="admin-back-link" href="/admin">← Administration</Link>
       <header className="admin-page__heading"><div><p className="eyebrow">Access control</p><h1>Users</h1><p>Review every account, filter by group, and add UpSwing administrators or dealer users.</p></div></header>
+      {params.deletedDealer ? <p className="admin-notice" role="status">{params.deletedDealer.slice(0, 120)} was deleted.</p> : null}
       {setupError ? <section className="admin-setup"><h2>User directory unavailable</h2><p>{setupError}</p></section> : <>
         <section className="admin-user-summary"><article><span>Total accounts</span><strong>{users.length}</strong></article><article><span>Administrators</span><strong>{administratorCount}</strong></article><article><span>Dealers</span><strong>{dealerCount}</strong></article><article><span>Unassigned</span><strong>{unassignedCount}</strong></article></section>
         <section className="admin-user-directory">
@@ -97,6 +101,9 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
             <button className="admin-button" type="submit">Apply</button>
           </form>
           <div className="admin-user-table-wrap"><table className="admin-user-table"><thead><tr><th>User</th><th>Group</th><th>Dealer access</th><th>Account status</th><th>Last sign in</th><th>Created</th><th>Actions</th></tr></thead><tbody>{visibleUsers.map((user) => { const role = roleFor(user); const userMemberships = memberships.filter((membership) => membership.user_id === user.id); return <tr key={user.id}><td><strong>{nameFor(user)}</strong><span>{user.email}</span><small className="admin-record-id">{user.id}</small></td><td><span className={`admin-user-role admin-user-role--${role}`}>{roleLabel(role)}</span>{role === "admin" ? <small className={hasVerifiedMfa(user) ? "admin-user-mfa is-on" : "admin-user-mfa"}>{hasVerifiedMfa(user) ? "2-step on" : "2-step not set up"}</small> : null}</td><td>{userMemberships.length ? userMemberships.map((membership) => { const organization = organizations.find((item) => item.id === membership.organization_id); return <Link className="admin-user-membership" href={`/admin/dealers/${membership.organization_id}`} key={membership.organization_id}><strong>{organization?.name || "Unknown dealer"}</strong><small>{membership.active ? membership.page_permissions.join(", ") : "Paused"}</small></Link>; }) : <span className="is-muted">None</span>}</td><td>{user.email_confirmed_at ? <span className="admin-status admin-status--verified">Active</span> : <span className="admin-status admin-status--needs-review">Unconfirmed</span>}</td><td>{formatDate(user.last_sign_in_at)}</td><td>{formatDate(user.created_at)}</td><td><div className="admin-user-actions">{role === "admin" && hasVerifiedMfa(user) && user.id !== currentAdmin.id ? <ResetMfaButton userId={user.id} email={user.email || "this user"} /> : null}<DeleteUserButton userId={user.id} email={user.email || "this user"} isCurrent={user.id === currentAdmin.id} /></div></td></tr>; })}</tbody></table>{visibleUsers.length === 0 ? <p className="admin-empty">No users match these filters.</p> : null}</div>
+        </section>
+        <section className="admin-organization-section"><header><div><p className="eyebrow">Dealer accounts</p><h2>Dealer organizations</h2><p>Open a dealer to manage its logo, portal users, and settings. A dealer can be deleted once it has no locations.</p></div></header>
+          <div className="admin-user-table-wrap"><table className="admin-user-table"><thead><tr><th>Dealer</th><th>Locations</th><th>Portal users</th><th>Status</th><th><span className="sr-only">Actions</span></th></tr></thead><tbody>{organizations.map((organization) => <tr key={organization.id}><td><strong>{organization.name}</strong></td><td>{locationCounts.get(organization.id) ?? 0}</td><td>{memberships.filter((membership) => membership.organization_id === organization.id).length}</td><td>{organization.active ? <span className="admin-status admin-status--verified">Active</span> : <span className="admin-status">Inactive</span>}</td><td><Link href={`/admin/dealers/${organization.id}`}>Manage →</Link></td></tr>)}</tbody></table>{organizations.length === 0 ? <p className="admin-empty">No dealer organizations yet.</p> : null}</div>
         </section>
       </>}
     </div>
