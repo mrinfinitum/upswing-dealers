@@ -4,7 +4,7 @@ The dealer portal is part of the locator application because it shares the same 
 
 ## Routes
 
-- `/partner/login` — dealer-only sign in
+- `/` — single sign-in for dealers and admins (Turnstile-protected); `/partner/login` and `/admin/login` redirect here
 - `/partner` — organization overview (Overview permission)
 - `/partner/locations` — assigned locations, with add, edit, and remove (Locations permission)
 - `/partner/locations/new`, `/partner/locations/[id]/edit` — dealer location forms (Locations permission)

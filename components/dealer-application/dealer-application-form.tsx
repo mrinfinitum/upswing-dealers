@@ -1,15 +1,12 @@
 "use client";
 
-import Script from "next/script";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useState } from "react";
+import { TurnstileWidget } from "@/components/auth/turnstile-widget";
 import { submitDealerApplicationAction, type DealerApplicationState } from "@/app/become-a-dealer/actions";
 import { BUSINESS_TYPES, CA_PROVINCE_NAMES, type DealerApplicationValues } from "@/lib/dealers/application";
 import { US_STATE_NAMES } from "@/lib/geo/us-states";
 import { dealerLocatorUrl } from "@/lib/site";
 
-declare global {
-  interface Window { turnstile?: { reset: (widget?: string) => void } }
-}
 
 const initialState: DealerApplicationState = { status: "idle", message: "" };
 
@@ -38,11 +35,6 @@ export function DealerApplicationForm({ siteKey }: { siteKey: string }) {
     "aria-describedby": errors[name] ? `apply-${name}-error` : undefined,
   });
 
-  // Each Turnstile token is single-use, so issue a fresh challenge after every failed submit.
-  useEffect(() => {
-    if (state.status === "error") window.turnstile?.reset();
-  }, [state]);
-
   if (state.status === "success") {
     return (
       <div className="apply-success" role="status">
@@ -57,7 +49,6 @@ export function DealerApplicationForm({ siteKey }: { siteKey: string }) {
   const regions = country === "CA" ? CA_PROVINCE_NAMES : US_STATE_NAMES;
   return (
     <form action={action} className="apply-form">
-      <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" strategy="afterInteractive" async defer />
       {state.status === "error" && state.message ? <p className="apply-form__error" role="alert">{state.message}</p> : null}
 
       <fieldset>
@@ -120,7 +111,7 @@ export function DealerApplicationForm({ siteKey }: { siteKey: string }) {
       </div>
 
       <div className="apply-form__submit">
-        <div className="cf-turnstile" data-sitekey={siteKey} data-action="dealer-application" data-theme="light" />
+        <TurnstileWidget siteKey={siteKey} action="dealer-application" resetKey={state.status === "error" ? state : undefined} />
         <button type="submit" disabled={pending}>{pending ? "Submitting…" : "Submit application"} <span aria-hidden="true">→</span></button>
       </div>
     </form>

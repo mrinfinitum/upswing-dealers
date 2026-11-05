@@ -58,3 +58,13 @@ The typed model supports addresses, coordinates, contact fields, active status, 
 The locator receives a `MapConfiguration` from the server component. Google-specific loading, markers, and geocoding are isolated under `lib/maps` and `google-map.tsx`; the locator state consumes only coordinates and provider-neutral dealer records. Missing or failed map configuration falls through to the existing list-mode panel.
 
 After the initial import, administrators add coordinates from `/admin/dealers` with Sync Map Data. The authorized browser geocodes each address, and the Server Action stores a result only when exactly one candidate passes `geocode-review.ts`. Other results are saved as `needs-review` or `failed` coordinate evidence and appear in `/admin/dealers/map-review`. An administrator can approve the proposed position there, and it is then recorded as a manual coordinate review.
+
+## Security hardening
+
+- **Sign-in:** there is one sign-in, at `/`, protected by Cloudflare Turnstile. `/admin/login` and `/partner/login` redirect there. Sign-ins reach Supabase from Vercel's servers, so Supabase's per-IP limits can't tell visitors apart. Turnstile is what stops scripted password guessing.
+- **Headers:** `next.config.ts` sets a Content Security Policy on every response, plus HSTS, `X-Frame-Options: DENY`, `nosniff`, a strict referrer policy, Permissions-Policy, and COOP. It also turns off `X-Powered-By`.
+  - The CSP allows only Supabase, Google Maps, and Turnstile.
+  - Add new third-party origins there, or the browser will block them.
+- **Bot checks:** `components/auth/turnstile-widget.tsx` renders the Turnstile widget explicitly, so it also works after client-side navigation.
+- **Authorization:** every Server Action calls `requireAdmin()` or `requireDealerPortal()` before reading input. The exceptions are sign-in, password reset, and the dealer application, which are protected by Turnstile.
+- **Dependencies:** keep `next` current. Run `npm audit --omit=dev` before each release.

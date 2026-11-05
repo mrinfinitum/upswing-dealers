@@ -5,6 +5,7 @@ import { PortalAuthShell } from "@/components/auth/portal-auth-shell";
 import { PortalSignInForm } from "@/components/auth/portal-sign-in-form";
 import { dealerLocatorUrl } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
+import { getTurnstileSiteKey } from "@/lib/turnstile";
 
 export const metadata: Metadata = {
   title: "UpSwing Dealer Portal | Sign in",
@@ -13,7 +14,8 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
-export default async function Home() {
+export default async function Home({ searchParams }: { searchParams: Promise<{ access?: string }> }) {
+  const { access } = await searchParams;
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   const role = data?.claims?.app_metadata?.role;
@@ -25,7 +27,8 @@ export default async function Home() {
       <p className="portal-home__kicker">Welcome back</p>
       <h1 id="portal-home-title">Sign in to your account</h1>
       <p className="portal-home__lead">For UpSwing team members and authorized dealers.</p>
-      <PortalSignInForm />
+      {access === "inactive" ? <p className="portal-home__error" role="status">Your dealer access is inactive or hasn’t been assigned yet. Contact your UpSwing representative.</p> : null}
+      <PortalSignInForm siteKey={getTurnstileSiteKey()} />
       <div className="portal-home__divider"><span>Not a dealer yet?</span></div>
       <div className="portal-home__links">
         <Link href="/become-a-dealer">Become an UpSwing dealer <span aria-hidden="true">→</span></Link>

@@ -20,6 +20,9 @@ const portalShell = read("components/portal/dealer-portal-shell.tsx");
 const galleryAuth = read("lib/gallery/auth.ts");
 const accessEndedRoute = read("app/partner/access-ended/route.ts");
 const dealerLoginPage = read("app/partner/login/page.tsx");
+const homePage = read("app/page.tsx");
+const signInAction = read("app/actions.ts");
+const nextConfig = read("next.config.ts");
 
 assert.match(migration, /role text not null default 'dealer'/, "dealer role is stored explicitly");
 assert.match(migration, /page_permissions text\[\]/, "memberships contain page permissions");
@@ -65,8 +68,15 @@ assert.match(portalAuth, /if \(!identity\) redirect\(portalAccessEndedPath\)/, "
 assert.match(galleryAuth, /if \(!identity\) redirect\(portalAccessEndedPath\)/, "revoked gallery sessions are ended instead of bounced to the login page");
 assert.equal(portalAccessEndedPath, "/partner/access-ended", "the session-ending route stays behind the dealer proxy matcher");
 assert.match(accessEndedRoute, /if \(await getDealerPortalIdentity\(\)\) redirect/, "dealers with usable access are never signed out by the access-ended route");
-assert.match(accessEndedRoute, /auth\.signOut\(\)[\s\S]*redirect\("\/partner\/login\?access=inactive"\)/, "revoked sessions are cleared before returning to sign in");
-assert.match(dealerLoginPage, /access === "inactive"/, "the login page explains why a revoked session was signed out");
+assert.match(accessEndedRoute, /auth\.signOut\(\)[\s\S]*redirect\("\/\?access=inactive"\)/, "revoked sessions are cleared before returning to sign in");
+assert.match(homePage, /access === "inactive"/, "the sign-in page explains why a revoked session was signed out");
+assert.match(dealerLoginPage, /redirect\(access === "inactive" \? "\/\?access=inactive" : "\/"\)/, "the legacy dealer login path forwards to the single sign-in page");
+assert.match(signInAction, /verifyTurnstileForm\(formData\)[\s\S]*signInWithPassword/, "sign-in checks Turnstile before trying the password");
+assert.doesNotMatch(read("app/admin/actions.ts"), /signInWithPassword/, "the admin login action is retired in favor of the single sign-in");
+assert.doesNotMatch(read("app/partner/actions.ts"), /signInWithPassword/, "the dealer login action is retired in favor of the single sign-in");
+assert.match(nextConfig, /frame-ancestors 'none'/, "pages cannot be framed for clickjacking");
+assert.match(nextConfig, /object-src 'none'/, "plugins are blocked by the content security policy");
+assert.match(nextConfig, /poweredByHeader: false/, "the X-Powered-By header is not sent");
 
 console.log("Dealer portal authorization and brand-surface checks passed.");
 

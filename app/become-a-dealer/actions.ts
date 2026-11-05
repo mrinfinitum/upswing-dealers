@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
 import { after } from "next/server";
 import {
   APPLICATION_SOURCE_SHEET,
@@ -15,7 +14,7 @@ import {
 import { dealerToMutation } from "@/lib/dealers/supabase-mapper";
 import { sendDealerApplicationNotification } from "@/lib/email/dealer-application-notification";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import { verifyTurnstileToken } from "@/lib/turnstile";
+import { verifyTurnstileForm } from "@/lib/turnstile";
 
 export type DealerApplicationState = {
   status: "idle" | "error" | "success";
@@ -35,9 +34,7 @@ export async function submitDealerApplicationAction(_: DealerApplicationState, f
   const { application, errors } = parseDealerApplication(values);
   if (!application) return { status: "error", message: "Please review the highlighted fields.", fieldErrors: errors, values };
 
-  const requestHeaders = await headers();
-  const remoteIp = requestHeaders.get("cf-connecting-ip") || requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() || undefined;
-  const verification = await verifyTurnstileToken(String(formData.get("cf-turnstile-response") ?? ""), remoteIp);
+  const verification = await verifyTurnstileForm(formData);
   if (verification === "failed") return { status: "error", message: "We couldn’t confirm you’re human. Please complete the check and submit again.", values };
   if (verification === "unavailable") return { status: "error", message: "Applications are temporarily unavailable. Please email info@upswinggolf.com instead.", values };
 

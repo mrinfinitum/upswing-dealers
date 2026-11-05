@@ -30,39 +30,26 @@ export async function updateSession(request: NextRequest) {
   const isDealer = data?.claims?.app_metadata?.role === "dealer";
   const isGalleryRoute = pathname === "/image-gallery" || pathname.startsWith("/image-gallery/");
 
+  // Signed-out visitors go to the single sign-in page at "/"; the legacy login paths redirect there too.
   if (isAdminRoute && !isLogin && !isPasswordRecovery && !isAdmin) {
     const loginUrl = request.nextUrl.clone();
-    loginUrl.pathname = "/admin/login";
+    loginUrl.pathname = "/";
     loginUrl.search = "";
     return NextResponse.redirect(loginUrl);
   }
 
-  if (isLogin && isAdmin) {
-    const locationsUrl = request.nextUrl.clone();
-    locationsUrl.pathname = "/admin/locations";
-    locationsUrl.search = "";
-    return NextResponse.redirect(locationsUrl);
-  }
-
   if (isGalleryRoute && !isAdmin && !isDealer) {
     const loginUrl = request.nextUrl.clone();
-    loginUrl.pathname = "/partner/login";
+    loginUrl.pathname = "/";
     loginUrl.search = "";
     return NextResponse.redirect(loginUrl);
   }
 
   if (isPartnerRoute && !isPartnerLogin && !isPartnerRecovery && !isDealer) {
     const loginUrl = request.nextUrl.clone();
-    loginUrl.pathname = "/partner/login";
+    loginUrl.pathname = "/";
     loginUrl.search = "";
     return NextResponse.redirect(loginUrl);
-  }
-
-  if (isPartnerLogin && isDealer) {
-    const portalUrl = request.nextUrl.clone();
-    portalUrl.pathname = "/partner";
-    portalUrl.search = "";
-    return NextResponse.redirect(portalUrl);
   }
 
   return response;

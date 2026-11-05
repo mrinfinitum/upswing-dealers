@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import type { PortalFormState } from "@/lib/portal/form-state";
 import { createClient } from "@/lib/supabase/server";
+import { verifyTurnstileForm } from "@/lib/turnstile";
 
 const text = (formData: FormData, key: string) => String(formData.get(key) ?? "").trim();
 
@@ -12,6 +13,11 @@ export async function portalSignInAction(_: PortalFormState, formData: FormData)
   // Passwords are compared exactly as typed; trimming would reject passwords that start or end with a space.
   const password = String(formData.get("password") ?? "");
   if (!email || !password) return { message: "Enter your email and password." };
+
+  // Sign-ins reach Supabase from Vercel's servers, so its per-IP limits can't tell visitors apart; this stops scripted guessing.
+  const verification = await verifyTurnstileForm(formData);
+  if (verification === "failed") return { message: "We couldn’t confirm you’re human. Please complete the check and try again." };
+  if (verification === "unavailable") return { message: "Sign-in is temporarily unavailable. Please try again in a few minutes." };
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });

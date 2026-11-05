@@ -71,28 +71,10 @@ function parseDealerForm(formData: FormData, existing?: Dealer) {
   return { dealer, errors };
 }
 
-export async function loginAction(_: AdminFormState, formData: FormData): Promise<AdminFormState> {
-  const email = text(formData, "email");
-  // Passwords are compared exactly as typed; trimming would reject passwords that start or end with a space.
-  const password = String(formData.get("password") ?? "");
-  if (!email || !password) return { message: "Enter your email and password." };
-
-  const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) return { message: "The email or password was not accepted." };
-
-  const { data } = await supabase.auth.getClaims();
-  if (data?.claims?.app_metadata?.role !== "admin") {
-    await supabase.auth.signOut();
-    return { message: "This account does not have dealer administrator access." };
-  }
-  redirect("/admin");
-}
-
 export async function logoutAction() {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  redirect("/admin/login");
+  redirect("/");
 }
 
 export async function createLocationAction(_: AdminFormState, formData: FormData): Promise<AdminFormState> {
