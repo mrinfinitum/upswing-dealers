@@ -122,3 +122,8 @@ assert.match(mfaForm, /challengeAndVerify\(\{ factorId: targetFactor, code \}\)/
 assert.match(mfaForm, /status === "unverified"\) await supabase\.auth\.mfa\.unenroll/, "abandoned authenticator setups are cleared before enrolling again");
 assert.match(adminResetForm, /nextLevel === "aal2"[\s\S]*challengeAndVerify[\s\S]*updateUser\(\{ password \}\)/, "password resets on MFA accounts verify a code first");
 assert.match(read("app/admin/(protected)/users/actions.ts"), /resetUserMfaAction[\s\S]*userId === currentAdmin\.id\) return/, "administrators cannot reset their own two-step verification");
+
+const dealerActions = read("app/admin/(protected)/dealers/actions.ts");
+assert.match(dealerActions, /deleteDealerOrganizationAction[\s\S]*await requireAdmin\(\)[\s\S]*if \(count\) return[\s\S]*\.from\("dealer_organizations"\)\.delete\(\)/, "a dealer organization is deleted only by an admin and only once it has no locations");
+assert.match(dealerActions, /dealer_portal_users"\)\.update\(\{ active: false/, "portal users left without a dealer are deactivated, not deleted");
+assert.match(read("app/admin/(protected)/users/page.tsx"), /href=\{`\/admin\/dealers\/\$\{organization\.id\}`\}/, "every dealer organization is reachable from the Users page");
