@@ -1,7 +1,7 @@
 import "server-only";
 
 import { redirect } from "next/navigation";
-import { getAdminIdentity } from "@/lib/admin/auth";
+import { ADMIN_MFA_PATH, adminNeedsMfa, getAdminIdentity } from "@/lib/admin/auth";
 import { portalAccessEndedPath } from "@/lib/portal/access";
 import { getDealerPortalIdentity } from "@/lib/portal/auth";
 
@@ -19,6 +19,7 @@ export async function getGalleryIdentity(): Promise<GalleryIdentity | null> {
 
 export async function requireGalleryIdentity() {
   const identity = await getGalleryIdentity();
+  if (!identity && await adminNeedsMfa()) redirect(ADMIN_MFA_PATH);
   // Proxy sends signed-out visitors to the sign-in page; a revoked dealer session must be ended to avoid a loop.
   if (!identity) redirect(portalAccessEndedPath);
   return identity;

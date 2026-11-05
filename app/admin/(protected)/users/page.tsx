@@ -2,6 +2,7 @@ import type { User } from "@supabase/supabase-js";
 import Link from "next/link";
 import { AddUserModal } from "@/components/admin/add-user-modal";
 import { DeleteUserButton } from "@/components/admin/delete-user-button";
+import { ResetMfaButton } from "@/components/admin/reset-mfa-button";
 import { requireAdmin } from "@/lib/admin/auth";
 import { AdminUserDirectoryError, listAuthUsers } from "@/lib/admin/users";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -18,6 +19,8 @@ function formatDate(value?: string | null) {
 function roleFor(user: User) {
   return String(user.app_metadata?.role || "unassigned");
 }
+
+const hasVerifiedMfa = (user: User) => Boolean(user.factors?.some((factor) => factor.status === "verified"));
 
 function roleLabel(role: string) {
   if (role === "admin") return "Administrator";
@@ -93,7 +96,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
             <div className="admin-field"><label htmlFor="userSort">Sort by</label><select id="userSort" name="sort" defaultValue={sort}><option value="name">Name</option><option value="group">Group</option><option value="newest">Newest</option><option value="last-sign-in">Last sign in</option></select></div>
             <button className="admin-button" type="submit">Apply</button>
           </form>
-          <div className="admin-user-table-wrap"><table className="admin-user-table"><thead><tr><th>User</th><th>Group</th><th>Dealer access</th><th>Account status</th><th>Last sign in</th><th>Created</th><th>Actions</th></tr></thead><tbody>{visibleUsers.map((user) => { const role = roleFor(user); const userMemberships = memberships.filter((membership) => membership.user_id === user.id); return <tr key={user.id}><td><strong>{nameFor(user)}</strong><span>{user.email}</span><small className="admin-record-id">{user.id}</small></td><td><span className={`admin-user-role admin-user-role--${role}`}>{roleLabel(role)}</span></td><td>{userMemberships.length ? userMemberships.map((membership) => { const organization = organizations.find((item) => item.id === membership.organization_id); return <Link className="admin-user-membership" href={`/admin/dealers/${membership.organization_id}`} key={membership.organization_id}><strong>{organization?.name || "Unknown dealer"}</strong><small>{membership.active ? membership.page_permissions.join(", ") : "Paused"}</small></Link>; }) : <span className="is-muted">None</span>}</td><td>{user.email_confirmed_at ? <span className="admin-status admin-status--verified">Active</span> : <span className="admin-status admin-status--needs-review">Unconfirmed</span>}</td><td>{formatDate(user.last_sign_in_at)}</td><td>{formatDate(user.created_at)}</td><td><DeleteUserButton userId={user.id} email={user.email || "this user"} isCurrent={user.id === currentAdmin.id} /></td></tr>; })}</tbody></table>{visibleUsers.length === 0 ? <p className="admin-empty">No users match these filters.</p> : null}</div>
+          <div className="admin-user-table-wrap"><table className="admin-user-table"><thead><tr><th>User</th><th>Group</th><th>Dealer access</th><th>Account status</th><th>Last sign in</th><th>Created</th><th>Actions</th></tr></thead><tbody>{visibleUsers.map((user) => { const role = roleFor(user); const userMemberships = memberships.filter((membership) => membership.user_id === user.id); return <tr key={user.id}><td><strong>{nameFor(user)}</strong><span>{user.email}</span><small className="admin-record-id">{user.id}</small></td><td><span className={`admin-user-role admin-user-role--${role}`}>{roleLabel(role)}</span>{role === "admin" ? <small className={hasVerifiedMfa(user) ? "admin-user-mfa is-on" : "admin-user-mfa"}>{hasVerifiedMfa(user) ? "2-step on" : "2-step not set up"}</small> : null}</td><td>{userMemberships.length ? userMemberships.map((membership) => { const organization = organizations.find((item) => item.id === membership.organization_id); return <Link className="admin-user-membership" href={`/admin/dealers/${membership.organization_id}`} key={membership.organization_id}><strong>{organization?.name || "Unknown dealer"}</strong><small>{membership.active ? membership.page_permissions.join(", ") : "Paused"}</small></Link>; }) : <span className="is-muted">None</span>}</td><td>{user.email_confirmed_at ? <span className="admin-status admin-status--verified">Active</span> : <span className="admin-status admin-status--needs-review">Unconfirmed</span>}</td><td>{formatDate(user.last_sign_in_at)}</td><td>{formatDate(user.created_at)}</td><td><div className="admin-user-actions">{role === "admin" && hasVerifiedMfa(user) && user.id !== currentAdmin.id ? <ResetMfaButton userId={user.id} email={user.email || "this user"} /> : null}<DeleteUserButton userId={user.id} email={user.email || "this user"} isCurrent={user.id === currentAdmin.id} /></div></td></tr>; })}</tbody></table>{visibleUsers.length === 0 ? <p className="admin-empty">No users match these filters.</p> : null}</div>
         </section>
       </>}
     </div>

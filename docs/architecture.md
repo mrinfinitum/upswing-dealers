@@ -62,6 +62,11 @@ After the initial import, administrators add coordinates from `/admin/dealers` w
 ## Security hardening
 
 - **Sign-in:** there is one sign-in, at `/`, protected by Cloudflare Turnstile. `/admin/login` and `/partner/login` redirect there. Sign-ins reach Supabase from Vercel's servers, so Supabase's per-IP limits can't tell visitors apart. Turnstile is what stops scripted password guessing.
+- **Admin two-step verification:** administrators must verify an authenticator-app code (TOTP) after their password. Only an `aal2` session counts as admin:
+  - `getAdminIdentity()`, `requireAdmin()`, and the proxy all check for `aal2`. A password-only admin session is sent to `/admin/mfa`, which handles first-time setup and the code check.
+  - Migration `202611040001_require_admin_mfa.sql` makes `is_dealer_admin()`, and therefore every admin RLS policy, require `aal2` too.
+  - Lost phone: another admin resets it from `/admin/users` ("Reset 2-step"). If no admin can sign in, run `npx tsx --env-file=.env.local scripts/reset-admin-mfa.ts <email> --apply`.
+  - Admin password resets ask for the authenticator code, because Supabase only lets an `aal2` session change the password on an account with MFA.
 - **Headers:** `next.config.ts` sets a Content Security Policy on every response, plus HSTS, `X-Frame-Options: DENY`, `nosniff`, a strict referrer policy, Permissions-Policy, and COOP. It also turns off `X-Powered-By`.
   - The CSP allows only Supabase, Google Maps, and Turnstile.
   - Add new third-party origins there, or the browser will block them.
