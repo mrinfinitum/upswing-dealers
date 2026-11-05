@@ -21,7 +21,7 @@ const googleMap = readFileSync("components/dealer-locator/google-map.tsx", "utf8
 const dealerCard = readFileSync("components/dealer-locator/dealer-card.tsx", "utf8");
 const dealerLocator = readFileSync("components/dealer-locator/dealer-locator.tsx", "utf8");
 const mapPanel = readFileSync("components/dealer-locator/map-panel.tsx", "utf8");
-assert.match(homePage, /<PortalSignInForm \/>/, "the home page is the portal sign-in screen");
+assert.match(homePage, /<PortalSignInForm siteKey=\{getTurnstileSiteKey\(\)\} \/>/, "the home page is the portal sign-in screen");
 assert.match(homePage, /href=\{dealerLocatorUrl\}/, "the home page sends visitors looking for a dealer to the storefront locator");
 assert.match(mapsPreloader, /preconnect\("https:\/\/maps\.googleapis\.com"\)/, "Google Maps API connection is warmed early");
 assert.match(mapsPreloader, /preconnect\("https:\/\/maps\.gstatic\.com"/, "Google Maps static asset connection is warmed early");

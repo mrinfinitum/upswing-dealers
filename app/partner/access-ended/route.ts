@@ -11,5 +11,5 @@ export async function GET() {
   if (await getDealerPortalIdentity()) redirect(portalPagePaths.dashboard);
   const supabase = await createClient();
   await supabase.auth.signOut();
-  redirect("/partner/login?access=inactive");
+  redirect("/?access=inactive");
 }

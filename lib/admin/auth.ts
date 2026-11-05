@@ -24,6 +24,6 @@ export async function getAdminIdentity() {
 
 export async function requireAdmin() {
   const identity = await getAdminIdentity();
-  if (!identity) redirect("/admin/login");
+  if (!identity) redirect("/");
   return identity;
 }

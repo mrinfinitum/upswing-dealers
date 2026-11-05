@@ -61,7 +61,7 @@ export async function getDealerPortalIdentity(): Promise<DealerPortalIdentity | 
 
 export async function requireDealerPortal(page?: PortalPageKey) {
   const identity = await getDealerPortalIdentity();
-  // Proxy sends signed-out visitors to /partner/login; a revoked dealer session must be ended to avoid a loop.
+  // Proxy sends signed-out visitors to the sign-in page; a revoked dealer session must be ended to avoid a loop.
   if (!identity) redirect(portalAccessEndedPath);
   const destination = dealerPortalRedirect(identity.permissions, page);
   if (destination) redirect(destination);

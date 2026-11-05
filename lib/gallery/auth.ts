@@ -19,7 +19,7 @@ export async function getGalleryIdentity(): Promise<GalleryIdentity | null> {
 
 export async function requireGalleryIdentity() {
   const identity = await getGalleryIdentity();
-  // Proxy sends signed-out visitors to /partner/login; a revoked dealer session must be ended to avoid a loop.
+  // Proxy sends signed-out visitors to the sign-in page; a revoked dealer session must be ended to avoid a loop.
   if (!identity) redirect(portalAccessEndedPath);
   return identity;
 }

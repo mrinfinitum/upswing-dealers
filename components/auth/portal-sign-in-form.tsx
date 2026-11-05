@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useActionState, useState } from "react";
 import { portalSignInAction } from "@/app/actions";
+import { TurnstileWidget } from "@/components/auth/turnstile-widget";
 import { initialPortalFormState } from "@/lib/portal/form-state";
 
-export function PortalSignInForm() {
+export function PortalSignInForm({ siteKey }: { siteKey: string }) {
   const [state, action, pending] = useActionState(portalSignInAction, initialPortalFormState);
   const [showPassword, setShowPassword] = useState(false);
   return (
@@ -21,6 +22,7 @@ export function PortalSignInForm() {
           <button type="button" onClick={() => setShowPassword((value) => !value)} aria-pressed={showPassword} aria-controls="portal-password">{showPassword ? "Hide" : "Show"}</button>
         </div>
       </div>
+      <TurnstileWidget siteKey={siteKey} action="sign-in" resetKey={state.message ? state : undefined} />
       {state.message ? <p className="portal-home__error" role="alert">{state.message}</p> : null}
       <button className="portal-home__submit" disabled={pending} type="submit">
         {pending ? "Signing in…" : "Sign in"}<span aria-hidden="true">→</span>
