@@ -4,7 +4,7 @@ import { detectLogoFormat } from "../lib/dealers/logo-format";
 
 // Moves the retailer logos that were hard-coded in lib/dealers/brand.ts into the dealer-logos bucket.
 // A brand without a dealer organization gets one, linked to every dealer row with the same name. Existing
-// organizations keep their current links (PGA TOUR Superstore deliberately excludes an ambiguous Preston record).
+// organizations keep their current links.
 // Dry run by default; pass --apply to write. Existing organization logos are kept unless --replace is passed.
 const brands = [
   { name: "Club Champion", slug: "club-champion", file: "public/brand/club-champion-logo.svg" },
