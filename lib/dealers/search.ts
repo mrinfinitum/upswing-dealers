@@ -1,13 +1,11 @@
 import type { Dealer } from "@/types/dealer";
+import { US_STATE_NAMES } from "@/lib/geo/us-states";
 
-const stateNames: Record<string, string> = {
-  CA: "california", CO: "colorado", FL: "florida", GA: "georgia", IA: "iowa",
-  ID: "idaho", IL: "illinois", IN: "indiana", KS: "kansas", MA: "massachusetts",
-  MI: "michigan", MN: "minnesota", MO: "missouri", NC: "north carolina",
-  NJ: "new jersey", NV: "nevada", NY: "new york", OK: "oklahoma", OR: "oregon",
-  PA: "pennsylvania", SC: "south carolina", SD: "south dakota", TN: "tennessee",
-  TX: "texas", UT: "utah", VA: "virginia", WA: "washington", WI: "wisconsin",
-};
+// Every US state and DC, so any state a dealer is in resolves to an exact-state filter. A missing state used to
+// fall back to substring search, where "NE" matched "371 NE 70th St" and "Ballyneal".
+const stateNames: Record<string, string> = Object.fromEntries(
+  Object.entries(US_STATE_NAMES).map(([code, name]) => [code, name.toLowerCase()]),
+);
 
 const countryAliases: Record<string, string> = {
   "United States": "us usa",

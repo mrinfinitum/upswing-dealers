@@ -154,3 +154,13 @@ assert.deepEqual(reviewGeocodeCandidate(austin, exactCandidate), { status: "veri
 assert.equal(reviewGeocodeCandidate(austin, { ...exactCandidate, locationType: "APPROXIMATE" }).status, "needs-review");
 
 console.log("Phase 2 data, search, distance, radius, and verification tests passed.");
+
+// Every state resolves to an exact-state filter, so picking one never falls back to substring search.
+for (const code of ["NE", "AK", "AL", "AZ", "CT", "KY", "MD", "DC"]) assert.equal(getStateCodeForQuery(code), code, `${code} is a known state`);
+assert.equal(getStateCodeForQuery("Nebraska"), "NE");
+{
+  const nebraska = { ...publicDealers[0], id: "ne-test", country: "United States", stateProvince: "NE", city: "Omaha" };
+  const lookalike = { ...publicDealers[0], id: "ok-test", country: "United States", stateProvince: "OK", addressLine1: "371 NE 70th St" };
+  assert.deepEqual(searchDealersByExactState([nebraska, lookalike], "NE").map((dealer) => dealer.id), ["ne-test"], "NE shows only Nebraska dealers");
+}
+assert.match(readFileSync("components/dealer-locator/dealer-locator.tsx", "utf8"), /source === "state" && nextQuery \? nextQuery\.toUpperCase\(\)/, "the state dropdown filters by exact state code");
