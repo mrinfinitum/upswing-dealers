@@ -47,7 +47,8 @@ export function DealerLocator({ dealers, mapConfig }: { dealers: Dealer[]; mapCo
 
   async function runSearch(value: string, geocode = true, source: "location" | "state" = "location") {
     const nextQuery = value.trim();
-    const exactState = getStateCodeForQuery(nextQuery);
+    // The state dropdown always filters by its exact code; typed text is checked against the state table.
+    const exactState = source === "state" && nextQuery ? nextQuery.toUpperCase() : getStateCodeForQuery(nextQuery);
     setQuery(source === "location" ? nextQuery : "");
     setStateQuery(source === "state" ? nextQuery : "");
     startTransition(() => {
