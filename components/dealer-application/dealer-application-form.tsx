@@ -61,7 +61,7 @@ export function DealerApplicationForm({ siteKey }: { siteKey: string }) {
               {Object.entries(BUSINESS_TYPES).map(([value, label]) => <option value={value} key={value}>{label}</option>)}
             </select>
           </Field>
-          <Field name="website" label="Website" error={errors.website}><input {...input("website")} type="url" inputMode="url" placeholder="https://" autoComplete="url" /></Field>
+          <Field name="website" label="Website" error={errors.website}><input {...input("website")} type="text" inputMode="url" autoCapitalize="none" spellCheck={false} placeholder="www.yourstore.com" autoComplete="url" /></Field>
           <Field name="storePhone" label="Store phone" error={errors.storePhone}><input {...input("storePhone")} type="tel" autoComplete="tel" /></Field>
           <Field name="yearsInBusiness" label="Years in business" error={errors.yearsInBusiness}>
             <select key={values?.yearsInBusiness} {...input("yearsInBusiness")}>

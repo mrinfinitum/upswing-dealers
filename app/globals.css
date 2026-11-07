@@ -1595,6 +1595,7 @@ button { color: inherit; }
 .admin-applications-alert { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0 0 24px; padding: 18px 22px; border: 1px solid #f0d9a6; border-radius: 16px; background: #fff8e8; color: #5d4512; }
 .admin-applications-alert a { font-weight: 600; text-underline-offset: 4px; white-space: nowrap; }
 .admin-application-notes { margin: 6px 0 0; color: var(--muted); font-size: 12px; white-space: pre-line; }
+.admin-application-org { display: table; margin-top: 6px; }
 @media (max-width: 960px) {
   .apply-page { padding: 32px 0 64px; }
   .apply-page__layout { grid-template-columns: 1fr; gap: 32px; }

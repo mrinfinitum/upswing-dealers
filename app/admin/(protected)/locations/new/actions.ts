@@ -6,6 +6,7 @@ import { requireAdmin } from "@/lib/admin/auth";
 import type { BatchImportState } from "@/lib/admin/batch-import-state";
 import { dealerToMutation } from "@/lib/dealers/supabase-mapper";
 import { createClient } from "@/lib/supabase/server";
+import { linkLocationsToOrganizationsByName } from "@/lib/admin/organizations";
 import type { Dealer } from "@/types/dealer";
 
 const MAX_FILE_BYTES = 4 * 1024 * 1024;
@@ -138,8 +139,9 @@ export async function importDealerBatchAction(_: BatchImportState, formData: For
 
   const { error } = await supabase.from("dealers").insert(dealers.map(dealerToMutation));
   if (error) return { message: "The batch could not be imported. No locations were added." };
+  const linked = await linkLocationsToOrganizationsByName(dealers);
   revalidatePath("/");
   revalidatePath("/admin/dealers");
   revalidatePath("/admin/locations");
-  return { success: true, imported: dealers.length, message: `${dealers.length} ${dealers.length === 1 ? "location was" : "locations were"} imported as unverified records.` };
+  return { success: true, imported: dealers.length, message: `${dealers.length} ${dealers.length === 1 ? "location was" : "locations were"} imported as unverified records.${linked ? ` ${linked} joined an existing dealer organization with the same name.` : ""}` };
 }

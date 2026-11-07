@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { detectLogoFormat } from "../lib/dealers/logo-format";
+import { matchOrganization, organizationDomains } from "../lib/dealers/organization-match";
 import { dealerPortalHome, dealerPortalRedirect, portalAccessEndedPath, portalPagePaths } from "../lib/portal/access";
 import { portalPageKeys, type PortalPageKey } from "../types/portal";
 
@@ -127,3 +128,38 @@ const dealerActions = read("app/admin/(protected)/dealers/actions.ts");
 assert.match(dealerActions, /deleteDealerOrganizationAction[\s\S]*await requireAdmin\(\)[\s\S]*if \(count\) return[\s\S]*\.from\("dealer_organizations"\)\.delete\(\)/, "a dealer organization is deleted only by an admin and only once it has no locations");
 assert.match(dealerActions, /dealer_portal_users"\)\.update\(\{ active: false/, "portal users left without a dealer are deactivated, not deleted");
 assert.match(read("app/admin/(protected)/users/page.tsx"), /href=\{`\/admin\/dealers\/\$\{organization\.id\}`\}/, "every dealer organization is reachable from the Users page");
+
+for (const file of ["components/dealer-application/dealer-application-form.tsx", "components/portal/dealer-location-form.tsx", "components/admin/location-form.tsx"]) {
+  assert.doesNotMatch(read(file), /type="url"/, `${file} accepts website addresses typed without https:// (browsers block type="url" submits)`);
+}
+
+// Chain applications are routed to their existing organization.
+const domains = organizationDomains([
+  { organizationId: "golftec", website: "https://www.golftec.com/golf-lessons/denver", email: "denver@golftec.com" },
+  { organizationId: "golftec", website: "https://www.golftec.com/golf-lessons/austin" },
+  { organizationId: "golf-town", website: "https://www.golftown.com", email: "store@gmail.com" },
+  { organizationId: "golf-town-express", website: "https://www.facebook.com/gte" },
+  { organizationId: "indie-a", website: "https://shared-host.com/a" },
+  { organizationId: "indie-b", website: "https://shared-host.com/b" },
+]);
+assert.deepEqual(domains.get("golftec"), ["golftec.com"]);
+assert.equal(domains.get("indie-a"), undefined, "a domain used by two organizations identifies neither");
+assert.equal(domains.get("golf-town")?.includes("gmail.com"), false, "mailbox providers are not organization domains");
+const organizations = [
+  { id: "golftec", name: "GOLFTEC", locationCount: 45, domains: domains.get("golftec") ?? [] },
+  { id: "golf-town", name: "Golf Town", locationCount: 3, domains: domains.get("golf-town") ?? [] },
+  { id: "golf-town-express", name: "Golf Town Express", locationCount: 1, domains: [] },
+  { id: "pro", name: "Pro", locationCount: 1, domains: [] },
+];
+assert.equal(matchOrganization({ name: "GOLFTEC Omaha" }, organizations)?.organization.id, "golftec");
+assert.equal(matchOrganization({ name: "golftec" }, organizations)?.organization.id, "golftec");
+assert.equal(matchOrganization({ name: "Golf Town Express Calgary" }, organizations)?.organization.id, "golf-town-express", "the longest matching name wins");
+assert.equal(matchOrganization({ name: "Golftecs Fitting" }, organizations), null, "a name prefix must end at a word boundary");
+assert.equal(matchOrganization({ name: "Pro Shop Plus" }, organizations), null, "very short organization names do not match by prefix");
+assert.equal(matchOrganization({ name: "Swing Lab", website: "https://golftec.com/golf-lessons/omaha" }, organizations)?.organization.id, "golftec");
+assert.equal(matchOrganization({ name: "Swing Lab", notes: "Dealer application submitted.\nContact email: jkinney@golftec.com" }, organizations)?.organization.id, "golftec");
+assert.equal(matchOrganization({ name: "Swing Lab", email: "owner@gmail.com", website: "https://www.facebook.com/swinglab" }, organizations), null);
+const locationForm = read("components/admin/location-form.tsx");
+assert.match(locationForm, /name="organizationId"/, "the location form offers an organization for unlinked locations");
+assert.match(read("app/admin/actions.ts"), /dealer_organization_locations"\)\.upsert/, "saving with an organization links the location");
+assert.match(read("app/admin/(protected)/locations/new/actions.ts"), /linkLocationsToOrganizationsByName\(dealers\)/, "batch imports join organizations with the same name");
