@@ -11,6 +11,8 @@ import {
   readApplicationValues,
   type DealerApplicationValues,
 } from "@/lib/dealers/application";
+import { loadOrganizationMatchCandidates } from "@/lib/admin/organizations";
+import { matchOrganization, normalizeOrganizationName } from "@/lib/dealers/organization-match";
 import { dealerToMutation } from "@/lib/dealers/supabase-mapper";
 import { sendDealerApplicationNotification } from "@/lib/email/dealer-application-notification";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -42,12 +44,13 @@ export async function submitDealerApplicationAction(_: DealerApplicationState, f
 
   const { data: sameLocation, error: locationError } = await supabase
     .from("dealers")
-    .select("name, address_line_1, postal_code, country, verification_status")
+    .select("name, location_name, address_line_1, postal_code, country, verification_status")
     .eq("country", application.country)
     .ilike("postal_code", escapeLike(application.postalCode));
   if (locationError) return { status: "error", message: "Something went wrong saving your application. Please try again.", values };
   const fingerprint = applicationFingerprint([application.businessName, application.postalCode]);
-  const existing = (sameLocation ?? []).find((row) => applicationFingerprint([row.name, row.postal_code]) === fingerprint);
+  // Chain applications are stored under the organization name, so compare the store name too.
+  const existing = (sameLocation ?? []).find((row) => [row.name, row.location_name].some((name) => applicationFingerprint([name, row.postal_code]) === fingerprint));
   if (existing?.verification_status === "verified") return { status: "error", message: `${application.businessName} is already an UpSwing dealer at this location. Email info@upswinggolf.com to update your listing.`, values };
   if (existing?.verification_status === "needs-review") return { status: "success", message: "We already have an application for this location, and our team is reviewing it." };
 
@@ -60,10 +63,20 @@ export async function submitDealerApplicationAction(_: DealerApplicationState, f
   if (emailError) return { status: "error", message: "Something went wrong saving your application. Please try again.", values };
   if ((pendingForEmail ?? 0) >= 5) return { status: "success", message: "We already have applications from this email address, and our team is reviewing them." };
 
+  // A chain store ("GOLFTEC Omaha") is filed under its organization's name right away, with the store name as
+  // the location name. It is linked to the organization only when an administrator approves it, because linked
+  // locations appear in that organization's portal and an application is unvetted until then.
+  const match = matchOrganization({ name: application.businessName, website: application.website, email: application.contactEmail }, await loadOrganizationMatchCandidates(supabase));
+  const organizationName = match?.organization.name;
+  const sameName = organizationName && normalizeOrganizationName(organizationName) === normalizeOrganizationName(application.businessName);
+  const notes = applicationNotes(application, new Date())
+    + (match ? `\nMatched organization: ${match.organization.name} (${match.reason}). It joins that organization when approved.` : "");
+
   const id = crypto.randomUUID();
   const { error } = await supabase.from("dealers").insert(dealerToMutation({
     id,
-    name: application.businessName,
+    name: organizationName ?? application.businessName,
+    locationName: organizationName && !sameName ? application.businessName : undefined,
     addressLine1: application.addressLine1,
     addressLine2: application.addressLine2,
     city: application.city,
@@ -74,7 +87,7 @@ export async function submitDealerApplicationAction(_: DealerApplicationState, f
     website: application.website,
     active: false,
     verificationStatus: "needs-review",
-    notes: applicationNotes(application, new Date()),
+    notes,
     source: { workbook: APPLICATION_SOURCE_WORKBOOK, sheet: APPLICATION_SOURCE_SHEET, row: 0, rawCity: application.city, rawRegion: application.region },
   }));
   if (error) {

@@ -73,7 +73,7 @@ export function DealerLocationForm({ location, organizations, mapConfig }: { loc
         <div className="portal-form-grid">
           <div className="portal-field"><label htmlFor="phone">Phone</label><input id="phone" name="phone" type="tel" defaultValue={location?.phone} autoComplete="tel" /></div>
           <div className="portal-field"><label htmlFor="email">Email</label><input id="email" name="email" type="email" defaultValue={location?.email} autoComplete="email" /><FieldError error={error("email")} /></div>
-          <div className="portal-field portal-field--wide"><label htmlFor="website">Website</label><input id="website" name="website" type="url" inputMode="url" placeholder="https://" defaultValue={location?.website} autoComplete="url" /><FieldError error={error("website")} /></div>
+          <div className="portal-field portal-field--wide"><label htmlFor="website">Website</label><input id="website" name="website" type="text" inputMode="url" autoCapitalize="none" spellCheck={false} placeholder="www.yourstore.com" defaultValue={location?.website} autoComplete="url" /><FieldError error={error("website")} /></div>
         </div>
       </fieldset>
 

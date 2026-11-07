@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { listDealerApplications, type DealerApplicationRow } from "@/lib/admin/applications";
+import { loadOrganizationMatchCandidates } from "@/lib/admin/organizations";
+import { matchOrganization } from "@/lib/dealers/organization-match";
 
 const statusLabels: Record<DealerApplicationRow["verification_status"], string> = {
   "needs-review": "New",
@@ -11,17 +13,25 @@ const statusLabels: Record<DealerApplicationRow["verification_status"], string> 
 const dateFormat = new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short", timeZone: "America/New_York" });
 
 export default async function DealerApplicationsPage() {
-  const applications = await listDealerApplications();
+  const [applications, organizations] = await Promise.all([listDealerApplications(), loadOrganizationMatchCandidates()]);
+  const organizationNames = new Map(organizations.map((organization) => [organization.id, organization.name]));
+  // Linked applications show their organization; unlinked ones show the organization they appear to belong to.
+  const organizationLabel = (application: DealerApplicationRow) => {
+    const linked = application.dealer_organization_locations[0]?.organization_id;
+    if (linked) return `Part of ${organizationNames.get(linked) ?? "an organization"}`;
+    const match = matchOrganization({ name: application.location_name || application.name, website: application.website ?? undefined, email: application.email ?? undefined, notes: application.notes ?? undefined }, organizations);
+    return match ? `Looks like ${match.organization.name}` : "";
+  };
   const pending = applications.filter((application) => application.verification_status === "needs-review").length;
 
   return (
     <div className="admin-page">
       <Link className="admin-back-link" href="/admin">← Administration</Link>
       <header className="admin-page__heading"><div><p className="eyebrow">Dealer network</p><h1>Dealer applications</h1><p>Submissions from the public <a href="/become-a-dealer" target="_blank" rel="noreferrer">Become a dealer</a> form. They stay off the locator until you approve them.</p></div></header>
-      <p className="admin-notice">{pending} new {pending === 1 ? "application" : "applications"}. To approve, open one, confirm the address, set the status to <strong>Verified</strong>, tick <strong>Active</strong>, and save. To decline, set the status to <strong>Rejected</strong>.</p>
+      <p className="admin-notice">{pending} new {pending === 1 ? "application" : "applications"}. To approve, open one, confirm the address, set the status to <strong>Verified</strong>, tick <strong>Active</strong>, and save. If it belongs to an existing organization (for example a new GOLFTEC store), confirm the <strong>Organization</strong> on the review page so it joins that dealer. To decline, set the status to <strong>Rejected</strong>.</p>
       <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Business</th><th>Location</th><th>Submitted</th><th>Status</th><th><span className="sr-only">Actions</span></th></tr></thead><tbody>
         {applications.map((application) => <tr key={application.id}>
-          <td><strong>{application.name}</strong>{application.notes ? <p className="admin-application-notes">{application.notes.split("\n").slice(1, 4).join("\n")}</p> : null}</td>
+          <td><strong>{application.location_name || application.name}</strong>{organizationLabel(application) ? <span className="admin-status admin-status--unverified admin-application-org">{organizationLabel(application)}</span> : null}{application.notes ? <p className="admin-application-notes">{application.notes.split("\n").slice(1, 4).join("\n")}</p> : null}</td>
           <td>{application.city}{application.state_province ? `, ${application.state_province}` : ""}<span>{application.country}</span></td>
           <td>{dateFormat.format(new Date(application.created_at))}</td>
           <td><span className={`admin-status admin-status--${application.verification_status}`}>{statusLabels[application.verification_status]}{application.verification_status === "verified" && !application.active ? " · inactive" : ""}</span></td>

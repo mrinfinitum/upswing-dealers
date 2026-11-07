@@ -10,6 +10,8 @@ import type { Dealer, DealerVerificationStatus } from "@/types/dealer";
 import type { AdminFormState } from "@/lib/admin/form-state";
 import { applyAutomaticCoordinates } from "@/lib/dealers/geocode-form";
 import { safeAdminReturnPath } from "@/lib/admin/return-path";
+import { APPLICATION_SOURCE_WORKBOOK } from "@/lib/dealers/application";
+import { linkLocationsToOrganizationsByName, organizationsForDealer } from "@/lib/admin/organizations";
 
 const statuses: DealerVerificationStatus[] = ["unverified", "needs-review", "verified", "rejected"];
 const text = (formData: FormData, key: string) => String(formData.get(key) ?? "").trim();
@@ -22,7 +24,7 @@ function parseDealerForm(formData: FormData, existing?: Dealer) {
   const country = text(formData, "country");
   const verificationStatus = text(formData, "verificationStatus") as DealerVerificationStatus;
   const addressLine1 = text(formData, "addressLine1");
-  const website = optionalText(formData, "website");
+  let website = optionalText(formData, "website");
   const email = optionalText(formData, "email");
 
   if (!name) errors.name = "Dealer name is required.";
@@ -31,11 +33,13 @@ function parseDealerForm(formData: FormData, existing?: Dealer) {
   if (!country) errors.country = "Country is required.";
   if (!statuses.includes(verificationStatus)) errors.verificationStatus = "Choose a valid status.";
   if (website) {
+    // Accept "www.example.com" as typed and store it with https://, matching the dealer forms.
     try {
-      const parsed = new URL(website);
-      if (!['http:', 'https:'].includes(parsed.protocol)) throw new Error();
+      const parsed = new URL(/^https?:\/\//i.test(website) ? website : `https://${website}`);
+      if (!["http:", "https:"].includes(parsed.protocol) || !parsed.hostname.includes(".")) throw new Error();
+      website = parsed.toString();
     } catch {
-      errors.website = "Enter a complete http or https URL.";
+      errors.website = "Enter a valid website address, like www.example.com.";
     }
   }
   if (email && !/^\S+@\S+\.\S+$/.test(email)) errors.email = "Enter a valid email address.";
@@ -87,6 +91,7 @@ export async function createLocationAction(_: AdminFormState, formData: FormData
   const supabase = await createClient();
   const { error } = await supabase.from("dealers").insert(dealerToMutation(dealer));
   if (error) return { message: "The location could not be created. Check database setup and try again." };
+  await linkLocationsToOrganizationsByName([dealer]);
   revalidatePath("/");
   revalidatePath("/admin/locations");
   redirect(`/admin/locations/${encodeURIComponent(dealer.id)}?saved=created`);
@@ -102,8 +107,32 @@ export async function updateLocationAction(id: string, _: AdminFormState, formDa
   if (geocodeError) return geocodeError;
 
   const supabase = await createClient();
+  // An unlinked location (typically an approved application) can join an organization from this form. It takes
+  // the organization's name, and its own name becomes the location name if it had none.
+  // Applications join only once approved: a linked location shows up in the organization's portal, and a pending
+  // or rejected application has not been vetted.
+  const pendingApplication = existing.source.workbook === APPLICATION_SOURCE_WORKBOOK && dealer.verificationStatus !== "verified";
+  const organizationId = pendingApplication ? "" : text(formData, "organizationId");
+  if (organizationId) {
+    const [{ data: organization }, linked] = await Promise.all([
+      supabase.from("dealer_organizations").select("id, name").eq("id", organizationId).maybeSingle(),
+      organizationsForDealer(id),
+    ]);
+    if (!organization) return { message: "Review the highlighted fields.", fieldErrors: { organizationId: "That organization no longer exists." } };
+    if (!linked.length) {
+      if (!dealer.locationName && dealer.name !== organization.name) dealer.locationName = dealer.name;
+      dealer.name = organization.name;
+    }
+  }
+
   const { error } = await supabase.from("dealers").update(dealerToMutation(dealer)).eq("id", id);
   if (error) return { message: "The location could not be saved. Try again." };
+  if (organizationId) {
+    const { error: linkError } = await supabase.from("dealer_organization_locations").upsert({ organization_id: organizationId, dealer_id: id }, { ignoreDuplicates: true });
+    if (linkError) return { message: "The location was saved, but it could not be linked to the organization. Try again." };
+    revalidatePath("/admin/dealers");
+    revalidatePath(`/admin/dealers/${organizationId}`);
+  }
   revalidatePath("/");
   revalidatePath("/admin/locations");
   revalidatePath(`/admin/locations/${id}`);

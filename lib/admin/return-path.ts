@@ -13,3 +13,13 @@ export function safeAdminReturnPath(value: string | undefined, fallback = fallba
     return fallback;
   }
 }
+
+// Names the page a return path leads to, for "← Applications"-style back links.
+export function adminReturnLabel(path: string) {
+  const pathname = path.split("?")[0];
+  if (pathname === "/admin/applications") return "Applications";
+  if (pathname === "/admin/dealers/locations") return "Dealer locations";
+  if (pathname === "/admin/dealers/map-review") return "Map review";
+  if (pathname.startsWith("/admin/dealers/")) return "Dealer organization";
+  return "Locations";
+}
