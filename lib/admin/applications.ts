@@ -8,6 +8,7 @@ import type { DealerVerificationStatus } from "@/types/dealer";
 export type DealerApplicationRow = {
   id: string;
   name: string;
+  location_name: string | null;
   city: string;
   state_province: string | null;
   country: string;
@@ -24,7 +25,7 @@ export async function listDealerApplications() {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("dealers")
-    .select("id, name, city, state_province, country, active, verification_status, notes, website, email, created_at, dealer_organization_locations(organization_id)")
+    .select("id, name, location_name, city, state_province, country, active, verification_status, notes, website, email, created_at, dealer_organization_locations(organization_id)")
     .eq("source_workbook", APPLICATION_SOURCE_WORKBOOK)
     .order("created_at", { ascending: false });
   if (error) throw new DealerAdminDataError("Applications could not be loaded");

@@ -1,14 +1,16 @@
 import "server-only";
 
 import { normalizeOrganizationName, organizationDomains, type OrganizationMatchCandidate } from "@/lib/dealers/organization-match";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 
 type LinkRow = { organization_id: string; dealer_id: string; dealers: { website: string | null; email: string | null } | null };
 
 // Every dealer organization with its location count and the domains its locations use, for matching new
-// locations to an organization. Read with the administrator's session, so RLS limits it to admins.
-export async function loadOrganizationMatchCandidates(): Promise<OrganizationMatchCandidate[]> {
-  const supabase = await createClient();
+// locations to an organization. Read with the administrator's session (so RLS limits it to admins) unless the
+// caller passes the service client, as the public application action does.
+export async function loadOrganizationMatchCandidates(client?: SupabaseClient): Promise<OrganizationMatchCandidate[]> {
+  const supabase = client ?? await createClient();
   const [{ data: organizations, error }, { data: links, error: linkError }] = await Promise.all([
     supabase.from("dealer_organizations").select("id, name").order("name"),
     supabase.from("dealer_organization_locations").select("organization_id, dealer_id, dealers(website, email)"),

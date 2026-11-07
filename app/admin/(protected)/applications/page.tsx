@@ -19,7 +19,7 @@ export default async function DealerApplicationsPage() {
   const organizationLabel = (application: DealerApplicationRow) => {
     const linked = application.dealer_organization_locations[0]?.organization_id;
     if (linked) return `Part of ${organizationNames.get(linked) ?? "an organization"}`;
-    const match = matchOrganization({ name: application.name, website: application.website ?? undefined, email: application.email ?? undefined, notes: application.notes ?? undefined }, organizations);
+    const match = matchOrganization({ name: application.location_name || application.name, website: application.website ?? undefined, email: application.email ?? undefined, notes: application.notes ?? undefined }, organizations);
     return match ? `Looks like ${match.organization.name}` : "";
   };
   const pending = applications.filter((application) => application.verification_status === "needs-review").length;
@@ -31,7 +31,7 @@ export default async function DealerApplicationsPage() {
       <p className="admin-notice">{pending} new {pending === 1 ? "application" : "applications"}. To approve, open one, confirm the address, set the status to <strong>Verified</strong>, tick <strong>Active</strong>, and save. If it belongs to an existing organization (for example a new GOLFTEC store), confirm the <strong>Organization</strong> on the review page so it joins that dealer. To decline, set the status to <strong>Rejected</strong>.</p>
       <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Business</th><th>Location</th><th>Submitted</th><th>Status</th><th><span className="sr-only">Actions</span></th></tr></thead><tbody>
         {applications.map((application) => <tr key={application.id}>
-          <td><strong>{application.name}</strong>{organizationLabel(application) ? <span className="admin-status admin-status--unverified admin-application-org">{organizationLabel(application)}</span> : null}{application.notes ? <p className="admin-application-notes">{application.notes.split("\n").slice(1, 4).join("\n")}</p> : null}</td>
+          <td><strong>{application.location_name || application.name}</strong>{organizationLabel(application) ? <span className="admin-status admin-status--unverified admin-application-org">{organizationLabel(application)}</span> : null}{application.notes ? <p className="admin-application-notes">{application.notes.split("\n").slice(1, 4).join("\n")}</p> : null}</td>
           <td>{application.city}{application.state_province ? `, ${application.state_province}` : ""}<span>{application.country}</span></td>
           <td>{dateFormat.format(new Date(application.created_at))}</td>
           <td><span className={`admin-status admin-status--${application.verification_status}`}>{statusLabels[application.verification_status]}{application.verification_status === "verified" && !application.active ? " · inactive" : ""}</span></td>

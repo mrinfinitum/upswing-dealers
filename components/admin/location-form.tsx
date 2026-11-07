@@ -19,9 +19,11 @@ export type OrganizationLinking = {
   linked: Array<{ id: string; name: string }>;
   options: OrganizationOption[];
   suggestion?: { id: string; reason: string };
+  // A pending application is linked only when it is saved as Verified.
+  joinsWhenVerified?: boolean;
 };
 
-export function LocationForm({ dealer, mapConfig, cancelHref = "/admin/locations", existingDealers = [], defaultDealerName, organizations }: { dealer?: Dealer; mapConfig: MapConfiguration; cancelHref?: string; existingDealers?: ExistingDealerOption[]; defaultDealerName?: string; organizations?: OrganizationLinking }) {
+export function LocationForm({ dealer, mapConfig, cancelHref = "/admin/locations", existingDealers = [], defaultDealerName, organizations, cancelLabel = "Cancel" }: { dealer?: Dealer; cancelLabel?: string; mapConfig: MapConfiguration; cancelHref?: string; existingDealers?: ExistingDealerOption[]; defaultDealerName?: string; organizations?: OrganizationLinking }) {
   const canLink = Boolean(dealer && organizations && !organizations.linked.length);
   const [organizationId, setOrganizationId] = useState(canLink ? organizations?.suggestion?.id ?? "" : "");
   const selectedOrganization = organizations?.options.find((option) => option.id === organizationId);
@@ -89,7 +91,7 @@ export function LocationForm({ dealer, mapConfig, cancelHref = "/admin/locations
             {organizations.options.map((option) => <option key={option.id} value={option.id}>{option.name} ({option.locationCount} {option.locationCount === 1 ? "location" : "locations"})</option>)}
           </select><FieldError error={error("organizationId")} /></div>
           {organizations.suggestion ? <p className="admin-form-help" role="status">{organizationId === organizations.suggestion.id ? "Suggested" : "We suggested"} {organizations.options.find((option) => option.id === organizations.suggestion?.id)?.name} because {organizations.suggestion.reason}.</p> : <p className="admin-form-help">No existing organization matched this dealer. Leave it unlinked to keep it independent.</p>}
-          {selectedOrganization ? <p className="admin-form-help">Saving links this location to {selectedOrganization.name}: it uses the organization’s dealer name and logo, and the organization’s portal users can manage it.</p> : null}
+          {selectedOrganization ? <p className="admin-form-help">{organizations.joinsWhenVerified ? `It joins ${selectedOrganization.name} when you save it as Verified` : `Saving links this location to ${selectedOrganization.name}`}: it uses the organization’s dealer name and logo, and the organization’s portal users can manage it.</p> : null}
         </>}
       </fieldset> : null}
 
@@ -120,7 +122,7 @@ export function LocationForm({ dealer, mapConfig, cancelHref = "/admin/locations
           <div className="admin-field admin-field--wide"><label htmlFor="notes">Internal notes</label><textarea id="notes" name="notes" rows={4} defaultValue={dealer?.notes} /></div>
         </div>
       </fieldset>
-      <div className="admin-form-actions"><button className="admin-button admin-button--primary" disabled={pending} type="submit">{pending ? "Validating address…" : dealer ? "Save changes" : "Create location"}</button><Link className="admin-button" href={cancelHref}>Cancel</Link></div>
+      <div className="admin-form-actions"><button className="admin-button admin-button--primary" disabled={pending} type="submit">{pending ? "Validating address…" : dealer ? "Save changes" : "Create location"}</button><Link className="admin-button" href={cancelHref}>{cancelLabel}</Link></div>
     </form>
   );
 }

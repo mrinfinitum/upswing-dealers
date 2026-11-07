@@ -163,3 +163,7 @@ const locationForm = read("components/admin/location-form.tsx");
 assert.match(locationForm, /name="organizationId"/, "the location form offers an organization for unlinked locations");
 assert.match(read("app/admin/actions.ts"), /dealer_organization_locations"\)\.upsert/, "saving with an organization links the location");
 assert.match(read("app/admin/(protected)/locations/new/actions.ts"), /linkLocationsToOrganizationsByName\(dealers\)/, "batch imports join organizations with the same name");
+const applicationAction = read("app/become-a-dealer/actions.ts");
+assert.match(applicationAction, /matchOrganization\(/, "applications from chain stores are filed under their organization name");
+assert.doesNotMatch(applicationAction, /dealer_organization_locations/, "an unvetted application is never linked to an organization's portal");
+assert.match(read("app/admin/actions.ts"), /pendingApplication \? "" :/, "applications join their organization only when saved as Verified");

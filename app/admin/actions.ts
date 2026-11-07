@@ -10,6 +10,7 @@ import type { Dealer, DealerVerificationStatus } from "@/types/dealer";
 import type { AdminFormState } from "@/lib/admin/form-state";
 import { applyAutomaticCoordinates } from "@/lib/dealers/geocode-form";
 import { safeAdminReturnPath } from "@/lib/admin/return-path";
+import { APPLICATION_SOURCE_WORKBOOK } from "@/lib/dealers/application";
 import { linkLocationsToOrganizationsByName, organizationsForDealer } from "@/lib/admin/organizations";
 
 const statuses: DealerVerificationStatus[] = ["unverified", "needs-review", "verified", "rejected"];
@@ -108,7 +109,10 @@ export async function updateLocationAction(id: string, _: AdminFormState, formDa
   const supabase = await createClient();
   // An unlinked location (typically an approved application) can join an organization from this form. It takes
   // the organization's name, and its own name becomes the location name if it had none.
-  const organizationId = text(formData, "organizationId");
+  // Applications join only once approved: a linked location shows up in the organization's portal, and a pending
+  // or rejected application has not been vetted.
+  const pendingApplication = existing.source.workbook === APPLICATION_SOURCE_WORKBOOK && dealer.verificationStatus !== "verified";
+  const organizationId = pendingApplication ? "" : text(formData, "organizationId");
   if (organizationId) {
     const [{ data: organization }, linked] = await Promise.all([
       supabase.from("dealer_organizations").select("id, name").eq("id", organizationId).maybeSingle(),
